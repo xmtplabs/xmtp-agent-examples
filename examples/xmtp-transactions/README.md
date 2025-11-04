@@ -136,7 +136,6 @@ To run your XMTP agent, you must create a `.env` file with the following variabl
 ```bash
 XMTP_WALLET_KEY= # the private key for the wallet
 XMTP_DB_ENCRYPTION_KEY= # the encryption key for the wallet
-# public key is
 
 NETWORK_ID=base-sepolia # base-mainnet or others
 XMTP_ENV=dev # local, dev, production
