@@ -51,8 +51,15 @@ agent.use(transactionReferenceMiddleware);
 const router = new CommandRouter();
 
 router.command("/balance", async (ctx) => {
-  const result = await usdcHandler.getUSDCBalance(`${agent.address}`);
-  await ctx.sendText(`Your USDC balance is: ${result} USDC`);
+  const agentAddress = agent.address;
+  const senderAddress = await ctx.getSenderAddress();
+
+  const agentBalance = await usdcHandler.getUSDCBalance(`${agentAddress}`);
+  const senderBalance = await usdcHandler.getUSDCBalance(`${senderAddress}`);
+
+  await ctx.sendText(
+    `My USDC balance is: ${agentBalance} USDC\nYour USDC balance is: ${senderBalance} USDC`,
+  );
 });
 
 router.command("/tx", async (ctx) => {
