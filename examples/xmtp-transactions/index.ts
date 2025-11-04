@@ -1,16 +1,13 @@
-import { Agent, type AgentMiddleware } from "@xmtp/agent-sdk";
+import { Agent, XmtpEnv, type AgentMiddleware } from "@xmtp/agent-sdk";
 import { getTestUrl } from "@xmtp/agent-sdk/debug";
-import {
-  TransactionReferenceCodec,
-  type TransactionReference,
-} from "@xmtp/content-type-transaction-reference";
+import { CommandRouter } from "@xmtp/agent-sdk/middleware";
+import { TransactionReferenceCodec } from "@xmtp/content-type-transaction-reference";
 import {
   ContentTypeWalletSendCalls,
   WalletSendCallsCodec,
 } from "@xmtp/content-type-wallet-send-calls";
-import { USDCHandler } from "../../utils/usdc";
 import { loadEnvFile } from "../../utils/general";
-import { CommandRouter } from "@xmtp/agent-sdk/middleware";
+import { USDCHandler } from "../../utils/usdc";
 
 loadEnvFile();
 
@@ -22,7 +19,7 @@ const usdcHandler = new USDCHandler(NETWORK_ID);
 const transactionReferenceMiddleware: AgentMiddleware = async (ctx, next) => {
   // Check if this is a transaction reference message
   if (ctx.usesCodec(TransactionReferenceCodec)) {
-    const transactionRef = ctx.message.content as TransactionReference;
+    const transactionRef = ctx.message.content;
     console.log("Received transaction reference:", transactionRef);
 
     await ctx.sendText(
@@ -41,13 +38,11 @@ const transactionReferenceMiddleware: AgentMiddleware = async (ctx, next) => {
 };
 
 const agent = await Agent.createFromEnv({
-  env: process.env.XMTP_ENV as "local" | "dev" | "production",
+  env: process.env.XMTP_ENV as XmtpEnv,
   codecs: [new WalletSendCallsCodec(), new TransactionReferenceCodec()],
 });
 
 // Apply the transaction reference middleware
-agent.use(transactionReferenceMiddleware);
-
 const router = new CommandRouter();
 
 router.command("/balance", async (ctx) => {
@@ -99,6 +94,7 @@ agent.on("text", async (ctx) => {
 });
 
 agent.use(router.middleware());
+agent.use(transactionReferenceMiddleware);
 
 agent.on("start", () => {
   console.log(`Waiting for messages...`);
