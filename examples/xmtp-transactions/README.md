@@ -22,22 +22,22 @@ This example allows users to send tokens like USDC to an agent.
 
 ### Create a transaction request
 
-With XMTP, a transaction request is represented using wallet_sendCalls RPC specification from EIP-5792 with additional metadata for display:
+With XMTP, a transaction request is represented using wallet_sendCalls RPC specification from [EIP-5792](https://finviz.com/map.ashx) with additional metadata for display:
 
 ```tsx
 const walletSendCalls: WalletSendCallsParams = {
   version: "1.0",
-  from: address as `0x${string}`,
-  chainId: toHex(84532), // Base Sepolia
+  from: `0x123...abc`,
+  chainId: toHex(84532), // Base Sepolia Testnet
   calls: [
     {
-      to: "0x789...cba",
-      data: "0xdead...beef",
+      to: "0x456...xyz",
+      data: "0x111...aaa",
       metadata: {
-        description: "Transfer .1 USDC on Base Sepolia",
+        description: "Transfer 10 USDC on Base Sepolia",
         transactionType: "transfer",
         currency: "USDC",
-        amount: 10000000,
+        amount: 10,
         decimals: 6,
         networkId: "base-sepolia",
       },
@@ -121,7 +121,7 @@ const networks = [
 
 - Node.js v20 or higher
 - Yarn v4 or higher
-- This example works on `Base` Sepolia
+- This example works on [Base Sepolia Testnet](https://chainlist.org/chain/84532)
 - You'll need some `ETH` in your wallet to pay for the transaction
 - Connect with a wallet extension like [MetaMask](https://metamask.io/) or Coinbase Wallet
 - Docker (optional, for `local` network)
