@@ -10,6 +10,7 @@ import {
 } from "@xmtp/content-type-wallet-send-calls";
 import { USDCHandler } from "../../utils/usdc";
 import { loadEnvFile } from "../../utils/general";
+import { CommandRouter } from "@xmtp/agent-sdk/middleware";
 
 loadEnvFile();
 
@@ -47,18 +48,15 @@ const agent = await Agent.createFromEnv({
 // Apply the transaction reference middleware
 agent.use(transactionReferenceMiddleware);
 
-agent.on("text", async (ctx) => {
-  if (!ctx.message.content.startsWith("/balance")) return;
-  const agentAddress = agent.address || "";
+const router = new CommandRouter();
 
-  const result = await usdcHandler.getUSDCBalance(agentAddress);
+router.command("/balance", async (ctx) => {
+  const result = await usdcHandler.getUSDCBalance(`${agent.address}`);
   await ctx.sendText(`Your USDC balance is: ${result} USDC`);
 });
 
-agent.on("text", async (ctx) => {
-  if (!ctx.message.content.startsWith("/tx")) return;
-  const agentAddress = agent.address || "";
-  const senderAddress = (await ctx.getSenderAddress()) || "";
+router.command("/tx", async (ctx) => {
+  const senderAddress = await ctx.getSenderAddress();
 
   const amount = parseFloat((ctx.message.content as string).split(" ")[1]);
   if (isNaN(amount) || amount <= 0) {
@@ -70,8 +68,8 @@ agent.on("text", async (ctx) => {
   const amountInDecimals = Math.floor(amount * Math.pow(10, 6));
 
   const walletSendCalls = usdcHandler.createUSDCTransferCalls(
-    senderAddress,
-    agentAddress,
+    `${senderAddress}`,
+    `${agent.address}`,
     amountInDecimals,
   );
   console.log("Replied with wallet sendcall");
@@ -92,6 +90,8 @@ agent.on("text", async (ctx) => {
     );
   }
 });
+
+agent.use(router.middleware());
 
 agent.on("start", () => {
   console.log(`Waiting for messages...`);
