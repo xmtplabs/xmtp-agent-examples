@@ -1,16 +1,8 @@
-import {
-  Agent,
-  isHexString,
-  XmtpEnv,
-  type AgentMiddleware,
-} from "@xmtp/agent-sdk";
+import { Agent, isHexString, type AgentMiddleware } from "@xmtp/agent-sdk";
 import { getTestUrl } from "@xmtp/agent-sdk/debug";
 import { CommandRouter } from "@xmtp/agent-sdk/middleware";
 import { TransactionReferenceCodec } from "@xmtp/content-type-transaction-reference";
-import {
-  ContentTypeWalletSendCalls,
-  WalletSendCallsCodec,
-} from "@xmtp/content-type-wallet-send-calls";
+import { ContentTypeWalletSendCalls } from "@xmtp/content-type-wallet-send-calls";
 import { loadEnvFile } from "../../utils/general";
 import { USDCHandler } from "../../utils/usdc";
 
