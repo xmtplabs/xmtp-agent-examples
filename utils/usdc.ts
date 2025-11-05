@@ -1,11 +1,12 @@
+import { HexString, isHexString } from "@xmtp/agent-sdk";
 import type { WalletSendCallsParams } from "@xmtp/content-type-wallet-send-calls";
 import { createPublicClient, formatUnits, http, toHex } from "viem";
 import { base, baseSepolia } from "viem/chains";
 
 // Network configuration type
 export type NetworkConfig = {
-  tokenAddress: string;
-  chainId: `0x${string}`;
+  tokenAddress: HexString;
+  chainId: HexString;
   decimals: number;
   networkName: string;
   networkId: string;
@@ -73,12 +74,12 @@ export class USDCHandler {
   /**
    * Get USDC balance for a given address
    */
-  async getUSDCBalance(address: string): Promise<string> {
+  async getUSDCBalance(address: HexString): Promise<string> {
     const balance = await this.publicClient.readContract({
-      address: this.networkConfig.tokenAddress as `0x${string}`,
+      address: this.networkConfig.tokenAddress,
       abi: erc20Abi,
       functionName: "balanceOf",
-      args: [address as `0x${string}`],
+      args: [address],
     });
 
     return formatUnits(balance, this.networkConfig.decimals);
@@ -88,7 +89,7 @@ export class USDCHandler {
    * Create wallet send calls parameters for USDC transfer
    */
   createUSDCTransferCalls(
-    fromAddress: string,
+    fromAddress: HexString,
     recipientAddress: string,
     amount: number,
   ): WalletSendCallsParams {
@@ -99,14 +100,18 @@ export class USDCHandler {
       .slice(2)
       .padStart(64, "0")}${BigInt(amount).toString(16).padStart(64, "0")}`;
 
+    if (!isHexString(transactionData)) {
+      throw new Error();
+    }
+
     return {
       version: "1.0",
-      from: fromAddress as `0x${string}`,
+      from: fromAddress,
       chainId: this.networkConfig.chainId,
       calls: [
         {
-          to: this.networkConfig.tokenAddress as `0x${string}`,
-          data: transactionData as `0x${string}`,
+          to: this.networkConfig.tokenAddress,
+          data: transactionData,
           metadata: {
             description: `Transfer ${amount / Math.pow(10, this.networkConfig.decimals)} USDC on ${this.networkConfig.networkName}`,
             transactionType: "transfer",
