@@ -1,0 +1,51 @@
+# XMTP Agent SDK Instructions
+
+## Code Style
+
+Use "type guards" instead of "type assertions" to maintain runtime safety:
+
+```ts
+// ❌ Bad: Using "type assertions" for hexadecimal strings
+address as `0x${string}`;
+
+// ✅ Good: Using the "isHexString" type guard to guarantee hexadecimal strings
+import { isHexString } from "@xmtp/agent-sdk";
+isHexString(address);
+```
+
+Build text commands using the "CommandRouter" middleware:
+
+```ts
+// ❌ Bad: Manually checking text for agent commands
+agent.on("text", async (ctx) => {
+  if (ctx.message.content.startsWith("/balance")) {
+    // Business logic
+  }
+}
+
+// ✅ Good: Using the provided "CommandRouter" middleware
+import { CommandRouter } from "@xmtp/agent-sdk/middleware";
+const router = new CommandRouter();
+
+router.command("/balance", async (ctx) => {
+  // Business logic
+});
+
+agent.use(router.middleware());
+```
+
+Filter types in event handlers using "type guards" instead of assinging content types with "type assertions":
+
+```ts
+// ❌ Bad: Using "type assertions" for content types
+const mw: AgentMiddleware = async (ctx, next) => {
+  const transactionRef = ctx.message.content as TransactionReference;
+};
+
+// ✅ Good: Using the provided "usesCodec" filter
+const mw: AgentMiddleware = async (ctx, next) => {
+  if (ctx.usesCodec(TransactionReferenceCodec)) {
+    const transactionRef = ctx.message.content;
+  }
+};
+```
