@@ -42,10 +42,7 @@ const transactionReferenceMiddleware: AgentMiddleware = async (ctx, next) => {
   await next();
 };
 
-const agent = await Agent.createFromEnv({
-  env: process.env.XMTP_ENV as XmtpEnv,
-  codecs: [new WalletSendCallsCodec(), new TransactionReferenceCodec()],
-});
+const agent = await Agent.createFromEnv();
 
 // Apply the transaction reference middleware
 const router = new CommandRouter();
