@@ -57,8 +57,8 @@ router.command("/balance", async (ctx) => {
   if (!isHexString(agentAddress)) return;
   if (!isHexString(senderAddress)) return;
 
-  const agentBalance = await usdcHandler.getUSDCBalance(`${agentAddress}`);
-  const senderBalance = await usdcHandler.getUSDCBalance(`${senderAddress}`);
+  const agentBalance = await usdcHandler.getUSDCBalance(agentAddress);
+  const senderBalance = await usdcHandler.getUSDCBalance(senderAddress);
 
   await ctx.sendText(
     `My USDC balance is: ${agentBalance} USDC\n` +
