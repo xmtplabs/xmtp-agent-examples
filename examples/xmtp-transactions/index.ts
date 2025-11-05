@@ -1,4 +1,9 @@
-import { Agent, XmtpEnv, type AgentMiddleware } from "@xmtp/agent-sdk";
+import {
+  Agent,
+  isHexString,
+  XmtpEnv,
+  type AgentMiddleware,
+} from "@xmtp/agent-sdk";
 import { getTestUrl } from "@xmtp/agent-sdk/debug";
 import { CommandRouter } from "@xmtp/agent-sdk/middleware";
 import { TransactionReferenceCodec } from "@xmtp/content-type-transaction-reference";
@@ -49,6 +54,9 @@ router.command("/balance", async (ctx) => {
   const agentAddress = agent.address;
   const senderAddress = await ctx.getSenderAddress();
 
+  if (!isHexString(agentAddress)) return;
+  if (!isHexString(senderAddress)) return;
+
   const agentBalance = await usdcHandler.getUSDCBalance(`${agentAddress}`);
   const senderBalance = await usdcHandler.getUSDCBalance(`${senderAddress}`);
 
@@ -59,7 +67,11 @@ router.command("/balance", async (ctx) => {
 });
 
 router.command("/tx", async (ctx) => {
+  const agentAddress = agent.address;
   const senderAddress = await ctx.getSenderAddress();
+
+  if (!isHexString(agentAddress)) return;
+  if (!isHexString(senderAddress)) return;
 
   const amount = parseFloat(ctx.message.content.split(" ")[1]);
   if (isNaN(amount) || amount <= 0) {
@@ -71,8 +83,8 @@ router.command("/tx", async (ctx) => {
   const amountInDecimals = Math.floor(amount * Math.pow(10, 6));
 
   const walletSendCalls = usdcHandler.createUSDCTransferCalls(
-    `${senderAddress}`,
-    `${agent.address}`,
+    senderAddress,
+    agentAddress,
     amountInDecimals,
   );
   console.log("Replied with wallet sendcall");
