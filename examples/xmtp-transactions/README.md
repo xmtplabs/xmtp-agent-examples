@@ -156,3 +156,15 @@ yarn gen:keys
 # run the example
 yarn dev
 ```
+
+## How to test?
+
+1. Start the agent
+1. Visit [xmtp.chat](https://xmtp.chat)
+1. Make sure "Smart contract wallet" toggle is turned on (ephemeral wallets are not supported)
+1. Get testnet USDC from a [Base Sepolia faucet](https://docs.base.org/base-chain/tools/network-faucets)
+1. Send `/balance` to the agent to check your testnet USDC balance
+
+**Note:** If you connect with an externally owned account (EOA) instead of a smart contract wallet (SCW), you will likely see this error:
+
+> Signature error Signature validation failed

@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@types/node": "^22.13.0",
-    "@xmtp/agent-sdk": "^1.1.9",
+    "@xmtp/agent-sdk": "^1.1.10",
     "@xmtp/content-type-remote-attachment": "^2.0.2",
     "@xmtp/content-type-wallet-send-calls": "^1.0.1",
     "ink-text-input": "^6.0.0",
@@ -41,6 +41,9 @@
     "typescript-eslint": "^8.22.0"
   },
   "packageManager": "yarn@4.6.0",
+  "resolutions": {
+    "@xmtp/agent-sdk": "^1.1.10"
+  },
   "engines": {
     "node": ">=20"
   }

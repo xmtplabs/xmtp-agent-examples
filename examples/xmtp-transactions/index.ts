@@ -53,14 +53,15 @@ router.command("/balance", async (ctx) => {
   const senderBalance = await usdcHandler.getUSDCBalance(`${senderAddress}`);
 
   await ctx.sendText(
-    `My USDC balance is: ${agentBalance} USDC\nYour USDC balance is: ${senderBalance} USDC`,
+    `My USDC balance is: ${agentBalance} USDC\n` +
+      `Your USDC balance is: ${senderBalance} USDC`,
   );
 });
 
 router.command("/tx", async (ctx) => {
   const senderAddress = await ctx.getSenderAddress();
 
-  const amount = parseFloat((ctx.message.content as string).split(" ")[1]);
+  const amount = parseFloat(ctx.message.content.split(" ")[1]);
   if (isNaN(amount) || amount <= 0) {
     await ctx.sendText("Please provide a valid amount. Usage: /tx <amount>");
     return;
@@ -83,14 +84,12 @@ router.command("/tx", async (ctx) => {
   );
 });
 
-agent.on("text", async (ctx) => {
-  if (ctx.isDm() && !ctx.message.content.startsWith("/")) {
-    await ctx.sendText(
-      "Available commands:\n" +
-        "/balance - Check your USDC balance\n" +
-        "/tx <amount> - Send USDC to the agent (e.g. /tx 0.1)",
-    );
-  }
+router.default(async (ctx) => {
+  await ctx.sendText(
+    "Available commands:\n" +
+      "/balance - Check your USDC balance\n" +
+      "/tx <amount> - Send USDC to the agent (e.g. /tx 0.1)",
+  );
 });
 
 agent.use(router.middleware());
@@ -102,4 +101,4 @@ agent.on("start", () => {
   console.log(`🔗${getTestUrl(agent.client)}`);
 });
 
-void agent.start();
+await agent.start();
