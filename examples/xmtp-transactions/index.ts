@@ -1,7 +1,6 @@
-import { Agent, validHex, type AgentMiddleware } from "@xmtp/agent-sdk";
+import { Agent, validHex } from "@xmtp/agent-sdk";
 import { getTestUrl } from "@xmtp/agent-sdk/debug";
 import { CommandRouter } from "@xmtp/agent-sdk/middleware";
-import { TransactionReferenceCodec } from "@xmtp/content-type-transaction-reference";
 import { ContentTypeWalletSendCalls } from "@xmtp/content-type-wallet-send-calls";
 import { loadEnvFile } from "../../utils/general";
 import { USDCHandler } from "../../utils/usdc";
@@ -12,31 +11,8 @@ const NETWORK_ID = process.env.NETWORK_ID || "base-sepolia";
 
 const usdcHandler = new USDCHandler(NETWORK_ID);
 
-// Transaction reference middleware
-const transactionReferenceMiddleware: AgentMiddleware = async (ctx, next) => {
-  // Check if this is a transaction reference message
-  if (ctx.usesCodec(TransactionReferenceCodec)) {
-    const transactionRef = ctx.message.content;
-    console.log("Received transaction reference:", transactionRef);
-
-    await ctx.sendText(
-      `✅ Transaction confirmed!\n` +
-        `🔗 Network: ${transactionRef.networkId}\n` +
-        `📄 Hash: ${transactionRef.reference}\n` +
-        `${transactionRef.metadata ? `📝 Transaction metadata received` : ""}`,
-    );
-
-    // Don't continue to other handlers since we handled this message
-    return;
-  }
-
-  // Continue to next middleware/handler
-  await next();
-};
-
 const agent = await Agent.createFromEnv();
 
-// Apply the transaction reference middleware
 const router = new CommandRouter();
 
 router.command("/balance", async (ctx) => {
@@ -89,13 +65,23 @@ router.default(async (ctx) => {
   );
 });
 
-agent.use(router.middleware());
-agent.use(transactionReferenceMiddleware);
-
 agent.on("start", () => {
   console.log(`Waiting for messages...`);
   console.log(`Address: ${agent.address}`);
   console.log(`🔗${getTestUrl(agent.client)}`);
 });
 
+agent.on("transaction-reference", async (ctx) => {
+  const transactionRef = ctx.message.content;
+  console.log("Received transaction reference: ", transactionRef);
+
+  await ctx.sendText(
+    `✅ Transaction confirmed!\n` +
+      `🔗 Network: ${transactionRef.networkId}\n` +
+      `📄 Hash: ${transactionRef.reference}\n` +
+      `${transactionRef.metadata ? `📝 Transaction metadata received` : ""}`,
+  );
+});
+
+agent.use(router.middleware());
 await agent.start();
