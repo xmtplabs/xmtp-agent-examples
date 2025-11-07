@@ -323,12 +323,12 @@ Code:
 
 ```ts
 import fs from "fs";
-import { Agent, createSigner, createUser, getTestUrl } from "@xmtp/agent-sdk";
+import { Agent, createSigner, createUser, getTestUrl, validHex } from "@xmtp/agent-sdk";
 
 process.loadEnvFile(".env");
 
 const agent = await Agent.create(
-  createSigner(createUser(process.env.XMTP_WALLET_KEY as `0x${string}`)),
+  createSigner(createUser(validHex(process.env.XMTP_WALLET_KEY))),
   {
     env: process.env.XMTP_ENV as "local" | "dev" | "production",
   },

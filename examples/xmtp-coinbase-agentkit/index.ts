@@ -13,7 +13,11 @@ import { HumanMessage } from "@langchain/core/messages";
 import { MemorySaver } from "@langchain/langgraph";
 import { createReactAgent } from "@langchain/langgraph/prebuilt";
 import { ChatOpenAI } from "@langchain/openai";
-import { Agent as XMTPAgent, type MessageContext } from "@xmtp/agent-sdk";
+import {
+  HexString,
+  Agent as XMTPAgent,
+  type MessageContext,
+} from "@xmtp/agent-sdk";
 import { getTestUrl } from "@xmtp/agent-sdk/debug";
 import { loadEnvFile } from "../../utils/general";
 
@@ -34,7 +38,7 @@ interface AgentConfig {
 
 interface WalletData {
   name?: string;
-  address: `0x${string}`;
+  address: HexString;
 }
 
 type Agent = ReturnType<typeof createReactAgent>;

@@ -10,6 +10,7 @@ import {
   type XmtpEnv,
   type Group,
   type Dm,
+  validHex,
 } from "@xmtp/agent-sdk";
 import { getRandomValues } from "node:crypto";
 import { Client } from "@xmtp/node-sdk";
@@ -468,7 +469,7 @@ const App: React.FC<AppProps> = ({ env, agentIdentifiers }) => {
         dbEncryptionKey = toString(getRandomValues(new Uint8Array(32)), "hex");
       }
 
-      const user = createUser(walletKey as `0x${string}`);
+      const user = createUser(validHex(walletKey));
       const signer = createSigner(user);
 
       // Convert hex string to Uint8Array for dbEncryptionKey
@@ -878,9 +879,7 @@ function parseArgs(): { env: XmtpEnv; help: boolean; agents?: string[] } {
   if (agents.length === 0 && env === "dev") {
     // Try to get agent address from environment or use the known dev agent address
     const autoAgentAddressKey = process.env.XMTP_WALLET_KEY || "";
-    const autoAgentAddress = privateKeyToAddress(
-      autoAgentAddressKey as `0x${string}`,
-    );
+    const autoAgentAddress = privateKeyToAddress(validHex(autoAgentAddressKey));
     if (autoAgentAddress) {
       agents.push(autoAgentAddress);
     }
@@ -904,7 +903,7 @@ async function main(): Promise<void> {
   if (agentIdentifiers.length === 0) {
     const walletKey = process.env.XMTP_WALLET_KEY || "";
     if (walletKey) {
-      const publicKey = privateKeyToAddress(walletKey as `0x${string}`);
+      const publicKey = privateKeyToAddress(validHex(walletKey));
       agentIdentifiers.push(publicKey);
     }
   }

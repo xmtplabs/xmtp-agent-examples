@@ -2,15 +2,15 @@
 
 ## Code Style
 
-Use "type guards" instead of "type assertions" to maintain runtime safety:
+Use "validators" instead of "type assertions" to maintain runtime safety:
 
 ```ts
 // ❌ Bad: Using "type assertions" for hexadecimal strings
-address as `0x${string}`;
+usdcHandler.getUSDCBalance(agentAddress as `0x${string}`);
 
 // ✅ Good: Using the "isHexString" type guard to guarantee hexadecimal strings
-import { isHexString } from "@xmtp/agent-sdk";
-isHexString(address);
+import { validHex } from "@xmtp/agent-sdk";
+usdcHandler.getUSDCBalance(validHex(agentAddress));
 ```
 
 Build text commands using the "CommandRouter" middleware:
