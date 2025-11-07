@@ -42,8 +42,7 @@
   },
   "packageManager": "yarn@4.6.0",
   "resolutions": {
-    "@xmtp/agent-sdk": "^1.1.12",
-    "@xmtp/node-sdk": "^4.2.6"
+    "@xmtp/agent-sdk": "^1.1.12"
   },
   "engines": {
     "node": ">=20"
