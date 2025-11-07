@@ -4366,22 +4366,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@xmtp/node-bindings@npm:1.6.0-dev.35d2ff1":
-  version: 1.6.0-dev.35d2ff1
-  resolution: "@xmtp/node-bindings@npm:1.6.0-dev.35d2ff1"
-  checksum: 10c0/0272b708873b69c50d5db3678910d2b35cacebd62a2525a4aa858f5d5cbea1bb5437807d85ffe88b961522326c6d0a808ae3bbf616fec884bd6325006d8f2e33
+"@xmtp/node-bindings@npm:1.5.4":
+  version: 1.5.4
+  resolution: "@xmtp/node-bindings@npm:1.5.4"
+  checksum: 10c0/0d8d53aeb7b5b4f3c8882857302e8a40a7556ecb825df9bc36f01cc3b527bf920de038e3c31d9e2a22e52bdf06a480e74f347a27166f5a7db450feaf3d463834
   languageName: node
   linkType: hard
 
-"@xmtp/node-sdk@npm:^4.2.6":
-  version: 4.3.0
-  resolution: "@xmtp/node-sdk@npm:4.3.0"
+"@xmtp/node-sdk@npm:4.2.6":
+  version: 4.2.6
+  resolution: "@xmtp/node-sdk@npm:4.2.6"
   dependencies:
     "@xmtp/content-type-group-updated": "npm:^2.0.2"
     "@xmtp/content-type-primitives": "npm:^2.0.2"
     "@xmtp/content-type-text": "npm:^2.0.2"
-    "@xmtp/node-bindings": "npm:1.6.0-dev.35d2ff1"
-  checksum: 10c0/912102b02c0a0d4e8b1be4d474be4b56eab623486c0714b470488436513e3c9790f724518087e934a293d160ffb5e5f308e964dfcf8d4132d0d8ffa0ce342ab2
+    "@xmtp/node-bindings": "npm:1.5.4"
+  checksum: 10c0/8930044a9a0ef59bf18bee093414fdc8401be3e17fed5e1be7c66c9c3f5ae62ade1132d2a0c49be1e5965475c0356c20ee6cf3e1bb536fc324ee0cdbd5a9f4ea
   languageName: node
   linkType: hard
 
