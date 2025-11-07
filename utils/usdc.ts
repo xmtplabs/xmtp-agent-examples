@@ -1,4 +1,4 @@
-import { HexString, isHexString, validHex } from "@xmtp/agent-sdk";
+import { HexString, validHex } from "@xmtp/agent-sdk";
 import type { WalletSendCallsParams } from "@xmtp/content-type-wallet-send-calls";
 import { createPublicClient, formatUnits, http, toHex } from "viem";
 import { base, baseSepolia } from "viem/chains";
