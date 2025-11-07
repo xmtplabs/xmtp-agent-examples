@@ -1,4 +1,4 @@
-import { HexString, isHexString } from "@xmtp/agent-sdk";
+import { HexString, isHexString, validHex } from "@xmtp/agent-sdk";
 import type { WalletSendCallsParams } from "@xmtp/content-type-wallet-send-calls";
 import { createPublicClient, formatUnits, http, toHex } from "viem";
 import { base, baseSepolia } from "viem/chains";
@@ -100,10 +100,6 @@ export class USDCHandler {
       .slice(2)
       .padStart(64, "0")}${BigInt(amount).toString(16).padStart(64, "0")}`;
 
-    if (!isHexString(transactionData)) {
-      throw new Error();
-    }
-
     return {
       version: "1.0",
       from: fromAddress,
@@ -111,7 +107,7 @@ export class USDCHandler {
       calls: [
         {
           to: this.networkConfig.tokenAddress,
-          data: transactionData,
+          data: validHex(transactionData),
           metadata: {
             description: `Transfer ${amount / Math.pow(10, this.networkConfig.decimals)} USDC on ${this.networkConfig.networkName}`,
             transactionType: "transfer",
