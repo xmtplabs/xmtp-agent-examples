@@ -8,7 +8,7 @@ Use "validators" instead of "type assertions" to maintain runtime safety:
 // ❌ Bad: Using "type assertions" for hexadecimal strings
 usdcHandler.getUSDCBalance(agentAddress as `0x${string}`);
 
-// ✅ Good: Using the "isHexString" type guard to guarantee hexadecimal strings
+// ✅ Good: Using the "validHex" validator to guarantee hexadecimal strings
 import { validHex } from "@xmtp/agent-sdk";
 usdcHandler.getUSDCBalance(validHex(agentAddress));
 ```
