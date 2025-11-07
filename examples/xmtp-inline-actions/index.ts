@@ -1,4 +1,4 @@
-import { Agent } from "@xmtp/agent-sdk";
+import { Agent, HexString, isHexString, validHex } from "@xmtp/agent-sdk";
 import { getTestUrl } from "@xmtp/agent-sdk/debug";
 import {
   WalletSendCallsCodec,
@@ -39,7 +39,7 @@ async function main() {
 
   // Helper function to create simple USDC transfer
   function createUSDCTransfer(
-    fromAddress: string,
+    fromAddress: HexString,
     amount: number,
     withMetadata: boolean = false,
   ) {
@@ -74,9 +74,7 @@ async function main() {
   // Register action handlers focused on inline actions UX
   registerAction("send-small", async (ctx) => {
     const senderAddress = await ctx.getSenderAddress();
-    if (!senderAddress) return;
-
-    const transfer = createUSDCTransfer(senderAddress, 0.005);
+    const transfer = createUSDCTransfer(validHex(senderAddress), 0.005);
     await ctx.conversation.send(transfer, ContentTypeWalletSendCalls);
     await ctx.sendText(
       "💸 Please approve the 0.005 USDC transfer in your wallet!",
@@ -85,15 +83,16 @@ async function main() {
 
   registerAction("send-large", async (ctx) => {
     const senderAddress = await ctx.getSenderAddress();
-    if (!senderAddress) return;
-
-    const transfer = createUSDCTransfer(senderAddress, 1);
+    const transfer = createUSDCTransfer(validHex(senderAddress), 1);
     await ctx.conversation.send(transfer, ContentTypeWalletSendCalls);
     await ctx.sendText("💸 Please approve the 1 USDC transfer in your wallet!");
   });
 
   registerAction("check-balance", async (ctx) => {
-    const balance = await usdcHandler.getUSDCBalance(agentAddress!);
+    const agentAddress = agent.address;
+    if (!isHexString(agentAddress)) return;
+
+    const balance = await usdcHandler.getUSDCBalance(agentAddress);
     await ctx.sendText(
       `💰 Bot Balance: ${balance} USDC on ${networkConfig.networkName}`,
     );
@@ -101,9 +100,7 @@ async function main() {
 
   registerAction("send-with-metadata", async (ctx) => {
     const senderAddress = await ctx.getSenderAddress();
-    if (!senderAddress) return;
-
-    const transfer = createUSDCTransfer(senderAddress, 0.005, true);
+    const transfer = createUSDCTransfer(validHex(senderAddress), 0.005, true);
     await ctx.conversation.send(transfer, ContentTypeWalletSendCalls);
     await ctx.sendText(
       "😉 Please approve the 0.005 USDC transfer with rich metadata!",

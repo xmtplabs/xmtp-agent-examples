@@ -1,7 +1,7 @@
 import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { type XmtpEnv } from "@xmtp/agent-sdk";
+import { validHex, type XmtpEnv } from "@xmtp/agent-sdk";
 import { createSigner, createUser } from "@xmtp/agent-sdk/user";
 import { Client } from "@xmtp/node-sdk";
 
@@ -117,9 +117,7 @@ async function main() {
 
   try {
     // Create signer and encryption key
-    const signer = createSigner(
-      createUser(envVars.XMTP_WALLET_KEY as `0x${string}`),
-    );
+    const signer = createSigner(createUser(validHex(envVars.XMTP_WALLET_KEY)));
 
     // Get current inbox state
     const inboxState = await Client.inboxStateFromInboxIds(

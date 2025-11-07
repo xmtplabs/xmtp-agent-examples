@@ -1,6 +1,6 @@
 import fs from "fs";
 import { Coinbase, Wallet, type WalletData } from "@coinbase/coinbase-sdk";
-import { Agent } from "@xmtp/agent-sdk";
+import { Agent, validHex } from "@xmtp/agent-sdk";
 import { createSigner, createUser } from "@xmtp/agent-sdk/user";
 import { loadEnvFile } from "../../utils/general";
 
@@ -13,7 +13,7 @@ const NETWORK_ID = process.env.NETWORK_ID || "base-sepolia";
 
 const walletData = await initializeWallet(WALLET_PATH);
 /* Create the signer using viem and parse the encryption key for the local db */
-const user = createUser(walletData.seed as `0x${string}`);
+const user = createUser(validHex(walletData.seed));
 const signer = createSigner(user);
 const agent = await Agent.create(signer, {
   env: process.env.XMTP_ENV as "local" | "dev" | "production",
