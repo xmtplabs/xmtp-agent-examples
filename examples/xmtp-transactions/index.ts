@@ -72,7 +72,16 @@ agent.on("start", () => {
 });
 
 agent.on("transaction-reference", async (ctx) => {
-  const transactionRef = ctx.message.content;
+  // Handle both standard format and Coinbase's incorrect nested format
+  // Standard: { transactionReference: { networkId, reference, metadata } }
+  // Coinbase: { transactionReference: { transactionReference: { networkId, reference, metadata } } }
+
+  // @ts-expect-error - Coinbase Wallet incorrectly wraps transaction references in an extra `transactionReference` property
+  let transactionRef = ctx.message.content.transactionReference;
+  if (transactionRef.transactionReference) {
+    transactionRef = transactionRef.transactionReference;
+  }
+
   console.log("Received transaction reference: ", transactionRef);
 
   await ctx.sendText(
