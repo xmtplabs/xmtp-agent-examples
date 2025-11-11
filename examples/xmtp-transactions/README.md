@@ -91,6 +91,17 @@ agent.use(transactionReferenceMiddleware);
 
 The middleware automatically detects and processes transaction reference messages without requiring any commands.
 
+> ⚠️ **Coinbase Wallet Compatibility**
+>
+> Coinbase Wallet incorrectly wraps transaction references in an extra `transactionReference` property. Handle both formats:
+>
+> ```tsx
+> let transactionRef = ctx.message.content.transactionReference;
+> if (transactionRef.transactionReference) {
+>   transactionRef = transactionRef.transactionReference;
+> }
+> ```
+
 ### Supported networks
 
 All eth networks are supported.This example covers Base Sepolia and Base Mainnet.
