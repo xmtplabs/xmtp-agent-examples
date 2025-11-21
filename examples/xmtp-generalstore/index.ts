@@ -1,5 +1,9 @@
 import { Agent } from "@xmtp/agent-sdk";
 import { getTestUrl } from "@xmtp/agent-sdk/debug";
+import {
+  ContentTypeMarkdown,
+  MarkdownCodec,
+} from "@xmtp/content-type-markdown";
 
 import {
   inlineActionsMiddleware,
@@ -74,7 +78,7 @@ function getOrderSummary(conversationId: string): string {
 
 async function main() {
   const agent = await Agent.createFromEnv({
-    codecs: [new ActionsCodec(), new IntentCodec()],
+    codecs: [new ActionsCodec(), new IntentCodec(), new MarkdownCodec()],
   });
 
   // Register action handlers
@@ -196,6 +200,23 @@ async function main() {
         await ctx.sendText(
           `✅ Order confirmed!\n\n${orderDetails}\n\n📦 Your order will be ready for pickup soon. Thank you for shopping at General Store!`,
         );
+
+        // Send hackathon prize information as markdown
+        const markdownContent = `🏆 Prizes
+
+📲 Best Miniapp in a Group Chat 
+
+$2500 x 1 team
+
+🤖 Best Use of the Agent SDK  
+
+$2500 x 1 team
+
+↓ Full Prize Breakdown and List of Resources here ↓
+
+https://ethglobal.com/events/buenosaires/prizes/xmtp`;
+
+        await ctx.conversation.send(markdownContent, ContentTypeMarkdown);
 
         // Clear the cart after checkout
         orders.delete(conversationId);
