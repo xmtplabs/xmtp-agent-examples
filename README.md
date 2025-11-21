@@ -12,7 +12,7 @@ These example agents serve as a starting point for building your own agents. The
 - [xmtp-gaia](/examples/xmtp-gaia/): This example uses a [Gaia](https://docs.gaianet.ai) API
 - [xmtp-smart-wallet](/examples/xmtp-smart-wallet/): Agent that uses a smart wallet to send messages
 - [xmtp-attachments](/examples/xmtp-attachments/): Agent that sends and receives images
-- [xmtp-inline-actions](/examples/xmtp-inline-actions/): An example using inline actions (dynamic buttons)
+- [xmtp-generalstore](/examples/xmtp-generalstore/): An example using inline actions (dynamic buttons)
 - [xmtp-thinking-reaction](/examples/xmtp-thinking-reaction/): Agent that reacts to messages with a thinking emoji
 - [xmtp-queue-dual-client](/examples/xmtp-queue-dual-client/): Agent that uses two clients to send and receive messages
 - [xmtp-welcome-message](/examples/xmtp-welcome-message/): Agent that sends a welcome message when its added and to new members

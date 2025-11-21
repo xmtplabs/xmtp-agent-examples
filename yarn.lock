@@ -1065,18 +1065,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@examples/xmtp-inline-actions@workspace:examples/xmtp-inline-actions":
-  version: 0.0.0-use.local
-  resolution: "@examples/xmtp-inline-actions@workspace:examples/xmtp-inline-actions"
-  dependencies:
-    "@xmtp/agent-sdk": "npm:*"
-    "@xmtp/content-type-wallet-send-calls": "npm:*"
-    tsx: "npm:*"
-    typescript: "npm:*"
-    viem: "npm:*"
-  languageName: unknown
-  linkType: soft
-
 "@examples/xmtp-queue-dual-client@workspace:examples/xmtp-queue-dual-client":
   version: 0.0.0-use.local
   resolution: "@examples/xmtp-queue-dual-client@workspace:examples/xmtp-queue-dual-client"
@@ -4358,21 +4346,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@xmtp/content-type-wallet-send-calls@npm:*, @xmtp/content-type-wallet-send-calls@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "@xmtp/content-type-wallet-send-calls@npm:2.0.0"
-  dependencies:
-    "@xmtp/content-type-primitives": "npm:^2.0.2"
-  checksum: 10c0/37ac98bebe1d54bc5404d9aad29bb6d0ce217f237a5864e3a9d373114b4c62cd19dff4864a484e135edd00c6b413703e7847ff33173ca24f2339b0cea9476416
-  languageName: node
-  linkType: hard
-
 "@xmtp/content-type-wallet-send-calls@npm:^1.0.1":
   version: 1.0.1
   resolution: "@xmtp/content-type-wallet-send-calls@npm:1.0.1"
   dependencies:
     "@xmtp/content-type-primitives": "npm:^2.0.2"
   checksum: 10c0/61ac2fdc0cab2410f6aac85253737a0fa49e7206d471fd92052b0ac612f60485d52c66e34452bf4a0f00acd870bd587f7213e31743dab1681c3fd7ee03d1dbd1
+  languageName: node
+  linkType: hard
+
+"@xmtp/content-type-wallet-send-calls@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "@xmtp/content-type-wallet-send-calls@npm:2.0.0"
+  dependencies:
+    "@xmtp/content-type-primitives": "npm:^2.0.2"
+  checksum: 10c0/37ac98bebe1d54bc5404d9aad29bb6d0ce217f237a5864e3a9d373114b4c62cd19dff4864a484e135edd00c6b413703e7847ff33173ca24f2339b0cea9476416
   languageName: node
   linkType: hard
 
@@ -9803,27 +9791,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"viem@npm:*, viem@npm:>=2.29.0, viem@npm:^2.1.1, viem@npm:^2.20.2, viem@npm:^2.21.26, viem@npm:^2.22.16, viem@npm:^2.27.2, viem@npm:^2.31.7, viem@npm:^2.37.6, viem@npm:^2.38.3":
-  version: 2.38.6
-  resolution: "viem@npm:2.38.6"
-  dependencies:
-    "@noble/curves": "npm:1.9.1"
-    "@noble/hashes": "npm:1.8.0"
-    "@scure/bip32": "npm:1.7.0"
-    "@scure/bip39": "npm:1.6.0"
-    abitype: "npm:1.1.0"
-    isows: "npm:1.0.7"
-    ox: "npm:0.9.6"
-    ws: "npm:8.18.3"
-  peerDependencies:
-    typescript: ">=5.0.4"
-  peerDependenciesMeta:
-    typescript:
-      optional: true
-  checksum: 10c0/9b8571bc9d7dfc414eb72700275ac71b9402cbf4fe3e447501d252cbc43cb7ddf9ce01a16c183fac265d071873d209efc2a459462c724624ef855d941d3447f0
-  languageName: node
-  linkType: hard
-
 "viem@npm:2.23.2":
   version: 2.23.2
   resolution: "viem@npm:2.23.2"
@@ -9842,6 +9809,27 @@ __metadata:
     typescript:
       optional: true
   checksum: 10c0/39332d008d2ab0700aa57f541bb199350daecdfb722ae1b262404b02944e11205368fcc696cc0ab8327b9f90bf7172014687ae3e5d9091978e9d174885ccff2d
+  languageName: node
+  linkType: hard
+
+"viem@npm:>=2.29.0, viem@npm:^2.1.1, viem@npm:^2.20.2, viem@npm:^2.21.26, viem@npm:^2.22.16, viem@npm:^2.27.2, viem@npm:^2.31.7, viem@npm:^2.37.6, viem@npm:^2.38.3":
+  version: 2.38.6
+  resolution: "viem@npm:2.38.6"
+  dependencies:
+    "@noble/curves": "npm:1.9.1"
+    "@noble/hashes": "npm:1.8.0"
+    "@scure/bip32": "npm:1.7.0"
+    "@scure/bip39": "npm:1.6.0"
+    abitype: "npm:1.1.0"
+    isows: "npm:1.0.7"
+    ox: "npm:0.9.6"
+    ws: "npm:8.18.3"
+  peerDependencies:
+    typescript: ">=5.0.4"
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 10c0/9b8571bc9d7dfc414eb72700275ac71b9402cbf4fe3e447501d252cbc43cb7ddf9ce01a16c183fac265d071873d209efc2a459462c724624ef855d941d3447f0
   languageName: node
   linkType: hard
 
