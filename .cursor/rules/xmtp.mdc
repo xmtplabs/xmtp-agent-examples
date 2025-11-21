@@ -51,7 +51,6 @@ const signer = createSigner(user);
 // 2. Spin up the agent
 const agent = await Agent.create(signer, {
   env: "dev", // or 'production'
-  dbPath: null, // in-memory store; provide a path to persist
 });
 
 // 3. Respond to text messages
@@ -311,7 +310,6 @@ Pass `codecs` when creating your agent to extend supported content:
 ```ts
 const agent = await Agent.create(signer, {
   env: "dev",
-  dbPath: null,
   codecs: [new MyContentType()],
 });
 ```
