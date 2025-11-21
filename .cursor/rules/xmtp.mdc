@@ -41,7 +41,8 @@ yarn cli --agent 0x81bddb3d7cd9ccdfaeb117ce19fd77c1433b907d
 ## Quick Start
 
 ```ts
-import { createUser, createSigner, Agent, getTestUrl } from "@xmtp/agent-sdk";
+import { getTestUrl } from "@xmtp/agent-sdk/debug";
+import { createUser, createSigner, Agent } from "@xmtp/agent-sdk";
 
 // 1. Create a local user + signer (you can plug in your own wallet signer)
 const user = createUser();
@@ -60,7 +61,7 @@ agent.on("text", async (ctx) => {
 
 // 4. Log when we're ready
 agent.on("start", () => {
-  console.log(`We are online: ${getTestUrl(agent)}`);
+  console.log(`We are online: ${getTestUrl(agent.client)}`);
 });
 
 await agent.start();
@@ -323,7 +324,13 @@ Code:
 
 ```ts
 import fs from "fs";
-import { Agent, createSigner, createUser, getTestUrl, validHex } from "@xmtp/agent-sdk";
+import {
+  Agent,
+  createSigner,
+  createUser,
+  getTestUrl,
+  validHex,
+} from "@xmtp/agent-sdk";
 
 process.loadEnvFile(".env");
 
