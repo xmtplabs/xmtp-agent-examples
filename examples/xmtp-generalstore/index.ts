@@ -236,6 +236,9 @@ https://ethglobal.com/events/buenosaires/prizes/xmtp`;
   // Use the inline actions middleware
   agent.use(inlineActionsMiddleware);
 
+  // Track if hackathon message has been sent per conversation
+  const hackathonMessageSent = new Set<string>();
+
   // Handle text messages - show menu on any text
   agent.on("text", async (ctx) => {
     const builder = ActionBuilder.create(
@@ -253,6 +256,28 @@ https://ethglobal.com/events/buenosaires/prizes/xmtp`;
     builder.add("checkout", "✅ Checkout");
 
     await sendActions(ctx.conversation, builder.build());
+
+    // Send hackathon prize information on first interaction
+    const conversationId = ctx.conversation.id;
+    if (!hackathonMessageSent.has(conversationId)) {
+      hackathonMessageSent.add(conversationId);
+
+      const markdownContent = `🏆 Prizes
+
+📲 Best Miniapp in a Group Chat 
+
+$2500 x 1 team
+
+🤖 Best Use of the Agent SDK  
+
+$2500 x 1 team
+
+↓ Full Prize Breakdown and List of Resources here ↓
+
+https://ethglobal.com/events/buenosaires/prizes/xmtp`;
+
+      await ctx.conversation.send(markdownContent, ContentTypeMarkdown);
+    }
   });
 
   // Handle startup
