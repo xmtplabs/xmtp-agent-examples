@@ -55,6 +55,19 @@ const products: Product[] = [
 // Track orders per conversation
 const orders = new Map<string, Product[]>();
 
+// Hackathon prize information in markdown format
+const hackathonPrizesMarkdown = `## 🏆 Prizes
+
+### 📲 Best Miniapp in a Group Chat
+**$2500** x 1 team
+
+### 🤖 Best Use of the Agent SDK
+**$2500** x 1 team
+
+---
+
+📋 **[Full Prize Breakdown and List of Resources](https://ethglobal.com/events/buenosaires/prizes/xmtp)**`;
+
 function getOrderSummary(conversationId: string): string {
   const orderItems = orders.get(conversationId) || [];
   if (orderItems.length === 0) {
@@ -202,21 +215,10 @@ async function main() {
         );
 
         // Send hackathon prize information as markdown
-        const markdownContent = `🏆 Prizes
-
-📲 Best Miniapp in a Group Chat 
-
-$2500 x 1 team
-
-🤖 Best Use of the Agent SDK  
-
-$2500 x 1 team
-
-↓ Full Prize Breakdown and List of Resources here ↓
-
-https://ethglobal.com/events/buenosaires/prizes/xmtp`;
-
-        await ctx.conversation.send(markdownContent, ContentTypeMarkdown);
+        await ctx.conversation.send(
+          hackathonPrizesMarkdown,
+          ContentTypeMarkdown,
+        );
 
         // Clear the cart after checkout
         orders.delete(conversationId);
@@ -261,22 +263,7 @@ https://ethglobal.com/events/buenosaires/prizes/xmtp`;
     const conversationId = ctx.conversation.id;
     if (!hackathonMessageSent.has(conversationId)) {
       hackathonMessageSent.add(conversationId);
-
-      const markdownContent = `🏆 Prizes
-
-📲 Best Miniapp in a Group Chat 
-
-$2500 x 1 team
-
-🤖 Best Use of the Agent SDK  
-
-$2500 x 1 team
-
-↓ Full Prize Breakdown and List of Resources here ↓
-
-https://ethglobal.com/events/buenosaires/prizes/xmtp`;
-
-      await ctx.conversation.send(markdownContent, ContentTypeMarkdown);
+      await ctx.conversation.send(hackathonPrizesMarkdown, ContentTypeMarkdown);
     }
   });
 
