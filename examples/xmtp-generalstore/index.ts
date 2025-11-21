@@ -42,10 +42,6 @@ const products: Product[] = [
 // Track orders per conversation
 const orders = new Map<string, Product[]>();
 
-function getProductsByCategory(category: string): Product[] {
-  return products.filter((p) => p.category === category);
-}
-
 function getOrderSummary(conversationId: string): string {
   const orderItems = orders.get(conversationId) || [];
   if (orderItems.length === 0) {
@@ -74,44 +70,19 @@ async function main() {
 
   // Register action handlers
   registerAction("show-menu", async (ctx) => {
-    const menu = ActionBuilder.create(
-      "main-menu",
-      "🏪 Welcome to General Store!\n\nWhat would you like to browse?",
-    )
-      .add("browse-personal-care", "🦷 Personal Care")
-      .add("browse-beverages", "🥤 Beverages")
-      .add("view-cart", "🛒 View Cart")
-      .add("checkout", "✅ Checkout")
-      .build();
-
-    await sendActions(ctx.conversation, menu);
-  });
-
-  registerAction("browse-personal-care", async (ctx) => {
-    const personalCareProducts = getProductsByCategory("personal-care");
     const builder = ActionBuilder.create(
-      "personal-care-menu",
-      "🦷 Personal Care Items:",
+      "main-menu",
+      "🏪 Welcome to General Store!\n\nSelect a product:",
     );
 
-    personalCareProducts.forEach((product) => {
+    // Add all products to the menu
+    products.forEach((product) => {
       builder.add(`add-${product.id}`, `${product.emoji} ${product.name}`);
     });
 
-    builder.add("show-menu", "🔙 Back to Main Menu");
-
-    await builder.send(ctx);
-  });
-
-  registerAction("browse-beverages", async (ctx) => {
-    const beverageProducts = getProductsByCategory("beverages");
-    const builder = ActionBuilder.create("beverages-menu", "🥤 Beverages:");
-
-    beverageProducts.forEach((product) => {
-      builder.add(`add-${product.id}`, `${product.emoji} ${product.name}`);
-    });
-
-    builder.add("show-menu", "🔙 Back to Main Menu");
+    // Add cart and checkout options
+    builder.add("view-cart", "🛒 View Cart");
+    builder.add("checkout", "✅ Checkout");
 
     await builder.send(ctx);
   });
@@ -249,15 +220,21 @@ async function main() {
       message === "start" ||
       message.startsWith("/")
     ) {
-      const menu = ActionBuilder.create(
+      const builder = ActionBuilder.create(
         "main-menu",
-        "🏪 Welcome to General Store!\n\nWhat would you like to browse?",
-      )
-        .add("browse-personal-care", "🦷 Personal Care")
-        .add("browse-beverages", "🥤 Beverages")
-        .add("view-cart", "🛒 View Cart")
-        .add("checkout", "✅ Checkout")
-        .build();
+        "🏪 Welcome to General Store!\n\nSelect a product:",
+      );
+
+      // Add all products to the menu
+      products.forEach((product) => {
+        builder.add(`add-${product.id}`, `${product.emoji} ${product.name}`);
+      });
+
+      // Add cart and checkout options
+      builder.add("view-cart", "🛒 View Cart");
+      builder.add("checkout", "✅ Checkout");
+
+      await sendActions(ctx.conversation, builder.build());
 
       await sendActions(ctx.conversation, menu);
     }
