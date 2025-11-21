@@ -206,36 +206,23 @@ async function main() {
   // Use the inline actions middleware
   agent.use(inlineActionsMiddleware);
 
-  // Handle text messages
+  // Handle text messages - show menu on any text
   agent.on("text", async (ctx) => {
-    const message = ctx.message.content.toLowerCase().trim();
+    const builder = ActionBuilder.create(
+      "main-menu",
+      "🏪 Welcome to General Store!\n\nSelect a product:",
+    );
 
-    // Show menu for common commands
-    if (
-      message === "hi" ||
-      message === "hello" ||
-      message === "hey" ||
-      message === "menu" ||
-      message === "shop" ||
-      message === "start" ||
-      message.startsWith("/")
-    ) {
-      const builder = ActionBuilder.create(
-        "main-menu",
-        "🏪 Welcome to General Store!\n\nSelect a product:",
-      );
+    // Add all products to the menu
+    products.forEach((product) => {
+      builder.add(`add-${product.id}`, `${product.emoji} ${product.name}`);
+    });
 
-      // Add all products to the menu
-      products.forEach((product) => {
-        builder.add(`add-${product.id}`, `${product.emoji} ${product.name}`);
-      });
+    // Add cart and checkout options
+    builder.add("view-cart", "🛒 View Cart");
+    builder.add("checkout", "✅ Checkout");
 
-      // Add cart and checkout options
-      builder.add("view-cart", "🛒 View Cart");
-      builder.add("checkout", "✅ Checkout");
-
-      await sendActions(ctx.conversation, builder.build());
-    }
+    await sendActions(ctx.conversation, builder.build());
   });
 
   // Handle startup
@@ -243,7 +230,7 @@ async function main() {
     console.log(`🏪 General Store Agent is running...`);
     console.log(`Address: ${agent.address}`);
     console.log(`🔗 ${getTestUrl(agent.client)}`);
-    console.log(`Send "hi" or "menu" to start shopping!`);
+    console.log(`Send any message to start shopping!`);
   });
 
   // Start the agent
