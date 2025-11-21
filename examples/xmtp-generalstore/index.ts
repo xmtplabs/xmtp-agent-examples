@@ -25,18 +25,27 @@ interface Product {
 const products: Product[] = [
   // Personal Care
   {
+    id: "deodorant",
+    name: "Deodorant",
+    category: "personal-care",
+    emoji: "🧴",
+  },
+  {
+    id: "toothbrush",
+    name: "Toothbrush",
+    category: "personal-care",
+    emoji: "🪥",
+  },
+  {
     id: "toothpaste",
     name: "Toothpaste",
     category: "personal-care",
     emoji: "🦷",
   },
-  { id: "mints", name: "Mints", category: "personal-care", emoji: "🍬" },
-  { id: "tictacs", name: "TicTacs", category: "personal-care", emoji: "🍬" },
+  { id: "tictacs", name: "Tic Tacs", category: "personal-care", emoji: "🍬" },
 
   // Beverages
   { id: "redbull", name: "Red Bull", category: "beverages", emoji: "🔴" },
-  { id: "water", name: "Water Bottle", category: "beverages", emoji: "💧" },
-  { id: "coffee", name: "Coffee", category: "beverages", emoji: "☕" },
 ];
 
 // Track orders per conversation
