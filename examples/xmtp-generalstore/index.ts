@@ -56,17 +56,22 @@ const products: Product[] = [
 const orders = new Map<string, Product[]>();
 
 // Hackathon prize information in markdown format
-const hackathonPrizesMarkdown = `## 🏆 Prizes
+const hackathonPrizesMarkdown = `
+## Say hi to XMTP!
 
-### 📲 Best Miniapp in a Group Chat
-**$2500** x 1 team
+XMTP is the largest & most secure decentralized messaging network. Powers a rapidly growing ecosystem of mini apps—where everything is a built-in chat experience from trading, prediction markets, event coordination, payments, and games.
 
-### 🤖 Best Use of the Agent SDK
-**$2500** x 1 team
+## 🏆 Hackathon prizes
+
+#### 📲 Best Miniapp in a Group Chat
+- **$2500** x 1 team
+
+#### 🤖 Best Use of the Agent SDK
+- **$2500** x 1 team
 
 ---
 
-📋 **[Full Prize Breakdown and List of Resources](https://ethglobal.com/events/buenosaires/prizes/xmtp)**`;
+📋 **[Full Prize Breakdown](https://ethglobal.com/events/buenosaires/prizes/xmtp)**`;
 
 function getOrderSummary(conversationId: string): string {
   const orderItems = orders.get(conversationId) || [];
