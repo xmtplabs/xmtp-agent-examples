@@ -235,8 +235,6 @@ async function main() {
       builder.add("checkout", "✅ Checkout");
 
       await sendActions(ctx.conversation, builder.build());
-
-      await sendActions(ctx.conversation, menu);
     }
   });
 
