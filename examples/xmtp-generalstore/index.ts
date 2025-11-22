@@ -95,10 +95,13 @@ function getOrderSummary(conversationId: string): string {
 }
 
 const agent = await Agent.createFromEnv({
-  dbPath: (inboxId) =>
-    process.env.RAILWAY_VOLUME_MOUNT_PATH ??
-    "." +
-      `/examples/xmtp-generalstore/${process.env.XMTP_ENV}-${inboxId.slice(0, 8)}.db3`,
+  dbPath: (inboxId: string) => {
+    return (
+      process.env.RAILWAY_VOLUME_MOUNT_PATH ??
+      "." +
+        `/examples/xmtp-generalstore/${process.env.XMTP_ENV}-${inboxId.slice(0, 8)}.db3`
+    );
+  },
   codecs: [new ActionsCodec(), new IntentCodec(), new MarkdownCodec()],
 });
 
