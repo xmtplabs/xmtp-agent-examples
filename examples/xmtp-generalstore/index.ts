@@ -94,197 +94,190 @@ function getOrderSummary(conversationId: string): string {
   return `Your order:\n${summary}`;
 }
 
-async function main() {
-  const agent = await Agent.createFromEnv({
-    dbPath: (inboxId) =>
-      process.env.RAILWAY_VOLUME_MOUNT_PATH ??
-      "." + `/${process.env.XMTP_ENV}-${inboxId.slice(0, 8)}.db3`,
-    codecs: [new ActionsCodec(), new IntentCodec(), new MarkdownCodec()],
-  });
+const agent = await Agent.createFromEnv({
+  dbPath: (inboxId) =>
+    process.env.RAILWAY_VOLUME_MOUNT_PATH ??
+    "." + `/${process.env.XMTP_ENV}-${inboxId.slice(0, 8)}.db3`,
+  codecs: [new ActionsCodec(), new IntentCodec(), new MarkdownCodec()],
+});
 
-  // Register action handlers
-  registerAction("show-menu", async (ctx) => {
-    const builder = ActionBuilder.create(
-      "main-menu",
-      "🏪 Welcome to General Store!\n\nSelect a product:",
-    );
+// Register action handlers
+registerAction("show-menu", async (ctx) => {
+  const builder = ActionBuilder.create(
+    "main-menu",
+    "🏪 Welcome to General Store!\n\nSelect a product:",
+  );
 
-    // Add all products to the menu
-    products.forEach((product) => {
-      builder.add(`add-${product.id}`, `${product.emoji} ${product.name}`);
-    });
-
-    // Add cart and checkout options
-    builder.add("view-cart", "🛒 View Cart");
-    builder.add("checkout", "✅ Checkout");
-
-    await builder.send(ctx);
-  });
-
-  // Register add-to-cart actions for each product
+  // Add all products to the menu
   products.forEach((product) => {
-    registerAction(`add-${product.id}`, async (ctx) => {
-      const conversationId = ctx.conversation.id;
-      const currentOrder = orders.get(conversationId) || [];
-      currentOrder.push(product);
-      orders.set(conversationId, currentOrder);
-
-      await ctx.sendText(
-        `✅ Added ${product.emoji} ${product.name} to your cart!\n\n${getOrderSummary(conversationId)}`,
-      );
-      //1
-      // Show navigation options
-      const navMenu = ActionBuilder.create(
-        "after-add-menu",
-        "What would you like to do next?",
-      )
-        .add("show-menu", "🛍️ Continue Shopping")
-        .add("view-cart", "🛒 View Cart")
-        .add("checkout", "✅ Checkout")
-        .build();
-
-      await sendActions(ctx.conversation, navMenu);
-    });
+    builder.add(`add-${product.id}`, `${product.emoji} ${product.name}`);
   });
 
-  registerAction("view-cart", async (ctx) => {
-    const conversationId = ctx.conversation.id;
-    const summary = getOrderSummary(conversationId);
+  // Add cart and checkout options
+  builder.add("view-cart", "🛒 View Cart");
+  builder.add("checkout", "✅ Checkout");
 
-    const menu = ActionBuilder.create("cart-menu", summary)
+  await builder.send(ctx);
+});
+
+// Register add-to-cart actions for each product
+products.forEach((product) => {
+  registerAction(`add-${product.id}`, async (ctx) => {
+    const conversationId = ctx.conversation.id;
+    const currentOrder = orders.get(conversationId) || [];
+    currentOrder.push(product);
+    orders.set(conversationId, currentOrder);
+
+    await ctx.sendText(
+      `✅ Added ${product.emoji} ${product.name} to your cart!\n\n${getOrderSummary(conversationId)}`,
+    );
+    //1
+    // Show navigation options
+    const navMenu = ActionBuilder.create(
+      "after-add-menu",
+      "What would you like to do next?",
+    )
       .add("show-menu", "🛍️ Continue Shopping")
+      .add("view-cart", "🛒 View Cart")
       .add("checkout", "✅ Checkout")
-      .add("clear-cart", "🗑️ Clear Cart", "danger")
       .build();
 
-    await sendActions(ctx.conversation, menu);
+    await sendActions(ctx.conversation, navMenu);
   });
+});
 
-  registerAction("clear-cart", async (ctx) => {
-    await sendConfirmation(
-      ctx,
-      "Are you sure you want to clear your cart?",
-      async (ctx) => {
-        const conversationId = ctx.conversation.id;
-        orders.delete(conversationId);
-        await ctx.sendText("🗑️ Cart cleared!");
+registerAction("view-cart", async (ctx) => {
+  const conversationId = ctx.conversation.id;
+  const summary = getOrderSummary(conversationId);
 
-        const menu = ActionBuilder.create(
-          "after-clear-menu",
-          "Your cart has been cleared. What would you like to do?",
-        )
-          .add("show-menu", "🛍️ Start Shopping")
-          .build();
+  const menu = ActionBuilder.create("cart-menu", summary)
+    .add("show-menu", "🛍️ Continue Shopping")
+    .add("checkout", "✅ Checkout")
+    .add("clear-cart", "🗑️ Clear Cart", "danger")
+    .build();
 
-        await sendActions(ctx.conversation, menu);
-      },
-    );
-  });
+  await sendActions(ctx.conversation, menu);
+});
 
-  registerAction("checkout", async (ctx) => {
-    const conversationId = ctx.conversation.id;
-    const orderItems = orders.get(conversationId) || [];
+registerAction("clear-cart", async (ctx) => {
+  await sendConfirmation(
+    ctx,
+    "Are you sure you want to clear your cart?",
+    async (ctx) => {
+      const conversationId = ctx.conversation.id;
+      orders.delete(conversationId);
+      await ctx.sendText("🗑️ Cart cleared!");
 
-    if (orderItems.length === 0) {
-      await ctx.sendText("🛒 Your cart is empty! Add some items first.");
       const menu = ActionBuilder.create(
-        "empty-cart-menu",
-        "What would you like to do?",
+        "after-clear-menu",
+        "Your cart has been cleared. What would you like to do?",
       )
         .add("show-menu", "🛍️ Start Shopping")
         .build();
 
       await sendActions(ctx.conversation, menu);
-      return;
-    }
+    },
+  );
+});
 
-    const summary = getOrderSummary(conversationId);
-    await sendConfirmation(
-      ctx,
-      `Confirm your order?\n\n${summary}\n\nThis will place your order.`,
-      async (ctx) => {
-        const conversationId = ctx.conversation.id;
-        const orderItems = orders.get(conversationId) || [];
+registerAction("checkout", async (ctx) => {
+  const conversationId = ctx.conversation.id;
+  const orderItems = orders.get(conversationId) || [];
 
-        const itemCounts = new Map<string, number>();
-        orderItems.forEach((item) => {
-          itemCounts.set(item.id, (itemCounts.get(item.id) || 0) + 1);
-        });
+  if (orderItems.length === 0) {
+    await ctx.sendText("🛒 Your cart is empty! Add some items first.");
+    const menu = ActionBuilder.create(
+      "empty-cart-menu",
+      "What would you like to do?",
+    )
+      .add("show-menu", "🛍️ Start Shopping")
+      .build();
 
-        const orderDetails = Array.from(itemCounts.entries())
-          .map(([id, count]) => {
-            const product = products.find((p) => p.id === id);
-            return `${product?.emoji} ${product?.name} x${count}`;
-          })
-          .join("\n");
+    await sendActions(ctx.conversation, menu);
+    return;
+  }
 
-        await ctx.sendText(
-          `✅ Order confirmed!\n\n${orderDetails}\n\n📦 Your order will be ready for pickup soon. Thank you for shopping at General Store!`,
-        );
+  const summary = getOrderSummary(conversationId);
+  await sendConfirmation(
+    ctx,
+    `Confirm your order?\n\n${summary}\n\nThis will place your order.`,
+    async (ctx) => {
+      const conversationId = ctx.conversation.id;
+      const orderItems = orders.get(conversationId) || [];
 
-        // Send hackathon prize information as markdown
-        await ctx.conversation.send(
-          hackathonPrizesMarkdown,
-          ContentTypeMarkdown,
-        );
+      const itemCounts = new Map<string, number>();
+      orderItems.forEach((item) => {
+        itemCounts.set(item.id, (itemCounts.get(item.id) || 0) + 1);
+      });
 
-        // Clear the cart after checkout
-        orders.delete(conversationId);
+      const orderDetails = Array.from(itemCounts.entries())
+        .map(([id, count]) => {
+          const product = products.find((p) => p.id === id);
+          return `${product?.emoji} ${product?.name} x${count}`;
+        })
+        .join("\n");
 
-        const menu = ActionBuilder.create(
-          "after-checkout-menu",
-          "Would you like to place another order?",
-        )
-          .add("show-menu", "🛍️ New Order")
-          .build();
+      await ctx.sendText(
+        `✅ Order confirmed!\n\n${orderDetails}\n\n📦 Your order will be ready for pickup soon. Thank you for shopping at General Store!`,
+      );
 
-        await sendActions(ctx.conversation, menu);
-      },
-    );
-  });
-
-  // Use the inline actions middleware
-  agent.use(inlineActionsMiddleware);
-
-  // Track if hackathon message has been sent per conversation
-  const hackathonMessageSent = new Set<string>();
-
-  // Handle text messages - show menu on any text
-  agent.on("text", async (ctx) => {
-    const builder = ActionBuilder.create(
-      "main-menu",
-      "🏪 Welcome to General Store!\n\nSelect a product:",
-    );
-
-    // Add all products to the menu
-    products.forEach((product) => {
-      builder.add(`add-${product.id}`, `${product.emoji} ${product.name}`);
-    });
-
-    // Add cart and checkout options
-    builder.add("view-cart", "🛒 View Cart");
-    builder.add("checkout", "✅ Checkout");
-
-    await sendActions(ctx.conversation, builder.build());
-
-    // Send hackathon prize information on first interaction
-    const conversationId = ctx.conversation.id;
-    if (!hackathonMessageSent.has(conversationId)) {
-      hackathonMessageSent.add(conversationId);
+      // Send hackathon prize information as markdown
       await ctx.conversation.send(hackathonPrizesMarkdown, ContentTypeMarkdown);
-    }
+
+      // Clear the cart after checkout
+      orders.delete(conversationId);
+
+      const menu = ActionBuilder.create(
+        "after-checkout-menu",
+        "Would you like to place another order?",
+      )
+        .add("show-menu", "🛍️ New Order")
+        .build();
+
+      await sendActions(ctx.conversation, menu);
+    },
+  );
+});
+
+// Use the inline actions middleware
+agent.use(inlineActionsMiddleware);
+
+// Track if hackathon message has been sent per conversation
+const hackathonMessageSent = new Set<string>();
+
+// Handle text messages - show menu on any text
+agent.on("text", async (ctx) => {
+  const builder = ActionBuilder.create(
+    "main-menu",
+    "🏪 Welcome to General Store!\n\nSelect a product:",
+  );
+
+  // Add all products to the menu
+  products.forEach((product) => {
+    builder.add(`add-${product.id}`, `${product.emoji} ${product.name}`);
   });
 
-  // Handle startup
-  agent.on("start", () => {
-    console.log(`🏪 General Store Agent is running...`);
-    console.log(`Address: ${agent.address}`);
-    console.log(`🔗 ${getTestUrl(agent.client)}`);
-    console.log(`Send any message to start shopping!`);
-  });
+  // Add cart and checkout options
+  builder.add("view-cart", "🛒 View Cart");
+  builder.add("checkout", "✅ Checkout");
 
-  // Start the agent
-  await agent.start();
-}
+  await sendActions(ctx.conversation, builder.build());
 
-main().catch(console.error);
+  // Send hackathon prize information on first interaction
+  const conversationId = ctx.conversation.id;
+  if (!hackathonMessageSent.has(conversationId)) {
+    hackathonMessageSent.add(conversationId);
+    await ctx.conversation.send(hackathonPrizesMarkdown, ContentTypeMarkdown);
+  }
+});
+
+// Handle startup
+agent.on("start", () => {
+  console.log(`🏪 General Store Agent is running...`);
+  console.log(`Address: ${agent.address}`);
+  console.log(`🔗 ${getTestUrl(agent.client)}`);
+  console.log(`Send any message to start shopping!`);
+});
+
+// Start the agent
+await agent.start();
