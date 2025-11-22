@@ -3,15 +3,14 @@ import { getTestUrl } from "@xmtp/agent-sdk/debug";
 import { CommandRouter } from "@xmtp/agent-sdk/middleware";
 import { ContentTypeWalletSendCalls } from "@xmtp/content-type-wallet-send-calls";
 import { loadEnvFile } from "../../utils/general";
-import { USDCHandler } from "../../utils/usdc";
+import {
+  createUSDCTransferCalls,
+  getUSDCBalance,
+} from "../../utils/transactions";
 
 loadEnvFile();
-
-const NETWORK_ID = process.env.NETWORK_ID || "base-sepolia";
-
-const usdcHandler = new USDCHandler(NETWORK_ID);
-
 const agent = await Agent.createFromEnv();
+const networkId = process.env.NETWORK_ID || "base-sepolia";
 
 const router = new CommandRouter();
 
@@ -19,8 +18,9 @@ router.command("/balance", async (ctx) => {
   const agentAddress = agent.address;
   const senderAddress = await ctx.getSenderAddress();
 
-  const agentBalance = await usdcHandler.getUSDCBalance(validHex(agentAddress));
-  const senderBalance = await usdcHandler.getUSDCBalance(
+  const agentBalance = await getUSDCBalance(networkId, validHex(agentAddress));
+  const senderBalance = await getUSDCBalance(
+    networkId,
     validHex(senderAddress),
   );
 
@@ -43,7 +43,8 @@ router.command("/tx", async (ctx) => {
   // Convert amount to USDC decimals (6 decimal places)
   const amountInDecimals = Math.floor(amount * Math.pow(10, 6));
 
-  const walletSendCalls = usdcHandler.createUSDCTransferCalls(
+  const walletSendCalls = createUSDCTransferCalls(
+    networkId,
     validHex(senderAddress),
     validHex(agentAddress),
     amountInDecimals,
