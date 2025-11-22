@@ -93,15 +93,16 @@ function getOrderSummary(conversationId: string): string {
 
   return `Your order:\n${summary}`;
 }
-
+const dbPath = (inboxId: string) => {
+  const filename = `${process.env.XMTP_ENV}-${inboxId.slice(0, 8)}.db3`;
+  const fullpath = process.env.RAILWAY_VOLUME_MOUNT_PATH
+    ? `${process.env.RAILWAY_VOLUME_MOUNT_PATH}/${filename}`
+    : `./${filename}`;
+  console.log("dbPath", fullpath);
+  return fullpath;
+};
 const agent = await Agent.createFromEnv({
-  dbPath: (inboxId: string) => {
-    return (
-      process.env.RAILWAY_VOLUME_MOUNT_PATH ??
-      "." +
-        `/examples/xmtp-generalstore/${process.env.XMTP_ENV}-${inboxId.slice(0, 8)}.db3`
-    );
-  },
+  dbPath: dbPath,
   codecs: [new ActionsCodec(), new IntentCodec(), new MarkdownCodec()],
 });
 
