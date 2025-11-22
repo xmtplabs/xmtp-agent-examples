@@ -96,6 +96,9 @@ function getOrderSummary(conversationId: string): string {
 
 async function main() {
   const agent = await Agent.createFromEnv({
+    dbPath: (inboxId) =>
+      process.env.RAILWAY_VOLUME_MOUNT_PATH ??
+      "." + `/${process.env.XMTP_ENV}-${inboxId.slice(0, 8)}.db3`,
     codecs: [new ActionsCodec(), new IntentCodec(), new MarkdownCodec()],
   });
 
