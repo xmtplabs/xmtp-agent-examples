@@ -3,7 +3,6 @@ import type { WalletSendCallsParams } from "@xmtp/content-type-wallet-send-calls
 import { createPublicClient, formatUnits, http, toHex } from "viem";
 import { base, baseSepolia } from "viem/chains";
 
-// Network configuration type
 export type NetworkConfig = {
   tokenAddress: HexString;
   chainId: HexString;
@@ -12,25 +11,23 @@ export type NetworkConfig = {
   networkId: string;
 };
 
-// Available network configurations
 export const USDC_NETWORKS: NetworkConfig[] = [
   {
-    tokenAddress: "0x036CbD53842c5426634e7929541eC2318f3dCF7e", // USDC on Base Sepolia
-    chainId: toHex(84532), // Base Sepolia network ID (84532 in hex)
+    tokenAddress: "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+    chainId: toHex(84532),
     decimals: 6,
     networkName: "Base Sepolia",
     networkId: "base-sepolia",
   },
   {
-    tokenAddress: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913", // USDC on Base Mainnet
-    chainId: toHex(8453), // Base Mainnet network ID (8453 in hex)
+    tokenAddress: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    chainId: toHex(8453),
     decimals: 6,
     networkName: "Base Mainnet",
     networkId: "base-mainnet",
   },
 ];
 
-// ERC20 minimal ABI for balance checking
 const erc20Abi = [
   {
     inputs: [{ name: "account", type: "address" }],
@@ -41,84 +38,55 @@ const erc20Abi = [
   },
 ] as const;
 
-export class USDCHandler {
-  private networkConfig: NetworkConfig;
-  private publicClient;
+const getNetworkConfig = (networkId: string): NetworkConfig => {
+  const config = USDC_NETWORKS.find((n) => n.networkId === networkId);
+  if (!config) throw new Error(`Network configuration not found: ${networkId}`);
+  return config;
+};
 
-  /**
-   * Create a USDC handler for a specific network
-   * @param networkId - The network identifier ("base-sepolia" or "base-mainnet")
-   */
-  constructor(networkId: string) {
-    const config = USDC_NETWORKS.find(
-      (network) => network.networkId === networkId,
-    );
-    if (!config) {
-      throw new Error(`Network configuration not found for: ${networkId}`);
-    }
+export const getUSDCBalance = async (
+  networkId: string,
+  address: HexString,
+): Promise<string> => {
+  const config = getNetworkConfig(networkId);
+  const client = createPublicClient({
+    chain: networkId === "base-mainnet" ? base : baseSepolia,
+    transport: http(),
+  });
+  const balance = await client.readContract({
+    address: config.tokenAddress,
+    abi: erc20Abi,
+    functionName: "balanceOf",
+    args: [address],
+  });
+  return formatUnits(balance, config.decimals);
+};
 
-    this.networkConfig = config;
-    this.publicClient = createPublicClient({
-      chain: networkId === "base-mainnet" ? base : baseSepolia,
-      transport: http(),
-    });
-  }
-
-  /**
-   * Get the network configuration
-   */
-  getNetworkConfig(): NetworkConfig {
-    return this.networkConfig;
-  }
-
-  /**
-   * Get USDC balance for a given address
-   */
-  async getUSDCBalance(address: HexString): Promise<string> {
-    const balance = await this.publicClient.readContract({
-      address: this.networkConfig.tokenAddress,
-      abi: erc20Abi,
-      functionName: "balanceOf",
-      args: [address],
-    });
-
-    return formatUnits(balance, this.networkConfig.decimals);
-  }
-
-  /**
-   * Create wallet send calls parameters for USDC transfer
-   */
-  createUSDCTransferCalls(
-    fromAddress: HexString,
-    recipientAddress: string,
-    amount: number,
-  ): WalletSendCallsParams {
-    const methodSignature = "0xa9059cbb"; // Function signature for ERC20 'transfer(address,uint256)'
-
-    // Format the transaction data following ERC20 transfer standard
-    const transactionData = `${methodSignature}${recipientAddress
-      .slice(2)
-      .padStart(64, "0")}${BigInt(amount).toString(16).padStart(64, "0")}`;
-
-    return {
-      version: "1.0",
-      from: fromAddress,
-      chainId: this.networkConfig.chainId,
-      calls: [
-        {
-          to: this.networkConfig.tokenAddress,
-          data: validHex(transactionData),
-          metadata: {
-            description: `Transfer ${amount / Math.pow(10, this.networkConfig.decimals)} USDC on ${this.networkConfig.networkName}`,
-            transactionType: "transfer",
-            currency: "USDC",
-            amount: amount.toString(),
-            decimals: this.networkConfig.decimals.toString(),
-            networkId: this.networkConfig.networkId,
-          },
+export const createUSDCTransferCalls = (
+  networkId: string,
+  fromAddress: HexString,
+  recipientAddress: string,
+  amount: number,
+): WalletSendCallsParams => {
+  const config = getNetworkConfig(networkId);
+  const data = `0xa9059cbb${recipientAddress.slice(2).padStart(64, "0")}${BigInt(amount).toString(16).padStart(64, "0")}`;
+  return {
+    version: "1.0",
+    from: fromAddress,
+    chainId: config.chainId,
+    calls: [
+      {
+        to: config.tokenAddress,
+        data: validHex(data),
+        metadata: {
+          description: `Transfer ${amount / Math.pow(10, config.decimals)} USDC on ${config.networkName}`,
+          transactionType: "transfer",
+          currency: "USDC",
+          amount: amount.toString(),
+          decimals: config.decimals.toString(),
+          networkId: config.networkId,
         },
-        /* add more calls here */
-      ],
-    };
-  }
-}
+      },
+    ],
+  };
+};
