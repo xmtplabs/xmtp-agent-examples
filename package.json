@@ -42,10 +42,6 @@
     "typescript-eslint": "^8.22.0"
   },
   "packageManager": "yarn@4.6.0",
-  "resolutions": {
-    "@xmtp/agent-sdk": "^1.1.12",
-    "@xmtp/node-sdk": "4.2.6"
-  },
   "engines": {
     "node": ">=20"
   }

@@ -4243,9 +4243,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@xmtp/agent-sdk@npm:^1.1.12":
-  version: 1.1.12
-  resolution: "@xmtp/agent-sdk@npm:1.1.12"
+"@xmtp/agent-sdk@npm:*, @xmtp/agent-sdk@npm:^1.1.14":
+  version: 1.1.15
+  resolution: "@xmtp/agent-sdk@npm:1.1.15"
   dependencies:
     "@xmtp/content-type-markdown": "npm:^1.0.0"
     "@xmtp/content-type-reaction": "npm:^2.0.2"
@@ -4255,9 +4255,9 @@ __metadata:
     "@xmtp/content-type-text": "npm:^2.0.2"
     "@xmtp/content-type-transaction-reference": "npm:^2.0.2"
     "@xmtp/content-type-wallet-send-calls": "npm:^2.0.0"
-    "@xmtp/node-sdk": "npm:^4.2.6"
+    "@xmtp/node-sdk": "npm:4.3.1"
     viem: "npm:^2.37.6"
-  checksum: 10c0/0c55d5f922dd177e66cb7d7d50f8a6afe0f2c33b0ca0a191d582bca6f1b88e859218d1f5a112bce951dd0faf3ae6309ee38e56f10e356fecd10e0463644a8999
+  checksum: 10c0/330528e84e1579456d37126d067f49d3131c3eae8864a0d5bcae69ef4359a5eed3dcf823edda49f06cea8a80be9edc9135a06fccc1668b6c1fe54a1241ebcdcd
   languageName: node
   linkType: hard
 
@@ -4371,15 +4371,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@xmtp/node-sdk@npm:4.2.6":
-  version: 4.2.6
-  resolution: "@xmtp/node-sdk@npm:4.2.6"
+"@xmtp/node-sdk@npm:4.3.1":
+  version: 4.3.1
+  resolution: "@xmtp/node-sdk@npm:4.3.1"
   dependencies:
     "@xmtp/content-type-group-updated": "npm:^2.0.2"
     "@xmtp/content-type-primitives": "npm:^2.0.2"
     "@xmtp/content-type-text": "npm:^2.0.2"
     "@xmtp/node-bindings": "npm:1.5.4"
-  checksum: 10c0/8930044a9a0ef59bf18bee093414fdc8401be3e17fed5e1be7c66c9c3f5ae62ade1132d2a0c49be1e5965475c0356c20ee6cf3e1bb536fc324ee0cdbd5a9f4ea
+  checksum: 10c0/669847a026f742fe3d75e2cff0aa5ce5c64ffa681ab067229a54542bb952f0c24304df745524c6e7aafa112bf73b6347b2be2f83ccec2c796001ddc073083166
   languageName: node
   linkType: hard
 
