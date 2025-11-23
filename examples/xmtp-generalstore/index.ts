@@ -1,3 +1,5 @@
+import fs from "fs";
+import path from "path";
 import { Agent } from "@xmtp/agent-sdk";
 import { getTestUrl } from "@xmtp/agent-sdk/debug";
 import {
