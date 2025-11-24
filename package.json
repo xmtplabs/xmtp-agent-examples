@@ -8,7 +8,7 @@
   ],
   "scripts": {
     "build": "tsc",
-    "cli": "tsx scripts/cli.tsx",
+    "debug": "tsx utils/debug.tsx",
     "build:examples": "yarn workspaces foreach --all --include \"examples/*\" run build",
     "dev": "cd examples/xmtp-gm && tsx --watch index.ts",
     "format": "prettier -w .",
