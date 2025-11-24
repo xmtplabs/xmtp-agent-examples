@@ -22,7 +22,7 @@ loadEnvFile();
 /**
  * Handle current ETH price request
  */
-async function handleCurrentPrice(ctx: MessageContext) {
+async function handleCurrentPrice(ctx: MessageContext<unknown>) {
   try {
     await ctx.sendText("⏳ Fetching current ETH price...");
 
@@ -44,7 +44,7 @@ async function handleCurrentPrice(ctx: MessageContext) {
 /**
  * Handle ETH price with 24h change request
  */
-async function handlePriceWithChange(ctx: MessageContext) {
+async function handlePriceWithChange(ctx: MessageContext<unknown>) {
   try {
     await ctx.sendText("⏳ Fetching ETH price with 24h change...");
 

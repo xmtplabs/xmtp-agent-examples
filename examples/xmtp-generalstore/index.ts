@@ -1,4 +1,4 @@
-import { Agent } from "@xmtp/agent-sdk";
+import { Agent, MessageContext } from "@xmtp/agent-sdk";
 import { getTestUrl } from "@xmtp/agent-sdk/debug";
 import {
   ContentTypeMarkdown,
@@ -107,7 +107,7 @@ const agent = await Agent.createFromEnv({
 });
 
 // Register action handlers
-registerAction("show-menu", async (ctx) => {
+registerAction("show-menu", async (ctx: MessageContext<unknown>) => {
   const builder = ActionBuilder.create(
     "main-menu",
     "🏪 Welcome to General Store!\n\nSelect a product:",
@@ -122,12 +122,12 @@ registerAction("show-menu", async (ctx) => {
   builder.add("view-cart", "🛒 View Cart");
   builder.add("checkout", "✅ Checkout");
 
-  await builder.send(ctx);
+  await builder.send(ctx as any);
 });
 
 // Register add-to-cart actions for each product
 products.forEach((product) => {
-  registerAction(`add-${product.id}`, async (ctx) => {
+  registerAction(`add-${product.id}`, async (ctx: MessageContext<unknown>) => {
     const conversationId = ctx.conversation.id;
     const currentOrder = orders.get(conversationId) || [];
     currentOrder.push(product);
@@ -151,7 +151,7 @@ products.forEach((product) => {
   });
 });
 
-registerAction("view-cart", async (ctx) => {
+registerAction("view-cart", async (ctx: MessageContext<unknown>) => {
   const conversationId = ctx.conversation.id;
   const summary = getOrderSummary(conversationId);
 
@@ -164,11 +164,11 @@ registerAction("view-cart", async (ctx) => {
   await sendActions(ctx.conversation, menu);
 });
 
-registerAction("clear-cart", async (ctx) => {
+registerAction("clear-cart", async (ctx: MessageContext<unknown>) => {
   await sendConfirmation(
     ctx,
     "Are you sure you want to clear your cart?",
-    async (ctx) => {
+    async (ctx: MessageContext<unknown>) => {
       const conversationId = ctx.conversation.id;
       orders.delete(conversationId);
       await ctx.sendText("🗑️ Cart cleared!");
@@ -185,7 +185,7 @@ registerAction("clear-cart", async (ctx) => {
   );
 });
 
-registerAction("checkout", async (ctx) => {
+registerAction("checkout", async (ctx: MessageContext<unknown>) => {
   const conversationId = ctx.conversation.id;
   const orderItems = orders.get(conversationId) || [];
 
@@ -206,7 +206,7 @@ registerAction("checkout", async (ctx) => {
   await sendConfirmation(
     ctx,
     `Confirm your order?\n\n${summary}\n\nThis will place your order.`,
-    async (ctx) => {
+    async (ctx: any) => {
       const conversationId = ctx.conversation.id;
       const orderItems = orders.get(conversationId) || [];
 
