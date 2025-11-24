@@ -61,7 +61,7 @@ yarn gen:keys
 ```
 
 > [!WARNING]
-> Running the `gen:keys` command will append keys to your existing `.env` file.
+> Running the `yarn gen:keys` command will append keys to your existing `.env` file.
 
 ### Revoke installations
 

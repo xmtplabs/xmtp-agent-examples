@@ -19,7 +19,7 @@ import { createSigner, createUser } from "@xmtp/agent-sdk/user";
 import { generatePrivateKey, privateKeyToAddress } from "viem/accounts";
 import { fromString, toString } from "uint8arrays";
 
-import { loadEnvFile } from "../utils/general";
+import { loadEnvFile } from "./general";
 
 loadEnvFile();
 function showHelp(): void {
