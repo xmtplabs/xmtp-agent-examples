@@ -84,9 +84,31 @@ async function main() {
   const envVars: Record<string, string> = {};
 
   envContent.split("\n").forEach((line) => {
-    const [key, value] = line.split("=");
-    if (key && value && !key.startsWith("#")) {
-      envVars[key.trim()] = value.trim();
+    // Skip empty lines and comments
+    const trimmedLine = line.trim();
+    if (!trimmedLine || trimmedLine.startsWith("#")) {
+      return;
+    }
+
+    // Find the first = sign (value might contain =)
+    const equalIndex = trimmedLine.indexOf("=");
+    if (equalIndex === -1) {
+      return;
+    }
+
+    const key = trimmedLine.slice(0, equalIndex).trim();
+    let value = trimmedLine.slice(equalIndex + 1).trim();
+
+    // Remove surrounding quotes if present
+    if (
+      (value.startsWith('"') && value.endsWith('"')) ||
+      (value.startsWith("'") && value.endsWith("'"))
+    ) {
+      value = value.slice(1, -1);
+    }
+
+    if (key && value) {
+      envVars[key] = value;
     }
   });
 
@@ -116,14 +138,49 @@ async function main() {
   }
 
   try {
+    // Validate wallet key format before using
+    const walletKey = envVars.XMTP_WALLET_KEY;
+    if (!walletKey) {
+      console.error(
+        "Error: XMTP_WALLET_KEY is empty or not found in .env file",
+      );
+      process.exit(1);
+    }
+
     // Create signer and encryption key
-    const signer = createSigner(createUser(validHex(envVars.XMTP_WALLET_KEY)));
+    let signer;
+    try {
+      signer = createSigner(createUser(validHex(walletKey)));
+    } catch (hexError) {
+      console.error(
+        `Error: Invalid XMTP_WALLET_KEY format. Expected a hexadecimal string.`,
+      );
+      console.error(
+        `Wallet key should be a private key (0x + 64 hex chars) or 64 hex chars.`,
+      );
+      console.error(`Received value length: ${walletKey.length}`);
+      console.error(`First 20 chars: ${walletKey.slice(0, 20)}...`);
+      throw hexError;
+    }
 
     // Get current inbox state
-    const inboxState = await Client.inboxStateFromInboxIds(
-      [inboxId],
-      envVars.XMTP_ENV as XmtpEnv,
-    );
+    let inboxState;
+    try {
+      inboxState = await Client.inboxStateFromInboxIds(
+        [inboxId],
+        envVars.XMTP_ENV as XmtpEnv,
+      );
+    } catch (inboxError) {
+      const errorMsg =
+        inboxError instanceof Error ? inboxError.message : String(inboxError);
+      console.error(`Error fetching inbox state: ${errorMsg}`);
+      console.error(`Inbox ID used: ${inboxId}`);
+      console.error(`Inbox ID length: ${inboxId.length}`);
+      console.error(
+        `Inbox ID format: ${/^[a-f0-9]{64}$/i.test(inboxId) ? "valid" : "invalid"}`,
+      );
+      throw inboxError;
+    }
 
     const currentInstallations = inboxState[0].installations;
     console.log(`✓ Current installations: ${currentInstallations.length}`);

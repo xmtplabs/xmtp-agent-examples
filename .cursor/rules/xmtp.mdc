@@ -8,9 +8,6 @@ alwaysApply: true
 
 Build event‑driven, middleware‑powered messaging agents on the XMTP network. 🚀
 
-> [!CAUTION]
-> This SDK is in beta status and ready for you to build with in production. Software in this status may change based on feedback.
-
 ## Documentation
 
 Full agent building guide: **[Build an XMTP Agent](https://docs.xmtp.org/agents/get-started/build-an-agent)**
@@ -29,19 +26,12 @@ pnpm add @xmtp/agent-sdk
 yarn add @xmtp/agent-sdk
 ```
 
-## Talk using the CLI
-
-```bash
-# initialize the CLI
-yarn cli
-# connect to an agent
-yarn cli --agent 0x81bddb3d7cd9ccdfaeb117ce19fd77c1433b907d
-```
-
 ## Quick Start
 
 ```ts
-import { createUser, createSigner, Agent, getTestUrl } from "@xmtp/agent-sdk";
+import { Agent } from "@xmtp/agent-sdk";
+import { getTestUrl } from "@xmtp/agent-sdk/debug";
+import { createUser, createSigner } from "@xmtp/agent-sdk/user";
 
 // 1. Create a local user + signer (you can plug in your own wallet signer)
 const user = createUser();
@@ -50,7 +40,6 @@ const signer = createSigner(user);
 // 2. Spin up the agent
 const agent = await Agent.create(signer, {
   env: "dev", // or 'production'
-  dbPath: null, // in-memory store; provide a path to persist
 });
 
 // 3. Respond to text messages
@@ -59,8 +48,8 @@ agent.on("text", async (ctx) => {
 });
 
 // 4. Log when we're ready
-agent.on("start", () => {
-  console.log(`We are online: ${getTestUrl(agent)}`);
+agent.on("start", (ctx) => {
+  console.log(`We are online: ${getTestUrl(ctx.client)}`);
 });
 
 await agent.start();
@@ -68,19 +57,21 @@ await agent.start();
 
 ## Environment Variables
 
-The XMTP Agent SDK allows you to use environment variables (`process.env`) for easier configuration without modifying code. Simply set the following variables and call `Agent.createFromEnv()`:
+The XMTP Agent SDK supports configuration through environment variables (`process.env`), making it easy to configure your agent without code changes. Set the following variables and call `Agent.createFromEnv()` to automatically load them:
 
 **Available Variables:**
 
-| Variable                 | Purpose                                                                                                                      | Example                                 |
-| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------- | --------------------------------------- |
-| `XMTP_WALLET_KEY`        | [Private key for wallet](https://docs.xmtp.org/inboxes/core-messaging/create-a-signer)                                       | `XMTP_WALLET_KEY=0x1234...abcd`         |
-| `XMTP_ENV`               | [Network environment](https://docs.xmtp.org/agents/core-messaging/create-a-client#xmtp-network-environments)                 | `XMTP_ENV=dev` or `XMTP_ENV=production` |
-| `XMTP_DB_ENCRYPTION_KEY` | [Database encryption key](https://docs.xmtp.org/agents/core-messaging/create-a-client#keep-the-database-encryption-key-safe) | `XMTP_DB_ENCRYPTION_KEY=0xabcd...1234`  |
+| Variable                 | Purpose                                                                                                         | Example                                 |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------- | --------------------------------------- |
+| `XMTP_DB_DIRECTORY`      | [Database directory](https://docs.xmtp.org/agents/build-agents/local-database#understand-local-database-files)  | `XMTP_DB_DIRECTORY=my/database/dir`     |
+| `XMTP_DB_ENCRYPTION_KEY` | [Database encryption key](https://docs.xmtp.org/agents/concepts/identity#keep-the-database-encryption-key-safe) | `XMTP_DB_ENCRYPTION_KEY=0xabcd...1234`  |
+| `XMTP_ENV`               | [Network environment](https://docs.xmtp.org/chat-apps/core-messaging/create-a-client#xmtp-network-environments) | `XMTP_ENV=dev` or `XMTP_ENV=production` |
+| `XMTP_WALLET_KEY`        | [Private key for Ethereum wallet](https://docs.xmtp.org/chat-apps/core-messaging/create-a-signer)               | `XMTP_WALLET_KEY=0x1234...abcd`         |
 
 Using the environment variables, you can setup your agent in just a few lines of code:
 
 ```ts
+// Load variables from .env file
 process.loadEnvFile(".env");
 
 // Create agent using environment variables
@@ -89,9 +80,10 @@ const agent = await Agent.createFromEnv();
 
 Agents can also recognize the following environment variables:
 
-| Variable           | Purpose                                                              | Example                 |
-| ------------------ | -------------------------------------------------------------------- | ----------------------- |
-| `XMTP_FORCE_DEBUG` | [Activate debugging logs](https://docs.xmtp.org/agents/debug-agents) | `XMTP_FORCE_DEBUG=true` |
+| Variable                 | Purpose                                                              | Example                        |
+| ------------------------ | -------------------------------------------------------------------- | ------------------------------ |
+| `XMTP_FORCE_DEBUG`       | [Activate debugging logs](https://docs.xmtp.org/agents/debug-agents) | `XMTP_FORCE_DEBUG=true`        |
+| `XMTP_FORCE_DEBUG_LEVEL` | Specify the logging level (defaults to `"info"`)                     | `XMTP_FORCE_DEBUG_LEVEL=debug` |
 
 ## Core Concepts
 
@@ -101,15 +93,21 @@ Subscribe only to what you need using Node’s `EventEmitter` interface. Events 
 
 **Message Events**
 
-- `attachment` – a new incoming remote attachment message
-- `message` – all incoming messages (fires for every message regardless of type)
-- `reaction` – a new incoming reaction message
-- `reply` – a new incoming reply message
-- `text` – a new incoming text message
-- `unknownMessage` – a message that doesn't match any specific type
+- `attachment` – an incoming [remote attachment message](https://docs.xmtp.org/chat-apps/content-types/attachments)
+- `markdown` – an incoming [markdown-formatted](https://docs.xmtp.org/agents/content-types/markdown) text message
+- `message` – all messages that are not having a [custom content type](https://docs.xmtp.org/agents/content-types/content-types#custom-content-types)
+- `group-update` – an incoming [group update](https://docs.xmtp.org/agents/content-types/group-updates#listen-for-group-updates) (like name change, member update, etc.)
+- `reaction` – an incoming [reaction message](https://docs.xmtp.org/agents/content-types/reactions)
+- `read-receipt` – an incoming [read receipt](https://docs.xmtp.org/chat-apps/content-types/read-receipts) notification
+- `reply` – an incoming [reply message](https://docs.xmtp.org/agents/content-types/replies)
+- `text` – an incoming [text message](https://docs.xmtp.org/agents/content-types/content-types#text-content-type)
+- `transaction-reference` – an incoming onchain [transaction reference](https://docs.xmtp.org/agents/content-types/transaction-refs#receive-a-transaction-reference)
+- `wallet-send-calls` – an incoming wallet [transaction request](https://docs.xmtp.org/agents/content-types/transactions#create-a-transaction-request) (batch calls)
+- `unknownMessage` – a message event that does not correspond to any of the pre-implemented event types
 
 **Conversation Events**
 
+- `conversation` – a new group or DM conversation
 - `dm` – a new DM conversation
 - `group` – a new group conversation
 
@@ -136,11 +134,11 @@ agent.on("reply", async (ctx) => {
 
 // Listen to new conversations
 agent.on("dm", async (ctx) => {
-  // handle dm conversation
+  await ctx.conversation.send("Welcome to our DM!");
 });
 
 agent.on("group", async (ctx) => {
-  // handle group conversation
+  await ctx.conversation.send("Hello group!");
 });
 
 // Listen to unhandled events
@@ -163,7 +161,7 @@ import { filter } from "@xmtp/agent-sdk";
 agent.on("message", async (ctx) => {
   // Filter for specific message types
   if (filter.isText(ctx.message)) {
-    await ctx.sendText(`Echo: ${ctx.message.content}`);
+    await ctx.conversation.send(`Echo: ${ctx.message.content}`);
   }
 });
 ```
@@ -242,6 +240,30 @@ agent.on("unhandledError", (error) => {
 });
 ```
 
+#### Provided Middleware
+
+Built‑in, officially supported middleware is provided via `@xmtp/agent-sdk/middleware`.
+
+**Example: CommandRouter**
+
+The `CommandRouter` makes it easy to handle slash commands out of the box.
+
+```ts
+import { Agent } from "@xmtp/agent-sdk";
+import { CommandRouter } from "@xmtp/agent-sdk/middleware";
+
+const agent = await Agent.createFromEnv();
+const router = new CommandRouter()
+  .command("/hello", async (ctx) => {
+    await ctx.conversation.send("Hi there! 👋");
+  })
+  .default(async (ctx) => {
+    await ctx.conversation.send(`Unknown command: ${ctx.message.content}`);
+  });
+
+agent.use(router.middleware());
+```
+
 ### 3. Built‑in Filters
 
 Instead of manually checking every incoming message, you can use the provided filters.
@@ -254,7 +276,7 @@ import { filter } from "@xmtp/agent-sdk";
 // Using filter in message handler
 agent.on("text", async (ctx) => {
   if (filter.isText(ctx.message)) {
-    await ctx.sendText("You sent a text message!");
+    await ctx.conversation.send("You sent a text message!");
   }
 });
 
@@ -265,7 +287,7 @@ agent.on("text", async (ctx) => {
     !filter.fromSelf(ctx.message, ctx.client) &&
     filter.isText(ctx.message)
   ) {
-    await ctx.sendText("Valid text message received ✅");
+    await ctx.conversation.send("Valid text message received ✅");
   }
 });
 ```
@@ -288,12 +310,12 @@ You can find all available prebuilt filters [here](https://github.com/xmtp/xmtp-
 
 ### 4. Rich Context
 
-Every message event handler receives a `MessageContext` with:
+Every message event handler receives a `MessageContext` (`ctx`) with:
 
 - `message` – the decoded message object
 - `conversation` – the active conversation object
 - `client` – underlying XMTP client
-- Helpers like `sendTextReply()`, `sendReaction()`, `getSenderAddress`, and more
+- Helpers like `sendTextReply`, `sendMarkdown`, `sendReaction`, `getSenderAddress`, and more
 
 **Example**
 
@@ -303,6 +325,57 @@ agent.on("text", async (ctx) => {
 });
 ```
 
+### 5. Starting Conversations
+
+These functionalities let you start a conversation:
+
+```ts
+// Direct Message
+const dm = await agent.createDmWithAddress("0x123");
+await dm.send("Hello!");
+
+// Group Conversation
+const group = await agent.createGroupWithAddresses(["0x123", "0x456"]);
+await group.addMembers(["0x789"]);
+await group.send("Hello group!");
+```
+
+### 6. Utilities
+
+The Agent SDK comes with subpackages that include utilities. You can for example get a testing URL or details of your Agent from the debug utilities:
+
+```ts
+import { getTestUrl, logDetails } from "@xmtp/agent-sdk/debug";
+
+// Get a test URL for your agent
+const testUrl = getTestUrl(agent.client);
+console.log(`Test your agent at: ${testUrl}`);
+
+// Log comprehensive details about your agent
+await logDetails(agent.client);
+```
+
+There are also utilities to simplify user management, such as signer creation or name resolutions:
+
+```ts
+import {
+  createUser,
+  createSigner,
+  createNameResolver,
+} from "@xmtp/agent-sdk/user";
+
+// Create a new user with a random private key
+const user = createUser();
+
+// Create a signer from the user
+const signer = createSigner(user);
+
+// Resolve ENS names or other web3 identities using web3.bio
+const resolver = createNameResolver("your-web3bio-api-key");
+const address = await resolver("vitalik.eth");
+console.log(`Resolved address: ${address}`);
+```
+
 ## Adding Custom Content Types
 
 Pass `codecs` when creating your agent to extend supported content:
@@ -310,10 +383,19 @@ Pass `codecs` when creating your agent to extend supported content:
 ```ts
 const agent = await Agent.create(signer, {
   env: "dev",
-  dbPath: null,
   codecs: [new MyContentType()],
 });
 ```
+
+## LibXMTP Version
+
+[LibXMTP](https://github.com/xmtp/libxmtp/) is a shared library encapsulating the core functionality of the XMTP messaging protocol, such as cryptography, networking, and language bindings. This version of the Agent SDK uses:
+
+| XMTP Node SDK Version | LibXMTP Version |
+| --------------------- | --------------- |
+| 4.3.1                 | 1.5.4           |
+
+To verify which LibXMTP version is installed, run `npm why @xmtp/node-bindings` after installing the Agent SDK.
 
 ## Prompt example to code an agent
 
@@ -323,7 +405,13 @@ Code:
 
 ```ts
 import fs from "fs";
-import { Agent, createSigner, createUser, getTestUrl, validHex } from "@xmtp/agent-sdk";
+import {
+  Agent,
+  createSigner,
+  createUser,
+  getTestUrl,
+  validHex,
+} from "@xmtp/agent-sdk";
 
 process.loadEnvFile(".env");
 
