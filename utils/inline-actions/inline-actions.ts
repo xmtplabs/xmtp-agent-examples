@@ -11,10 +11,10 @@ import {
 import { type IntentContent } from "./types/IntentContent";
 
 // Core types
-export type ActionHandler = (ctx: MessageContext) => Promise<void>;
+export type ActionHandler<T = unknown> = (ctx: MessageContext<T>) => Promise<void>;
 
-// Action registry
-const actionHandlers = new Map<string, ActionHandler>();
+// Action registry - using unknown to accept handlers for any content type
+const actionHandlers = new Map<string, ActionHandler<unknown>>();
 
 // Track the last sent action message for reply functionality
 let lastSentActionMessage: unknown = null;
@@ -22,12 +22,15 @@ let lastSentActionMessage: unknown = null;
 // Track the last shown menu for automatic navigation
 let lastShownMenu: { config: AppConfig; menuId: string } | null = null;
 
-export function registerAction(actionId: string, handler: ActionHandler): void {
+export function registerAction<T = unknown>(
+  actionId: string,
+  handler: ActionHandler<T> | ((ctx: any) => Promise<void>),
+): void {
   // Prevent overwriting existing handlers unless explicitly intended
   if (actionHandlers.has(actionId)) {
     console.warn(`⚠️ Action ${actionId} already registered, overwriting...`);
   }
-  actionHandlers.set(actionId, handler);
+  actionHandlers.set(actionId, handler as ActionHandler<unknown>);
 }
 
 // Get the last sent action message for reply functionality
@@ -42,7 +45,9 @@ export function clearAllActions(): void {
 }
 
 // Show the last shown menu
-export async function showLastMenu(ctx: MessageContext): Promise<void> {
+export async function showLastMenu<T = unknown>(
+  ctx: MessageContext<T>,
+): Promise<void> {
   if (lastShownMenu) {
     console.log(`🔄 Showing last menu: ${lastShownMenu.menuId}`);
     await showMenu(ctx, lastShownMenu.config, lastShownMenu.menuId);
@@ -53,8 +58,12 @@ export async function showLastMenu(ctx: MessageContext): Promise<void> {
   }
 }
 
-// Middleware
-export const inlineActionsMiddleware: AgentMiddleware = async (ctx, next) => {
+// Middleware - works with any content type
+// Using any for the context parameter to allow compatibility with any agent content types
+export const inlineActionsMiddleware = (async (
+  ctx: any,
+  next: () => Promise<void>,
+) => {
   if (ctx.message.contentType?.typeId === "intent") {
     const intentContent = ctx.message.content as IntentContent;
     const handler = actionHandlers.get(intentContent.actionId);
@@ -63,7 +72,7 @@ export const inlineActionsMiddleware: AgentMiddleware = async (ctx, next) => {
 
     if (handler) {
       try {
-        await handler(ctx);
+        await handler(ctx as MessageContext<unknown>);
       } catch (error) {
         console.error(`❌ Error in action handler:`, error);
         await ctx.sendText(
@@ -76,7 +85,7 @@ export const inlineActionsMiddleware: AgentMiddleware = async (ctx, next) => {
     return;
   }
   await next();
-};
+}) as AgentMiddleware as any;
 
 // Builder for creating actions
 export class ActionBuilder {
@@ -108,7 +117,7 @@ export class ActionBuilder {
     };
   }
 
-  async send(ctx: MessageContext): Promise<void> {
+  async send<T = unknown>(ctx: MessageContext<T>): Promise<void> {
     const message = await ctx.conversation.send(
       this.build(),
       ContentTypeActions,
@@ -126,23 +135,23 @@ export async function sendActions(
   lastSentActionMessage = message;
 }
 
-export async function sendConfirmation(
-  ctx: MessageContext,
+export async function sendConfirmation<T = unknown>(
+  ctx: MessageContext<T> | any,
   message: string,
-  onYes: ActionHandler,
-  onNo?: ActionHandler,
+  onYes: ActionHandler<T> | ((ctx: any) => Promise<void>),
+  onNo?: ActionHandler<T> | ((ctx: any) => Promise<void>),
 ): Promise<void> {
   const timestamp = Date.now();
   const yesId = `yes-${timestamp}`;
   const noId = `no-${timestamp}`;
 
-  registerAction(yesId, onYes);
+  registerAction(yesId, onYes as ActionHandler<unknown>);
   registerAction(
     noId,
-    onNo ||
+    (onNo ||
       (async (ctx) => {
         await ctx.sendText("❌ Cancelled");
-      }),
+      })) as ActionHandler<unknown>,
   );
 
   await ActionBuilder.create(`confirm-${timestamp}`, message)
@@ -151,14 +160,14 @@ export async function sendConfirmation(
     .send(ctx);
 }
 
-export async function sendSelection(
-  ctx: MessageContext,
+export async function sendSelection<T = unknown>(
+  ctx: MessageContext<T>,
   message: string,
   options: Array<{
     id: string;
     label: string;
     style?: "primary" | "secondary" | "danger";
-    handler: ActionHandler;
+    handler: ActionHandler<T>;
   }>,
 ): Promise<void> {
   const builder = ActionBuilder.create(`selection-${Date.now()}`, message);
@@ -198,11 +207,11 @@ export const patterns = {
 };
 
 // Additional types needed by index.ts
-export type MenuAction = {
+export type MenuAction<T = unknown> = {
   id: string;
   label: string;
   style?: "primary" | "secondary" | "danger";
-  handler?: ActionHandler;
+  handler?: ActionHandler<T>;
   showNavigationOptions?: boolean;
 };
 
@@ -226,8 +235,8 @@ export function getRegisteredActions(): string[] {
   return Array.from(actionHandlers.keys());
 }
 
-export async function showMenu(
-  ctx: MessageContext,
+export async function showMenu<T = unknown>(
+  ctx: MessageContext<T>,
   config: AppConfig,
   menuId: string,
 ): Promise<void> {
@@ -252,8 +261,8 @@ export async function showMenu(
 }
 
 // Configurable navigation helper
-export async function showNavigationOptions(
-  ctx: MessageContext,
+export async function showNavigationOptions<T = unknown>(
+  ctx: MessageContext<T>,
   config: AppConfig,
   message: string,
   customActions?: Array<{
@@ -310,7 +319,7 @@ export function initializeAppFromConfig(
     menu.actions.forEach((action) => {
       if (action.handler) {
         // Wrap handler to automatically show last menu if showNavigationOptions is true
-        const wrappedHandler = async (ctx: MessageContext) => {
+        const wrappedHandler = async (ctx: MessageContext<unknown>) => {
           await action.handler?.(ctx);
           if (action.showNavigationOptions) {
             await showLastMenu(ctx);
@@ -337,7 +346,7 @@ export function initializeAppFromConfig(
     menu.actions.forEach((action) => {
       if (!action.handler && config.menus[action.id]) {
         // This action navigates to another menu
-        registerAction(action.id, async (ctx: MessageContext) => {
+        registerAction(action.id, async (ctx: MessageContext<unknown>) => {
           await showMenu(ctx, config, action.id);
         });
         console.log(`✅ Auto-registered navigation for menu: ${action.id}`);
@@ -346,15 +355,15 @@ export function initializeAppFromConfig(
   });
 
   // Auto-register common navigation actions
-  registerAction("main-menu", async (ctx: MessageContext) => {
+  registerAction("main-menu", async (ctx: MessageContext<unknown>) => {
     await showMenu(ctx, config, "main-menu");
   });
 
-  registerAction("help", async (ctx: MessageContext) => {
+  registerAction("help", async (ctx: MessageContext<unknown>) => {
     await showMenu(ctx, config, "main-menu");
   });
 
-  registerAction("back-to-main", async (ctx: MessageContext) => {
+  registerAction("back-to-main", async (ctx: MessageContext<unknown>) => {
     await showMenu(ctx, config, "main-menu");
   });
 }

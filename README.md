@@ -61,7 +61,7 @@ yarn gen:keys
 ```
 
 > [!WARNING]
-> Running the `gen:keys` command will append keys to your existing `.env` file.
+> Running the `yarn gen:keys` command will append keys to your existing `.env` file.
 
 ### Revoke installations
 
@@ -93,9 +93,9 @@ Try out the examples using [xmtp.chat](https://xmtp.chat), the official playgrou
 
 ```bash
 # initialize the CLI
-yarn cli
+yarn debug
 # connect to an agent
-yarn cli --agent 0x81bddb3d7cd9ccdfaeb117ce19fd77c1433b907d
+yarn debug --agent 0x81bddb3d7cd9ccdfaeb117ce19fd77c1433b907d
 ```
 
 ### Run a local XMTP network (optional)

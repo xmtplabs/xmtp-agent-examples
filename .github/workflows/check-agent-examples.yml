@@ -33,6 +33,7 @@ jobs:
       - name: Generate keys and set env
         run: |
           cd test-dir/examples/xmtp-gm
+          touch .env
           yarn gen:keys
 
       - name: Run agent
