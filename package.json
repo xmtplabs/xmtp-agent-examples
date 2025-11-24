@@ -12,9 +12,9 @@
     "build:examples": "yarn workspaces foreach --all --include \"examples/*\" run build",
     "dev": "cd examples/xmtp-gm && tsx --watch index.ts",
     "format": "prettier -w .",
-    "gen:keys": "tsx scripts/generateKeys.ts",
+    "gen:keys": "yarn dlx @xmtp/cli gen:keys",
     "lint": "eslint .",
-    "revoke": "tsx scripts/revokeInstallations.ts",
+    "revoke": "yarn dlx @xmtp/cli revoke",
     "start": "cd examples/xmtp-gm && tsx index.ts",
     "typecheck": "tsc"
   },
