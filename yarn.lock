@@ -4243,25 +4243,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@xmtp/agent-sdk@npm:*":
-  version: 1.1.15
-  resolution: "@xmtp/agent-sdk@npm:1.1.15"
-  dependencies:
-    "@xmtp/content-type-markdown": "npm:^1.0.0"
-    "@xmtp/content-type-reaction": "npm:^2.0.2"
-    "@xmtp/content-type-read-receipt": "npm:^2.0.2"
-    "@xmtp/content-type-remote-attachment": "npm:^2.0.2"
-    "@xmtp/content-type-reply": "npm:^2.0.2"
-    "@xmtp/content-type-text": "npm:^2.0.2"
-    "@xmtp/content-type-transaction-reference": "npm:^2.0.2"
-    "@xmtp/content-type-wallet-send-calls": "npm:^2.0.0"
-    "@xmtp/node-sdk": "npm:4.3.1"
-    viem: "npm:^2.37.6"
-  checksum: 10c0/330528e84e1579456d37126d067f49d3131c3eae8864a0d5bcae69ef4359a5eed3dcf823edda49f06cea8a80be9edc9135a06fccc1668b6c1fe54a1241ebcdcd
-  languageName: node
-  linkType: hard
-
-"@xmtp/agent-sdk@npm:^1.2.1":
+"@xmtp/agent-sdk@npm:*, @xmtp/agent-sdk@npm:^1.2.1":
   version: 1.2.1
   resolution: "@xmtp/agent-sdk@npm:1.2.1"
   dependencies:
@@ -4325,18 +4307,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@xmtp/content-type-remote-attachment@npm:^2.0.2":
-  version: 2.0.2
-  resolution: "@xmtp/content-type-remote-attachment@npm:2.0.2"
-  dependencies:
-    "@noble/secp256k1": "npm:^2.2.3"
-    "@xmtp/content-type-primitives": "npm:^2.0.2"
-    "@xmtp/proto": "npm:^3.78.0"
-  checksum: 10c0/aacec27d001b4707c3a3c0bf3aa0402839e6e59deced0d777ff21906d21a6771b43bfe07d944d7269ca422a3f0f47bd227bbc6fef181307c3533abdb0606ab72
-  languageName: node
-  linkType: hard
-
-"@xmtp/content-type-remote-attachment@npm:^2.0.3":
+"@xmtp/content-type-remote-attachment@npm:^2.0.2, @xmtp/content-type-remote-attachment@npm:^2.0.3":
   version: 2.0.3
   resolution: "@xmtp/content-type-remote-attachment@npm:2.0.3"
   dependencies:
@@ -4393,29 +4364,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@xmtp/node-bindings@npm:1.5.4":
-  version: 1.5.4
-  resolution: "@xmtp/node-bindings@npm:1.5.4"
-  checksum: 10c0/0d8d53aeb7b5b4f3c8882857302e8a40a7556ecb825df9bc36f01cc3b527bf920de038e3c31d9e2a22e52bdf06a480e74f347a27166f5a7db450feaf3d463834
-  languageName: node
-  linkType: hard
-
 "@xmtp/node-bindings@npm:1.6.6":
   version: 1.6.6
   resolution: "@xmtp/node-bindings@npm:1.6.6"
   checksum: 10c0/4050e3f1fec45d8a25836317a0e7ca3623559549fc813f4e1f72499be1aecd48ea6afd5669e42682c10a7406728ce80b0b6523c750be05b1a36e5366b492d4b8
-  languageName: node
-  linkType: hard
-
-"@xmtp/node-sdk@npm:4.3.1":
-  version: 4.3.1
-  resolution: "@xmtp/node-sdk@npm:4.3.1"
-  dependencies:
-    "@xmtp/content-type-group-updated": "npm:^2.0.2"
-    "@xmtp/content-type-primitives": "npm:^2.0.2"
-    "@xmtp/content-type-text": "npm:^2.0.2"
-    "@xmtp/node-bindings": "npm:1.5.4"
-  checksum: 10c0/669847a026f742fe3d75e2cff0aa5ce5c64ffa681ab067229a54542bb952f0c24304df745524c6e7aafa112bf73b6347b2be2f83ccec2c796001ddc073083166
   languageName: node
   linkType: hard
 
