@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@types/node": "^22.13.0",
-    "@xmtp/agent-sdk": "^1.1.16",
+    "@xmtp/agent-sdk": "^1.1.17",
     "@xmtp/content-type-markdown": "^1.0.0",
     "@xmtp/content-type-remote-attachment": "^2.0.2",
     "@xmtp/content-type-wallet-send-calls": "^1.0.1",
