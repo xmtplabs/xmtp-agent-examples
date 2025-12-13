@@ -4261,7 +4261,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@xmtp/agent-sdk@npm:^1.1.17":
+"@xmtp/agent-sdk@npm:^1.2.1":
   version: 1.2.1
   resolution: "@xmtp/agent-sdk@npm:1.2.1"
   dependencies:
@@ -10198,7 +10198,7 @@ __metadata:
     "@eslint/compat": "npm:^1.2.4"
     "@types/node": "npm:^22.13.0"
     "@types/react": "npm:^19"
-    "@xmtp/agent-sdk": "npm:^1.1.17"
+    "@xmtp/agent-sdk": "npm:^1.2.1"
     "@xmtp/content-type-markdown": "npm:^1.0.0"
     "@xmtp/content-type-remote-attachment": "npm:^2.0.3"
     "@xmtp/content-type-wallet-send-calls": "npm:^1.0.1"
