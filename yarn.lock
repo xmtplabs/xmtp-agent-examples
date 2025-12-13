@@ -4336,6 +4336,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@xmtp/content-type-remote-attachment@npm:^2.0.3":
+  version: 2.0.3
+  resolution: "@xmtp/content-type-remote-attachment@npm:2.0.3"
+  dependencies:
+    "@noble/secp256k1": "npm:^2.2.3"
+    "@xmtp/content-type-primitives": "npm:^2.0.2"
+    "@xmtp/proto": "npm:3.78.0"
+  checksum: 10c0/ecce7168b54968465cd1f3dc4a420ba764c591403b3de7293fc6954c18ee8cf97412d8c4e7438112f28ffde0df7de26b44d8ba967cdb71e21c76185c4cd1e0ab
+  languageName: node
+  linkType: hard
+
 "@xmtp/content-type-reply@npm:^2.0.2":
   version: 2.0.2
   resolution: "@xmtp/content-type-reply@npm:2.0.2"
@@ -4417,6 +4428,18 @@ __metadata:
     "@xmtp/content-type-text": "npm:^2.0.2"
     "@xmtp/node-bindings": "npm:1.6.6"
   checksum: 10c0/5ca2a791f94664994f59f6fb1d45e710fcb040dbc133a522659df1204e9218ef9e8ede34f519e042e2f7baf9f5fbd0f6450fcfd6cd2f628daad416638c4bf75d
+  languageName: node
+  linkType: hard
+
+"@xmtp/proto@npm:3.78.0":
+  version: 3.78.0
+  resolution: "@xmtp/proto@npm:3.78.0"
+  dependencies:
+    long: "npm:^5.2.0"
+    protobufjs: "npm:^7.0.0"
+    rxjs: "npm:^7.8.0"
+    undici: "npm:^5.8.1"
+  checksum: 10c0/c27e1700599541e6277eaef0dc7145514f656e73efb362fd0065f254754e0e4343cb197a9f8c3882f795870e8c872bbca14065661f121ca22d155c487330722b
   languageName: node
   linkType: hard
 
@@ -10177,7 +10200,7 @@ __metadata:
     "@types/react": "npm:^19"
     "@xmtp/agent-sdk": "npm:^1.1.17"
     "@xmtp/content-type-markdown": "npm:^1.0.0"
-    "@xmtp/content-type-remote-attachment": "npm:^2.0.2"
+    "@xmtp/content-type-remote-attachment": "npm:^2.0.3"
     "@xmtp/content-type-wallet-send-calls": "npm:^1.0.1"
     eslint: "npm:^9.19.0"
     eslint-plugin-prettier: "npm:^5.2.3"
