@@ -4345,7 +4345,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@xmtp/content-type-remote-attachment@npm:^2.0.2, @xmtp/content-type-remote-attachment@npm:^2.0.3":
+"@xmtp/content-type-remote-attachment@npm:^2.0.2":
   version: 2.0.3
   resolution: "@xmtp/content-type-remote-attachment@npm:2.0.3"
   dependencies:
@@ -4353,6 +4353,17 @@ __metadata:
     "@xmtp/content-type-primitives": "npm:^2.0.2"
     "@xmtp/proto": "npm:3.78.0"
   checksum: 10c0/ecce7168b54968465cd1f3dc4a420ba764c591403b3de7293fc6954c18ee8cf97412d8c4e7438112f28ffde0df7de26b44d8ba967cdb71e21c76185c4cd1e0ab
+  languageName: node
+  linkType: hard
+
+"@xmtp/content-type-remote-attachment@npm:^2.0.4":
+  version: 2.0.4
+  resolution: "@xmtp/content-type-remote-attachment@npm:2.0.4"
+  dependencies:
+    "@noble/secp256k1": "npm:^2.2.3"
+    "@xmtp/content-type-primitives": "npm:^2.0.2"
+    "@xmtp/proto": "npm:3.78.0"
+  checksum: 10c0/2195b7c502179e45fedeb77825b5082da83fec93346a132df2002700769d8b391ca93d5dca412328865368f422a9d9226f7da7065d63fde29ea9b71d4db3a844
   languageName: node
   linkType: hard
 
@@ -10228,7 +10239,7 @@ __metadata:
     "@xmtp/agent-sdk": "npm:^1.2.1"
     "@xmtp/cli": "npm:^0.0.4"
     "@xmtp/content-type-markdown": "npm:^1.0.0"
-    "@xmtp/content-type-remote-attachment": "npm:^2.0.3"
+    "@xmtp/content-type-remote-attachment": "npm:^2.0.4"
     "@xmtp/content-type-wallet-send-calls": "npm:^1.0.1"
     eslint: "npm:^9.19.0"
     eslint-plugin-prettier: "npm:^5.2.3"
