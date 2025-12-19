@@ -1,6 +1,6 @@
-# XMTP Agent SDK Instructions
-
-## Code Style
+---
+alwaysApply: true
+---
 
 Use "validators" instead of "type assertions" to maintain runtime safety:
 
