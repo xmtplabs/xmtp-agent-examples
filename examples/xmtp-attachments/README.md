@@ -8,29 +8,60 @@ An XMTP agent that demonstrates [file attachment](https://docs.xmtp.org/agents/c
 
 ## Usage
 
-```typescript
-// 1. Encrypt the attachment data
-const encrypted = await encryptAttachment(
-  new Uint8Array(await readFile(DEFAULT_IMAGE_PATH)),
-  "logo.png",
-  "image/png",
-);
+Send and receive attachments using the `sendRemoteAttachment` and `downloadRemoteAttachment` utility functions.
 
-// 2. Upload to IPFS
-const fileUrl = await uploadToPinata(
-  encrypted.encryptedData,
-  encrypted.filename,
-);
+```ts
+import { type AttachmentUploadCallback } from "@xmtp/agent-sdk/util";
 
-// 3. Create and send new remote attachment
-const remoteAttachment = await createRemoteAttachmentFromFile(
-  DEFAULT_IMAGE_PATH,
-  fileUrl,
-  "image/png",
-);
+agent.on("text", async (ctx) => {
+  if (ctx.message.content === "/send-file") {
+    // Create a File object (in Node.js, you can use the File class from buffer or file-system)
+    const file = new File(["Hello, World!"], "hello.txt", {
+      type: "text/plain",
+    });
 
-// 4. Send the remote attachment
-await ctx.conversation.send(remoteAttachment, ContentTypeRemoteAttachment);
+    // Upload callback - implement your own storage solution
+    const uploadCallback: AttachmentUploadCallback = async (attachment) => {
+      // Upload "attachment.content.payload" to your storage
+      const pinata = new PinataSDK({
+        pinataJwt: process.env.PINATA_JWT,
+        pinataGateway: process.env.PINATA_GATEWAY,
+      });
+
+      const mimeType = "application/octet-stream";
+      const encryptedBlob = new Blob(
+        [Buffer.from(attachment.content.payload)],
+        {
+          type: mimeType,
+        },
+      );
+      const encryptedFile = new File([encryptedBlob], attachment.filename, {
+        type: mimeType,
+      });
+      const upload = await pinata.upload.public.file(encryptedFile);
+
+      // Return the public URL where the file can be downloaded
+      return pinata.gateways.public.convert(`${upload.cid}`);
+    };
+
+    // Send the encrypted remote attachment
+    await ctx.sendRemoteAttachment(file, uploadCallback);
+  }
+});
+```
+
+Other agents can then download and decrypt the attachment using the `"attachment"` topic:
+
+```ts
+import { downloadRemoteAttachment } from "@xmtp/agent-sdk/util";
+
+agent.on("attachment", async (ctx) => {
+  const receivedAttachment = await downloadRemoteAttachment(
+    ctx.message.content,
+    agent,
+  );
+  console.log(`Received attachment: ${receivedAttachment.filename}`);
+});
 ```
 
 ## Getting started
