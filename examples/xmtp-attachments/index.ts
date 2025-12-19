@@ -2,26 +2,16 @@ import { readFile } from "node:fs/promises";
 import { Agent } from "@xmtp/agent-sdk";
 import { getTestUrl } from "@xmtp/agent-sdk/debug";
 import {
-  AttachmentCodec,
-  ContentTypeRemoteAttachment,
-  RemoteAttachmentCodec,
-} from "@xmtp/content-type-remote-attachment";
-import {
-  createRemoteAttachmentFromData,
-  createRemoteAttachmentFromFile,
-  encryptAttachment,
-  loadRemoteAttachment,
-} from "../../utils/atttachment";
+  type AttachmentUploadCallback,
+  downloadRemoteAttachment,
+} from "@xmtp/agent-sdk/util";
 import { uploadToPinata } from "./upload";
-
 import { loadEnvFile } from "../../utils/general";
 
 loadEnvFile();
-// Check this path is correct in your case of errors
 const DEFAULT_IMAGE_PATH = "./logo.png";
 
 const agent = await Agent.createFromEnv({
-  codecs: [new RemoteAttachmentCodec(), new AttachmentCodec()],
   env: process.env.XMTP_ENV as "local" | "dev" | "production",
 });
 
@@ -31,35 +21,37 @@ agent.on("text", async (ctx) => {
   );
 
   const senderAddress = await ctx.getSenderAddress();
-
   console.log(`Preparing attachment for ${senderAddress}...`);
   await ctx.sendText(`I'll send you an attachment now...`);
 
-  const encrypted = await encryptAttachment(
-    new Uint8Array(await readFile(DEFAULT_IMAGE_PATH)),
-    "logo.png",
-    "image/png",
-  );
-  const fileUrl = await uploadToPinata(
-    encrypted.encryptedData,
-    encrypted.filename,
-  );
+  const fileData = await readFile(DEFAULT_IMAGE_PATH);
+  const file = new File([fileData], "logo.png", {
+    type: "image/png",
+  });
 
-  const remoteAttachment = await createRemoteAttachmentFromFile(
-    DEFAULT_IMAGE_PATH,
-    fileUrl,
-    "image/png",
-  );
-  await ctx.conversation.send(remoteAttachment, ContentTypeRemoteAttachment);
+  const uploadCallback: AttachmentUploadCallback = async (attachment: any) => {
+    console.log(
+      `Uploading encrypted attachment: ${attachment.filename}, size: ${attachment.content.payload.length} bytes`,
+    );
+    const fileUrl = await uploadToPinata(
+      new Uint8Array(attachment.content.payload),
+      attachment.filename,
+    );
+    console.log(`File uploaded to: ${fileUrl}`);
+    return fileUrl;
+  };
 
+  // @ts-expect-error - New API method
+  await ctx.sendRemoteAttachment(file, uploadCallback);
   console.log("Remote attachment sent successfully");
 });
 
 agent.on("attachment", async (ctx) => {
-  // Load and decode the received attachment
-  const receivedAttachment = await loadRemoteAttachment(
+  console.log("Received attachment message");
+
+  const receivedAttachment = await downloadRemoteAttachment(
     ctx.message.content,
-    agent.client,
+    agent,
   );
 
   const filename = receivedAttachment.filename || "unnamed";
@@ -67,36 +59,27 @@ agent.on("attachment", async (ctx) => {
 
   console.log(`Processing attachment: ${filename} (${mimeType})`);
 
-  // Send acknowledgment message
   await ctx.sendText(
     `I received your attachment "${filename}"! Processing it now...`,
   );
 
-  // Encrypt and upload the attachment data
-  const encrypted = await encryptAttachment(
-    receivedAttachment.data,
-    filename,
-    mimeType,
-  );
-  const fileUrl = await uploadToPinata(
-    encrypted.encryptedData,
-    encrypted.filename,
-  );
+  const file = new File([receivedAttachment.data], filename, {
+    type: mimeType,
+  });
 
-  // Create a new remote attachment from the decoded data
-  const reEncodedAttachment = await createRemoteAttachmentFromData(
-    receivedAttachment.data,
-    filename,
-    mimeType,
-    fileUrl,
-  );
+  const uploadCallback: AttachmentUploadCallback = async (attachment: any) => {
+    console.log(
+      `Re-uploading attachment: ${attachment.filename}, size: ${attachment.content.payload.length} bytes`,
+    );
+    return await uploadToPinata(
+      new Uint8Array(attachment.content.payload),
+      attachment.filename,
+    );
+  };
 
-  // Send the re-encoded attachment back
-  await ctx.conversation.send(reEncodedAttachment, ContentTypeRemoteAttachment);
-
+  // @ts-expect-error - New API method
+  await ctx.sendRemoteAttachment(file, uploadCallback);
   console.log(`Successfully sent back attachment: ${filename}`);
-
-  // Send confirmation message
   await ctx.sendText(`Here's your attachment back: ${filename}`);
 });
 
