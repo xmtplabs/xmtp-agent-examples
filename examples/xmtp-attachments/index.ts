@@ -3,8 +3,11 @@ import { Agent } from "@xmtp/agent-sdk";
 import { getTestUrl } from "@xmtp/agent-sdk/debug";
 import {
   type AttachmentUploadCallback,
+  createRemoteAttachmentFromFile,
   downloadRemoteAttachment,
 } from "@xmtp/agent-sdk/util";
+
+import { ContentTypeRemoteAttachment } from "@xmtp/content-type-remote-attachment";
 import { uploadToPinata } from "./upload";
 import { loadEnvFile } from "../../utils/general";
 
@@ -29,7 +32,7 @@ agent.on("text", async (ctx) => {
     type: "image/png",
   });
 
-  const uploadCallback: AttachmentUploadCallback = async (attachment: any) => {
+  const uploadCallback: AttachmentUploadCallback = async (attachment) => {
     console.log(
       `Uploading encrypted attachment: ${attachment.filename}, size: ${attachment.content.payload.length} bytes`,
     );
@@ -41,8 +44,11 @@ agent.on("text", async (ctx) => {
     return fileUrl;
   };
 
-  // @ts-expect-error - New API method
-  await ctx.sendRemoteAttachment(file, uploadCallback);
+  const remoteAttachment = await createRemoteAttachmentFromFile(
+    file,
+    uploadCallback,
+  );
+  await ctx.conversation.send(remoteAttachment, ContentTypeRemoteAttachment);
   console.log("Remote attachment sent successfully");
 });
 
@@ -51,7 +57,7 @@ agent.on("attachment", async (ctx) => {
 
   const receivedAttachment = await downloadRemoteAttachment(
     ctx.message.content,
-    agent,
+    agent,  
   );
 
   const filename = receivedAttachment.filename || "unnamed";
@@ -67,7 +73,7 @@ agent.on("attachment", async (ctx) => {
     type: mimeType,
   });
 
-  const uploadCallback: AttachmentUploadCallback = async (attachment: any) => {
+  const uploadCallback: AttachmentUploadCallback = async (attachment) => {
     console.log(
       `Re-uploading attachment: ${attachment.filename}, size: ${attachment.content.payload.length} bytes`,
     );
@@ -77,8 +83,11 @@ agent.on("attachment", async (ctx) => {
     );
   };
 
-  // @ts-expect-error - New API method
-  await ctx.sendRemoteAttachment(file, uploadCallback);
+  const remoteAttachment = await createRemoteAttachmentFromFile(
+    file,
+    uploadCallback,
+  );
+  await ctx.conversation.send(remoteAttachment, ContentTypeRemoteAttachment);
   console.log(`Successfully sent back attachment: ${filename}`);
   await ctx.sendText(`Here's your attachment back: ${filename}`);
 });
