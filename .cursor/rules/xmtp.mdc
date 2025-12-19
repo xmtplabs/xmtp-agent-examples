@@ -4,6 +4,7 @@ alwaysApply: true
 
 # Vibe coding XMTP Agents
 
+
 # XMTP Agent SDK
 
 Build event‑driven, middleware‑powered messaging agents on the XMTP network. 🚀
@@ -40,6 +41,7 @@ const signer = createSigner(user);
 // 2. Spin up the agent
 const agent = await Agent.create(signer, {
   env: "dev", // or 'production'
+  dbPath: null, // in-memory store; provide a path to persist
 });
 
 // 3. Respond to text messages
@@ -306,7 +308,7 @@ if (f.isText(ctx.message)) {
 
 **Available Filters:**
 
-You can find all available prebuilt filters [here](https://github.com/xmtp/xmtp-js/blob/main/sdks/agent-sdk/src/utils/filter.ts).
+You can find all available prebuilt filters [here](https://github.com/xmtp/xmtp-js/blob/main/sdks/agent-sdk/src/core/filter.ts).
 
 ### 4. Rich Context
 
@@ -323,6 +325,15 @@ Every message event handler receives a `MessageContext` (`ctx`) with:
 agent.on("text", async (ctx) => {
   await ctx.sendTextReply("Reply using helper ✨");
 });
+```
+
+The Agent class also exposes a function to get the `ConversationContext`, so you can directly interact with a conversation.
+
+**Example**
+
+```ts
+const ctx = await agent.getConversationContext("conversationId");
+await ctx?.sendMarkdown("**Hello, World!**");
 ```
 
 ### 5. Starting Conversations
@@ -376,6 +387,66 @@ const address = await resolver("vitalik.eth");
 console.log(`Resolved address: ${address}`);
 ```
 
+### 7. Sending Attachments
+
+The Agent SDK supports sending encrypted remote attachments. Files are encrypted locally, uploaded to your storage provider of choice, and then sent as a remote attachment message containing the URL and decryption keys.
+
+**Example**
+
+```ts
+import { type AttachmentUploadCallback } from "@xmtp/agent-sdk/util";
+
+agent.on("text", async (ctx) => {
+  if (ctx.message.content === "/send-file") {
+    // Create a File object (in Node.js, you can use the File class from buffer or file-system)
+    const file = new File(["Hello, World!"], "hello.txt", {
+      type: "text/plain",
+    });
+
+    // Upload callback - implement your own storage solution
+    const uploadCallback: AttachmentUploadCallback = async (attachment) => {
+      // Upload "attachment.content.payload" to your storage
+      const pinata = new PinataSDK({
+        pinataJwt: process.env.PINATA_JWT,
+        pinataGateway: process.env.PINATA_GATEWAY,
+      });
+
+      const mimeType = "application/octet-stream";
+      const encryptedBlob = new Blob(
+        [Buffer.from(attachment.content.payload)],
+        {
+          type: mimeType,
+        },
+      );
+      const encryptedFile = new File([encryptedBlob], attachment.filename, {
+        type: mimeType,
+      });
+      const upload = await pinata.upload.public.file(encryptedFile);
+
+      // Return the public URL where the file can be downloaded
+      return pinata.gateways.public.convert(`${upload.cid}`);
+    };
+
+    // Send the encrypted remote attachment
+    await ctx.sendRemoteAttachment(file, uploadCallback);
+  }
+});
+```
+
+Other agents can then download and decrypt the attachment using the `"attachment"` topic:
+
+```ts
+import { downloadRemoteAttachment } from "@xmtp/agent-sdk/util";
+
+agent.on("attachment", async (ctx) => {
+  const receivedAttachment = await downloadRemoteAttachment(
+    ctx.message.content,
+    agent,
+  );
+  console.log(`Received attachment: ${receivedAttachment.filename}`);
+});
+```
+
 ## Adding Custom Content Types
 
 Pass `codecs` when creating your agent to extend supported content:
@@ -383,19 +454,23 @@ Pass `codecs` when creating your agent to extend supported content:
 ```ts
 const agent = await Agent.create(signer, {
   env: "dev",
+  dbPath: null,
   codecs: [new MyContentType()],
 });
 ```
 
 ## LibXMTP Version
 
-[LibXMTP](https://github.com/xmtp/libxmtp/) is a shared library encapsulating the core functionality of the XMTP messaging protocol, such as cryptography, networking, and language bindings. This version of the Agent SDK uses:
+[LibXMTP](https://github.com/xmtp/libxmtp/) is a shared library encapsulating the core functionality of the XMTP messaging protocol, such as cryptography, networking, and language bindings.
 
-| XMTP Node SDK Version | LibXMTP Version |
-| --------------------- | --------------- |
-| 4.3.1                 | 1.5.4           |
+The LibXMTP version used in the Agent SDK can be accessed with the `libxmtpVersion` property of an agent instance.
 
-To verify which LibXMTP version is installed, run `npm why @xmtp/node-bindings` after installing the Agent SDK.
+```ts
+console.log(agent.libxmtpVersion);
+```
+
+
+# Examples
 
 ## Prompt example to code an agent
 
@@ -940,169 +1015,5 @@ import { validators } from "./inline-actions";
 const result = validators.inboxId("123abc...");
 if (!result.valid) {
   await ctx.sendText(`Error: ${result.error}`);
-}
-```
-
-## Remote Attachments
-
-XMTP agents can handle file attachments through a secure, encrypted system using remote storage. The SDK provides utility functions to simplify attachment processing, encryption, and decryption.
-
-### Setup
-
-First, register the required codecs when creating your agent:
-
-```typescript
-import {
-  AttachmentCodec,
-  RemoteAttachmentCodec,
-} from "@xmtp/content-type-remote-attachment";
-
-const agent = await Agent.createFromEnv({
-  codecs: [new RemoteAttachmentCodec(), new AttachmentCodec()],
-  env: process.env.XMTP_ENV as "local" | "dev" | "production",
-});
-```
-
-### Utility Functions
-
-Import attachment utilities from the shared utilities:
-
-```typescript
-import {
-  createRemoteAttachmentFromData,
-  createRemoteAttachmentFromFile,
-  encryptAttachment,
-  loadRemoteAttachment,
-} from "../../utils/atttachment";
-```
-
-### Core Functions
-
-**Encrypt attachment data:**
-
-```typescript
-const encrypted = await encryptAttachment(
-  new Uint8Array(fileData),
-  "filename.jpg",
-  "image/jpeg",
-);
-// Returns: { encryptedData: Uint8Array, filename: string }
-```
-
-**Create remote attachment from file:**
-
-```typescript
-const remoteAttachment = await createRemoteAttachmentFromFile(
-  "./path/to/file.jpg",
-  "https://ipfs.io/ipfs/hash",
-  "image/jpeg",
-);
-```
-
-**Create remote attachment from data:**
-
-```typescript
-const remoteAttachment = await createRemoteAttachmentFromData(
-  new Uint8Array(fileData),
-  "filename.jpg",
-  "image/jpeg",
-  "https://ipfs.io/ipfs/hash",
-);
-```
-
-**Load and decode received attachment:**
-
-```typescript
-const receivedAttachment = await loadRemoteAttachment(
-  ctx.message.content,
-  agent.client,
-);
-// Returns: { data: Uint8Array, filename: string, mimeType: string }
-```
-
-### Handling Attachments
-
-**Send attachments:**
-
-```typescript
-// For text messages - send default attachment
-agent.on("text", async (ctx) => {
-  const encrypted = await encryptAttachment(
-    new Uint8Array(await readFile("./logo.png")),
-    "logo.png",
-    "image/png",
-  );
-
-  const fileUrl = await uploadToPinata(
-    encrypted.encryptedData,
-    encrypted.filename,
-  );
-
-  const remoteAttachment = await createRemoteAttachmentFromFile(
-    "./logo.png",
-    fileUrl,
-    "image/png",
-  );
-
-  await ctx.sendText(remoteAttachment, ContentTypeRemoteAttachment);
-});
-```
-
-**Receive and process attachments:**
-
-```typescript
-agent.on("attachment", async (ctx) => {
-  // Load and decode the received attachment
-  const receivedAttachment = await loadRemoteAttachment(
-    ctx.message.content,
-    agent.client,
-  );
-
-  const filename = receivedAttachment.filename || "unnamed";
-  const mimeType = receivedAttachment.mimeType || "application/octet-stream";
-
-  console.log(`Processing attachment: ${filename} (${mimeType})`);
-
-  // Send acknowledgment
-  await ctx.sendText(
-    `I received your attachment "${filename}"! Processing it now...`,
-  );
-
-  // Re-encrypt and upload (optional)
-  const encrypted = await encryptAttachment(
-    receivedAttachment.data,
-    filename,
-    mimeType,
-  );
-
-  const fileUrl = await uploadToPinata(
-    encrypted.encryptedData,
-    encrypted.filename,
-  );
-
-  // Create and send new remote attachment
-  const reEncodedAttachment = await createRemoteAttachmentFromData(
-    receivedAttachment.data,
-    filename,
-    mimeType,
-    fileUrl,
-  );
-
-  await ctx.sendText(reEncodedAttachment, ContentTypeRemoteAttachment);
-});
-```
-
-### Storage Integration
-
-The examples use Pinata for IPFS storage, but you can integrate with any storage service:
-
-```typescript
-// Example upload function (implement based on your storage provider)
-async function uploadToPinata(
-  data: Uint8Array,
-  filename: string,
-): Promise<string> {
-  // Upload to IPFS/storage and return URL
-  return "https://ipfs.io/ipfs/your-hash";
 }
 ```
