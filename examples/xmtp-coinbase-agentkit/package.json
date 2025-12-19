@@ -17,7 +17,7 @@
     "@langchain/core": "^0.3.19",
     "@langchain/langgraph": "^0.2.21",
     "@langchain/openai": "^0.3.14",
-    "@xmtp/agent-sdk": "^1.2.3"
+    "@xmtp/agent-sdk": "*"
   },
   "devDependencies": {
     "tsx": "*",

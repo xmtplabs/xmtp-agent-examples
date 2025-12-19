@@ -990,7 +990,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/xmtp-attachments@workspace:examples/xmtp-attachments"
   dependencies:
-    "@xmtp/agent-sdk": "npm:^1.2.3"
+    "@xmtp/agent-sdk": "npm:*"
     axios: "npm:^1.8.4"
     form-data: "npm:^4.0.2"
     tsx: "npm:*"
@@ -1007,7 +1007,7 @@ __metadata:
     "@langchain/core": "npm:^0.3.19"
     "@langchain/langgraph": "npm:^0.2.21"
     "@langchain/openai": "npm:^0.3.14"
-    "@xmtp/agent-sdk": "npm:^1.2.3"
+    "@xmtp/agent-sdk": "npm:*"
     tsx: "npm:*"
     typescript: "npm:*"
   languageName: unknown
@@ -1017,7 +1017,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/xmtp-domain-resolver@workspace:examples/xmtp-domain-resolver"
   dependencies:
-    "@xmtp/agent-sdk": "npm:^1.2.3"
+    "@xmtp/agent-sdk": "npm:*"
     tsx: "npm:*"
     typescript: "npm:*"
   languageName: unknown
@@ -1027,7 +1027,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/xmtp-gaia@workspace:examples/xmtp-gaia"
   dependencies:
-    "@xmtp/agent-sdk": "npm:^1.2.3"
+    "@xmtp/agent-sdk": "npm:*"
     openai: "npm:4.94.0"
     tsx: "npm:*"
     typescript: "npm:*"
@@ -1038,7 +1038,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/xmtp-generalstore@workspace:examples/xmtp-generalstore"
   dependencies:
-    "@xmtp/agent-sdk": "npm:^1.2.3"
+    "@xmtp/agent-sdk": "npm:*"
     tsx: "npm:*"
     typescript: "npm:*"
   languageName: unknown
@@ -1048,7 +1048,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/xmtp-gm@workspace:examples/xmtp-gm"
   dependencies:
-    "@xmtp/agent-sdk": "npm:^1.2.3"
+    "@xmtp/agent-sdk": "npm:*"
     tsx: "npm:*"
     typescript: "npm:*"
   languageName: unknown
@@ -1058,7 +1058,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/xmtp-gpt@workspace:examples/xmtp-gpt"
   dependencies:
-    "@xmtp/agent-sdk": "npm:^1.2.3"
+    "@xmtp/agent-sdk": "npm:*"
     openai: "npm:4.94.0"
     tsx: "npm:*"
     typescript: "npm:*"
@@ -1069,7 +1069,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/xmtp-queue-dual-client@workspace:examples/xmtp-queue-dual-client"
   dependencies:
-    "@xmtp/agent-sdk": "npm:^1.2.3"
+    "@xmtp/agent-sdk": "npm:*"
     tsx: "npm:*"
     typescript: "npm:*"
   languageName: unknown
@@ -1079,7 +1079,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/xmtp-secret-word-group@workspace:examples/xmtp-gated-group"
   dependencies:
-    "@xmtp/agent-sdk": "npm:^1.2.3"
+    "@xmtp/agent-sdk": "npm:*"
     tsx: "npm:*"
     typescript: "npm:*"
   languageName: unknown
@@ -1090,7 +1090,7 @@ __metadata:
   resolution: "@examples/xmtp-smart-wallet@workspace:examples/xmtp-smart-wallet"
   dependencies:
     "@coinbase/coinbase-sdk": "npm:^0.22.0"
-    "@xmtp/agent-sdk": "npm:^1.2.3"
+    "@xmtp/agent-sdk": "npm:*"
     tsx: "npm:*"
     typescript: "npm:*"
   languageName: unknown
@@ -1100,7 +1100,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/xmtp-thinking-reaction@workspace:examples/xmtp-thinking-reaction"
   dependencies:
-    "@xmtp/agent-sdk": "npm:^1.2.3"
+    "@xmtp/agent-sdk": "npm:*"
     "@xmtp/content-type-reaction": "npm:^2.0.2"
     tsx: "npm:*"
     typescript: "npm:*"
@@ -1111,7 +1111,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/xmtp-transactions@workspace:examples/xmtp-transactions"
   dependencies:
-    "@xmtp/agent-sdk": "npm:^1.2.3"
+    "@xmtp/agent-sdk": "npm:*"
     "@xmtp/content-type-transaction-reference": "npm:^2.0.2"
     "@xmtp/content-type-wallet-send-calls": "npm:^1.0.1"
     tsx: "npm:*"
@@ -1124,7 +1124,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/xmtp-welcome-message@workspace:examples/xmtp-welcome-message"
   dependencies:
-    "@xmtp/agent-sdk": "npm:^1.2.3"
+    "@xmtp/agent-sdk": "npm:*"
     tsx: "npm:*"
     typescript: "npm:*"
   languageName: unknown
@@ -1762,7 +1762,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nodelib/fs.walk@npm:^1.2.3":
+"@nodelib/fs.walk@npm:*":
   version: 1.2.8
   resolution: "@nodelib/fs.walk@npm:1.2.8"
   dependencies:
@@ -4243,6 +4243,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@xmtp/agent-sdk@npm:*, @xmtp/agent-sdk@npm:1.2.3":
+  version: 1.2.3
+  resolution: "@xmtp/agent-sdk@npm:1.2.3"
+  dependencies:
+    "@xmtp/content-type-markdown": "npm:^1.0.0"
+    "@xmtp/content-type-reaction": "npm:^2.0.2"
+    "@xmtp/content-type-read-receipt": "npm:^2.0.2"
+    "@xmtp/content-type-remote-attachment": "npm:^2.0.4"
+    "@xmtp/content-type-reply": "npm:^2.0.2"
+    "@xmtp/content-type-text": "npm:^2.0.2"
+    "@xmtp/content-type-transaction-reference": "npm:^2.0.2"
+    "@xmtp/content-type-wallet-send-calls": "npm:^2.0.0"
+    "@xmtp/node-sdk": "npm:4.6.0"
+    viem: "npm:^2.37.6"
+  checksum: 10c0/80da0a7c153d9ebdd1d4956c7c4a590aa7920d6cde9ebda675bed230ddb4b56f35d8842aa357ef8339ba69a85dfa946e29ff38d77288a160c0f500d34bf57d83
+  languageName: node
+  linkType: hard
+
 "@xmtp/agent-sdk@npm:1.1.16":
   version: 1.1.16
   resolution: "@xmtp/agent-sdk@npm:1.1.16"
@@ -4258,24 +4276,6 @@ __metadata:
     "@xmtp/node-sdk": "npm:4.3.1"
     viem: "npm:^2.37.6"
   checksum: 10c0/789599df7f199ca62332e4ccbbae46e4e2f646ce9d9f7edf9f34b85809c1d82712a23c4efe0020c5472ce44da497f97f463be0c4dd4a3c6f09220f741a529dde
-  languageName: node
-  linkType: hard
-
-"@xmtp/agent-sdk@npm:^1.2.3":
-  version: 1.2.3
-  resolution: "@xmtp/agent-sdk@npm:1.2.3"
-  dependencies:
-    "@xmtp/content-type-markdown": "npm:^1.0.0"
-    "@xmtp/content-type-reaction": "npm:^2.0.2"
-    "@xmtp/content-type-read-receipt": "npm:^2.0.2"
-    "@xmtp/content-type-remote-attachment": "npm:^2.0.4"
-    "@xmtp/content-type-reply": "npm:^2.0.2"
-    "@xmtp/content-type-text": "npm:^2.0.2"
-    "@xmtp/content-type-transaction-reference": "npm:^2.0.2"
-    "@xmtp/content-type-wallet-send-calls": "npm:^2.0.0"
-    "@xmtp/node-sdk": "npm:4.6.0"
-    viem: "npm:^2.37.6"
-  checksum: 10c0/80da0a7c153d9ebdd1d4956c7c4a590aa7920d6cde9ebda675bed230ddb4b56f35d8842aa357ef8339ba69a85dfa946e29ff38d77288a160c0f500d34bf57d83
   languageName: node
   linkType: hard
 
@@ -6416,7 +6416,7 @@ __metadata:
   resolution: "fast-glob@npm:3.3.3"
   dependencies:
     "@nodelib/fs.stat": "npm:^2.0.2"
-    "@nodelib/fs.walk": "npm:^1.2.3"
+    "@nodelib/fs.walk": "npm:*"
     glob-parent: "npm:^5.1.2"
     merge2: "npm:^1.3.0"
     micromatch: "npm:^4.0.8"
@@ -10236,10 +10236,9 @@ __metadata:
     "@eslint/compat": "npm:^1.2.4"
     "@types/node": "npm:^22.13.0"
     "@types/react": "npm:^19"
-    "@xmtp/agent-sdk": "npm:^1.2.3"
+    "@xmtp/agent-sdk": "npm:1.2.3"
     "@xmtp/cli": "npm:^0.0.4"
     "@xmtp/content-type-markdown": "npm:^1.0.0"
-    "@xmtp/content-type-remote-attachment": "npm:^2.0.4"
     "@xmtp/content-type-wallet-send-calls": "npm:^1.0.1"
     eslint: "npm:^9.19.0"
     eslint-plugin-prettier: "npm:^5.2.3"

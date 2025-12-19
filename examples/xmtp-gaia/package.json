@@ -12,7 +12,7 @@
     "start": "tsx  index.ts"
   },
   "dependencies": {
-    "@xmtp/agent-sdk": "^1.2.3",
+    "@xmtp/agent-sdk": "*",
     "openai": "4.94.0"
   },
   "devDependencies": {

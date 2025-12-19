@@ -13,7 +13,7 @@
     "start": "tsx index.ts"
   },
   "dependencies": {
-    "@xmtp/agent-sdk": "^1.2.3"
+    "@xmtp/agent-sdk": "*"
   },
   "devDependencies": {
     "tsx": "*",

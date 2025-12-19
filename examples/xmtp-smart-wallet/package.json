@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@coinbase/coinbase-sdk": "^0.22.0",
-    "@xmtp/agent-sdk": "^1.2.3"
+    "@xmtp/agent-sdk": "*"
   },
   "devDependencies": {
     "tsx": "*",
