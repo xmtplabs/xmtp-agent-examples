@@ -104,9 +104,9 @@ agent.on("group", async (ctx) => {
 });
 
 agent.on("start", () => {
-  console.log(`Waiting for messages...`);
   console.log(`Address: ${agent.address}`);
   console.log(`🔗${getTestUrl(agent.client)}`);
+  console.log(`Agent started. Waiting for messages...`);
 });
 
 void agent.start();

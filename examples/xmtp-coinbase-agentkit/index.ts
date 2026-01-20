@@ -266,7 +266,7 @@ agent.on("start", () => {
   console.log(`Address: ${agent.address}`);
   console.log(`Start a conversation at 🔗${getTestUrl(agent.client)}`);
 
-  console.log(`Waiting for messages... \n`);
+  console.log(`Agent started. Waiting for messages... \n`);
 });
 
 void agent.start();
