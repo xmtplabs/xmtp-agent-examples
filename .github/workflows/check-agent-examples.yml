@@ -41,9 +41,9 @@ jobs:
           cd test-dir/examples/xmtp-gm
           timeout 20s yarn dev | tee output.log
           if grep -q "Agent started. Waiting for messages..." output.log; then
-            echo "Success: Agent started successfully and is Agent started. Waiting for messages"
+            echo "Success: Agent started successfully and is waiting for messages"
             exit 0
           else
-            echo "Error: Agent did not reach 'Agent started. Waiting for messages...' state"
+            echo "Error: Agent did not reach 'is waiting for messages' state"
             exit 1
           fi
