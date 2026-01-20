@@ -57,7 +57,7 @@ agent.on("attachment", async (ctx) => {
 
   const receivedAttachment = await downloadRemoteAttachment(
     ctx.message.content,
-    agent,  
+    agent,
   );
 
   const filename = receivedAttachment.filename || "unnamed";
@@ -93,9 +93,9 @@ agent.on("attachment", async (ctx) => {
 });
 
 agent.on("start", () => {
-  console.log(`Waiting for messages...`);
   console.log(`Address: ${agent.address}`);
   console.log(`🔗${getTestUrl(agent.client)}`);
+  console.log(`Agent started. Waiting for messages...`);
 });
 
 void agent.start();
