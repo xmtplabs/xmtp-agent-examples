@@ -1,7 +1,7 @@
 import { Agent, validHex } from "@xmtp/agent-sdk";
 import { getTestUrl } from "@xmtp/agent-sdk/debug";
 import { CommandRouter } from "@xmtp/agent-sdk/middleware";
-import { ContentTypeWalletSendCalls } from "@xmtp/content-type-wallet-send-calls";
+import { ContentTypeWalletSendCalls } from "@xmtp/agent-sdk";
 import { loadEnvFile } from "../../utils/general";
 import {
   createUSDCTransferCalls,

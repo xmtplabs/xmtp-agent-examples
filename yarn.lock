@@ -1101,7 +1101,6 @@ __metadata:
   resolution: "@examples/xmtp-thinking-reaction@workspace:examples/xmtp-thinking-reaction"
   dependencies:
     "@xmtp/agent-sdk": "npm:*"
-    "@xmtp/content-type-reaction": "npm:^2.0.2"
     tsx: "npm:*"
     typescript: "npm:*"
   languageName: unknown
@@ -1112,8 +1111,6 @@ __metadata:
   resolution: "@examples/xmtp-transactions@workspace:examples/xmtp-transactions"
   dependencies:
     "@xmtp/agent-sdk": "npm:*"
-    "@xmtp/content-type-transaction-reference": "npm:^2.0.2"
-    "@xmtp/content-type-wallet-send-calls": "npm:^1.0.1"
     tsx: "npm:*"
     typescript: "npm:*"
     viem: "npm:^2.20.2"
@@ -4245,9 +4242,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@xmtp/agent-sdk@npm:1.2.4":
-  version: 1.2.4
-  resolution: "@xmtp/agent-sdk@npm:1.2.4"
+"@xmtp/agent-sdk@npm:2.0.0-rc1":
+  version: 2.0.0-rc1
+  resolution: "@xmtp/agent-sdk@npm:2.0.0-rc1"
   dependencies:
     "@xmtp/content-type-markdown": "npm:^1.0.0"
     "@xmtp/content-type-reaction": "npm:^2.0.2"
@@ -4259,7 +4256,7 @@ __metadata:
     "@xmtp/content-type-wallet-send-calls": "npm:^2.0.0"
     "@xmtp/node-sdk": "npm:4.6.0"
     viem: "npm:^2.37.6"
-  checksum: 10c0/d2eb5a3313ae252775d5c5a3b827c0cd7cc419185533b6e0c1e380ef27ffa18f3a8327f1529e1d6ecf27e4830ee0b6cdd8ceca6930caac976b87214b6180ea34
+  checksum: 10c0/6d80b5ab37d46d2888e71a8cf1e4862e1be463eee50045f060aa00759b18cb53a8ac92378a20bade0174afd2a402fe505f8dd14059ff4410492616742cac0e8c
   languageName: node
   linkType: hard
 
@@ -4365,15 +4362,6 @@ __metadata:
   dependencies:
     "@xmtp/content-type-primitives": "npm:^2.0.2"
   checksum: 10c0/5fc75bb452a7c06909ec57a7e72e08ec0f9c24f1d93f7d869f2f8af4a69d19de8fc9d813ca1e41430077a3efadb64b12a5b394c9243d199c3f7e45a603ba0db4
-  languageName: node
-  linkType: hard
-
-"@xmtp/content-type-wallet-send-calls@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "@xmtp/content-type-wallet-send-calls@npm:1.0.1"
-  dependencies:
-    "@xmtp/content-type-primitives": "npm:^2.0.2"
-  checksum: 10c0/61ac2fdc0cab2410f6aac85253737a0fa49e7206d471fd92052b0ac612f60485d52c66e34452bf4a0f00acd870bd587f7213e31743dab1681c3fd7ee03d1dbd1
   languageName: node
   linkType: hard
 
@@ -9999,10 +9987,8 @@ __metadata:
     "@eslint/compat": "npm:^1.2.4"
     "@types/node": "npm:^22.13.0"
     "@types/react": "npm:^19"
-    "@xmtp/agent-sdk": "npm:1.2.4"
+    "@xmtp/agent-sdk": "npm:2.0.0-rc1"
     "@xmtp/cli": "npm:^0.0.4"
-    "@xmtp/content-type-markdown": "npm:^1.0.0"
-    "@xmtp/content-type-wallet-send-calls": "npm:^1.0.1"
     eslint: "npm:^9.19.0"
     eslint-plugin-prettier: "npm:^5.2.3"
     globals: "npm:^15.14.0"

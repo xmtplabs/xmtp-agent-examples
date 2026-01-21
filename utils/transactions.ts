@@ -1,5 +1,5 @@
 import { HexString, validHex } from "@xmtp/agent-sdk";
-import type { WalletSendCallsParams } from "@xmtp/content-type-wallet-send-calls";
+import type { WalletSendCallsParams } from "@xmtp/agent-sdk";
 import { createPublicClient, formatUnits, http, toHex } from "viem";
 import { base, baseSepolia } from "viem/chains";
 

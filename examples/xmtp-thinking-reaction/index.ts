@@ -8,7 +8,7 @@ import {
   ContentTypeReaction,
   ReactionCodec,
   type Reaction,
-} from "@xmtp/content-type-reaction";
+} from "@xmtp/agent-sdk";
 import { loadEnvFile } from "../../utils/general";
 
 loadEnvFile();

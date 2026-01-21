@@ -3,7 +3,7 @@ import { getTestUrl } from "@xmtp/agent-sdk/debug";
 import {
   ContentTypeMarkdown,
   MarkdownCodec,
-} from "@xmtp/content-type-markdown";
+} from "@xmtp/agent-sdk";
 
 import {
   inlineActionsMiddleware,

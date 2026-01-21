@@ -5,7 +5,13 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Changed
-- Update agent SDK (2026-01-20)
+- Update agent SDK to 2.0.0-rc1 (2026-01-21)
+- Remove content type packages and test SDK compatibility
+- Update imports to use SDK instead of separate content type packages
+
+### Added
+- Add SDK 2.0.0-rc1 test report
+- Add content types removal error documentation
 
 ## [2025-12-19]
 

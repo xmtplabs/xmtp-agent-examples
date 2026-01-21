@@ -7,7 +7,7 @@ import {
   downloadRemoteAttachment,
 } from "@xmtp/agent-sdk/util";
 
-import { ContentTypeRemoteAttachment } from "@xmtp/content-type-remote-attachment";
+import { ContentTypeRemoteAttachment } from "@xmtp/agent-sdk";
 import { uploadToPinata } from "./upload";
 import { loadEnvFile } from "../../utils/general";
 

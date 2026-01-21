@@ -2,7 +2,7 @@ import {
   ContentTypeId,
   type ContentCodec,
   type EncodedContent,
-} from "@xmtp/content-type-primitives";
+} from "@xmtp/agent-sdk";
 
 /**
  * Content Type ID for Intent messages
