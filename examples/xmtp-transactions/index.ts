@@ -35,23 +35,39 @@ router.command("/tx", async (ctx) => {
   const agentAddress = agent.address;
   const senderAddress = await ctx.getSenderAddress();
 
-  // Parse amount from command arguments
-  const messageContent = String(ctx.message.content).trim();
-  const parts = messageContent.split(/\s+/);
-  const valueToParse = parts[1] || "";
-  const amount = parseFloat(valueToParse);
+  const parseUsdcToBaseUnits = (raw: string): number | null => {
+    const s = raw.trim();
+    if (!s) return null;
 
-  if (isNaN(amount) || amount <= 0 || !isFinite(amount)) {
+    // Accept: "2", "2.5", ".5" (USDC has 6 decimals)
+    if (!/^(?:\d+(?:\.\d+)?|\.\d+)$/.test(s)) return null;
+
+    const [wholePart, fracPartRaw = ""] = s.split(".");
+    const whole = BigInt(wholePart === "" ? "0" : wholePart);
+    const fracPart = fracPartRaw.padEnd(6, "0").slice(0, 6);
+    const frac = BigInt(fracPart === "" ? "0" : fracPart);
+    const units = whole * 1_000_000n + frac;
+
+    if (units <= 0n) return null;
+    if (units > BigInt(Number.MAX_SAFE_INTEGER)) return null;
+    return Number(units);
+  };
+
+  // CommandRouter may pass either "/tx 2" or just "2" as message content.
+  const messageContent = String(ctx.message.content ?? "").trim();
+  const argsText = messageContent.toLowerCase().startsWith("/tx")
+    ? messageContent.replace(/^\/tx\b/i, "").trim()
+    : messageContent;
+  const amountToken = argsText.split(/\s+/)[0] ?? "";
+  const amountInDecimals = parseUsdcToBaseUnits(amountToken);
+
+  if (!amountInDecimals) {
     await ctx.conversation.sendText(
       "Please provide a valid amount. Usage: /tx <amount>",
     );
     return;
   }
 
-  // Convert amount to USDC decimals (6 decimal places)
-  const amountInDecimals = Math.floor(amount * Math.pow(10, 6));
-
-  console.log("Amount", amount);
   console.log("Amount in decimals", amountInDecimals);
 
   const walletSendCalls = createUSDCTransferCalls(

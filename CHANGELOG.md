@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 - Fix type incompatibilities with SDK 2.0.0-rc3
 - Prevent reaction middleware from looping on read receipts / non-text messages
 - Remove unsafe `any` casts in examples and inline actions helpers
+- Fix `/tx` amount parsing when CommandRouter passes args-only content
 
 ## [0.0.4] - 2026-01-21
 
