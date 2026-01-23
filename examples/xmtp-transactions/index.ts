@@ -1,7 +1,6 @@
 import { Agent, validHex } from "@xmtp/agent-sdk";
 import { getTestUrl } from "@xmtp/agent-sdk/debug";
 import { CommandRouter } from "@xmtp/agent-sdk/middleware";
-import { ContentTypeWalletSendCalls } from "@xmtp/agent-sdk";
 import { loadEnvFile } from "../../utils/general";
 import {
   createUSDCTransferCalls,
@@ -24,7 +23,7 @@ router.command("/balance", async (ctx) => {
     validHex(senderAddress),
   );
 
-  await ctx.sendText(
+  await ctx.conversation.sendText(
     `My USDC balance is: ${agentBalance} USDC\n` +
       `Your USDC balance is: ${senderBalance} USDC`,
   );
@@ -36,7 +35,9 @@ router.command("/tx", async (ctx) => {
 
   const amount = parseFloat(ctx.message.content.split(" ")[1]);
   if (isNaN(amount) || amount <= 0) {
-    await ctx.sendText("Please provide a valid amount. Usage: /tx <amount>");
+    await ctx.conversation.sendText(
+      "Please provide a valid amount. Usage: /tx <amount>",
+    );
     return;
   }
 
@@ -50,16 +51,16 @@ router.command("/tx", async (ctx) => {
     amountInDecimals,
   );
   console.log("Replied with wallet sendcall");
-  await ctx.conversation.send(walletSendCalls, ContentTypeWalletSendCalls);
+  await (ctx.conversation as any).sendWalletSendCalls(walletSendCalls);
 
   // Send a follow-up message about transaction references
-  await ctx.sendText(
+  await ctx.conversation.sendText(
     `💡 After completing the transaction, you can send a transaction reference message to confirm completion.`,
   );
 });
 
 router.default(async (ctx) => {
-  await ctx.sendText(
+  await ctx.conversation.sendText(
     "Available commands:\n" +
       "/balance - Check your USDC balance\n" +
       "/tx <amount> - Send USDC to the agent (e.g. /tx 0.1)",
@@ -85,7 +86,7 @@ agent.on("transaction-reference", async (ctx) => {
 
   console.log("Received transaction reference: ", transactionRef);
 
-  await ctx.sendText(
+  await ctx.conversation.sendText(
     `✅ Transaction confirmed!\n` +
       `🔗 Network: ${transactionRef.networkId}\n` +
       `📄 Hash: ${transactionRef.reference}\n` +

@@ -23,7 +23,7 @@ agent.on("text", async (ctx) => {
   const senderAddress = await ctx.getSenderAddress();
 
   console.log(`Sending "gm" response to ${senderAddress}...`);
-  await ctx.sendText("gm");
+  await ctx.conversation.sendText("gm");
 });
 
 async function initializeWallet(walletPath: string): Promise<WalletData> {

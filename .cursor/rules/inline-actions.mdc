@@ -1,4 +1,3 @@
-
 ## Inline Actions
 
 Interactive button-based UI for XMTP agents following the XIP-67 specification. Users can tap buttons instead of typing commands.
@@ -17,7 +16,7 @@ agent.use(inlineActionsMiddleware);
 
 // 2. Register action handlers
 registerAction("my-action", async (ctx) => {
-  await ctx.sendText("Action executed!");
+  await ctx.conversation.sendText("Action executed!");
 });
 
 // 3. Send interactive buttons
@@ -48,8 +47,8 @@ await ActionBuilder.create("menu-id", "Description")
 await sendConfirmation(
   ctx,
   "Delete this item?",
-  async (ctx) => await ctx.sendText("Deleted!"),
-  async (ctx) => await ctx.sendText("Cancelled"),
+  async (ctx) => await ctx.conversation.sendText("Deleted!"),
+  async (ctx) => await ctx.conversation.sendText("Cancelled"),
 );
 ```
 
@@ -103,7 +102,7 @@ Register handlers for button clicks:
 ```typescript
 registerAction("my-action", async (ctx: MessageContext) => {
   // Handle the action
-  await ctx.sendText("Action completed!");
+  await ctx.conversation.sendText("Action completed!");
 
   // Optionally show navigation options
   await showNavigationOptions(ctx, config, "What would you like to do next?");
@@ -119,9 +118,10 @@ import { validators } from "./inline-actions";
 
 const result = validators.inboxId("123abc...");
 if (!result.valid) {
-  await ctx.sendText(`Error: ${result.error}`);
+  await ctx.conversation.sendText(`Error: ${result.error}`);
 }
 ```
+
 ---
-alwaysApply: true
----
+
+## alwaysApply: true

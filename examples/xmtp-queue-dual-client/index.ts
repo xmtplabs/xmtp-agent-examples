@@ -52,7 +52,7 @@ setInterval(async () => {
 
     if (conversations.length > 0) {
       const latestConv = conversations[0];
-      await latestConv.send(
+      await latestConv.sendText(
         "Sending client: " + message + " at " + new Date().toISOString(),
       );
       console.log(`📤 Sent: "${message}"`);

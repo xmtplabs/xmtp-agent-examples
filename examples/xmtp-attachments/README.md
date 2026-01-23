@@ -45,7 +45,7 @@ agent.on("text", async (ctx) => {
     };
 
     // Send the encrypted remote attachment
-    await ctx.sendRemoteAttachment(file, uploadCallback);
+    await ctx.conversation.sendRemoteAttachment(file, uploadCallback);
   }
 });
 ```

@@ -2,7 +2,6 @@
 alwaysApply: true
 ---
 
-
 # XMTP Agent SDK
 
 Build event‑driven, middleware‑powered messaging agents on the XMTP network. 🚀
@@ -44,7 +43,7 @@ const agent = await Agent.create(signer, {
 
 // 3. Respond to text messages
 agent.on("text", async (ctx) => {
-  await ctx.sendText("Hello from my XMTP Agent! 👋");
+  await ctx.conversation.sendText("Hello from my XMTP Agent! 👋");
 });
 
 // 4. Log when we're ready
@@ -134,11 +133,11 @@ agent.on("reply", async (ctx) => {
 
 // Listen to new conversations
 agent.on("dm", async (ctx) => {
-  await ctx.conversation.send("Welcome to our DM!");
+  await ctx.conversation.sendText("Welcome to our DM!");
 });
 
 agent.on("group", async (ctx) => {
-  await ctx.conversation.send("Hello group!");
+  await ctx.conversation.sendText("Hello group!");
 });
 
 // Listen to unhandled events
@@ -161,7 +160,7 @@ import { filter } from "@xmtp/agent-sdk";
 agent.on("message", async (ctx) => {
   // Filter for specific message types
   if (filter.isText(ctx.message)) {
-    await ctx.conversation.send(`Echo: ${ctx.message.content}`);
+    await ctx.conversation.sendText(`Echo: ${ctx.message.content}`);
   }
 });
 ```
@@ -255,10 +254,10 @@ import { CommandRouter } from "@xmtp/agent-sdk/middleware";
 const agent = await Agent.createFromEnv();
 const router = new CommandRouter()
   .command("/hello", async (ctx) => {
-    await ctx.conversation.send("Hi there! 👋");
+    await ctx.conversation.sendText("Hi there! 👋");
   })
   .default(async (ctx) => {
-    await ctx.conversation.send(`Unknown command: ${ctx.message.content}`);
+    await ctx.conversation.sendText(`Unknown command: ${ctx.message.content}`);
   });
 
 agent.use(router.middleware());
@@ -276,7 +275,7 @@ import { filter } from "@xmtp/agent-sdk";
 // Using filter in message handler
 agent.on("text", async (ctx) => {
   if (filter.isText(ctx.message)) {
-    await ctx.conversation.send("You sent a text message!");
+    await ctx.conversation.sendText("You sent a text message!");
   }
 });
 
@@ -287,7 +286,7 @@ agent.on("text", async (ctx) => {
     !filter.fromSelf(ctx.message, ctx.client) &&
     filter.isText(ctx.message)
   ) {
-    await ctx.conversation.send("Valid text message received ✅");
+    await ctx.conversation.sendText("Valid text message received ✅");
   }
 });
 ```
@@ -321,7 +320,7 @@ Every message event handler receives a `MessageContext` (`ctx`) with:
 
 ```ts
 agent.on("text", async (ctx) => {
-  await ctx.sendTextReply("Reply using helper ✨");
+  await ctx.conversation.sendTextReply("Reply using helper ✨");
 });
 ```
 
@@ -426,7 +425,7 @@ agent.on("text", async (ctx) => {
     };
 
     // Send the encrypted remote attachment
-    await ctx.sendRemoteAttachment(file, uploadCallback);
+    await ctx.conversation.sendRemoteAttachment(file, uploadCallback);
   }
 });
 ```
@@ -467,7 +466,6 @@ The LibXMTP version used in the Agent SDK can be accessed with the `libxmtpVersi
 console.log(agent.libxmtpVersion);
 ```
 
-
 # Examples
 
 ## Prompt example to code an agent
@@ -502,10 +500,10 @@ agent.on("text", async (ctx) => {
   try {
     // Parse the message to extract two numbers
     const result = parseAndMultiply(messageContent);
-    await ctx.sendText(result);
+    await ctx.conversation.sendText(result);
   } catch (error) {
     console.error("Error processing message:", error);
-    await ctx.sendText(
+    await ctx.conversation.sendText(
       "Please send two numbers separated by space, comma, or 'x'. Examples: '5 3', '5,3', '5 x 3', 'multiply 5 and 3'",
     );
   }

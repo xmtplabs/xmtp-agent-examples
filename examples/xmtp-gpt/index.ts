@@ -1,4 +1,4 @@
-import { Agent } from "@xmtp/agent-sdk";
+import { Agent, BuiltInContentTypes, MessageContext } from "@xmtp/agent-sdk";
 import { getTestUrl } from "@xmtp/agent-sdk/debug";
 import OpenAI from "openai";
 import { loadEnvFile } from "../../utils/general";
@@ -10,7 +10,7 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 console.log(process.env.OPENAI_API_KEY);
 const agent = await Agent.createFromEnv();
 
-agent.on("text", async (ctx) => {
+agent.on("text", async (ctx: MessageContext<string, BuiltInContentTypes>) => {
   const messageContent = ctx.message.content;
   const senderAddress = await ctx.getSenderAddress();
   console.log(`Received message: ${messageContent} by ${senderAddress}`);
@@ -29,10 +29,10 @@ agent.on("text", async (ctx) => {
 
     console.log(`Sending AI response: ${response}`);
     /* Send the AI response to the conversation */
-    await ctx.sendText(response);
+    await ctx.conversation.sendText(response);
   } catch (error) {
     console.error("Error getting AI response:", error);
-    await ctx.sendText(
+    await ctx.conversation.sendText(
       "Sorry, I encountered an error processing your message.",
     );
   }

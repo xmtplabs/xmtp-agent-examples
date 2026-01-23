@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@types/node": "^22.13.0",
-    "@xmtp/agent-sdk": "2.0.0-rc1",
+    "@xmtp/agent-sdk": "2.0.0-rc3",
     "@xmtp/cli": "^0.0.4",
     "ink-text-input": "^6.0.0",
     "react": "^19.2.0",

@@ -27,7 +27,7 @@ agent.on("text", async (ctx) => {
     // Resolve all mentions in the message
     const resolved = await resolveMentionsInMessage(
       content,
-      await ctx.conversation.members(),
+      (await ctx.conversation.members()) as any,
     );
 
     // If no mentions found, don't respond
@@ -64,10 +64,10 @@ agent.on("text", async (ctx) => {
       );
     }
 
-    await ctx.sendText(response);
+    await ctx.conversation.sendText(response);
   } catch (error) {
     console.error("Error processing message:", error);
-    await ctx.sendText(
+    await ctx.conversation.sendText(
       "❌ Sorry, I encountered an error processing your request. Please try again.",
     );
   }

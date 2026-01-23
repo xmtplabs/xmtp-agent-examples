@@ -1,21 +1,12 @@
-import {
-  Agent,
-  Conversation,
-  ConversationContext,
-  MessageContext,
-} from "@xmtp/agent-sdk";
+import { Agent, MessageContext } from "@xmtp/agent-sdk";
 import { getTestUrl } from "@xmtp/agent-sdk/debug";
-
-import {
-  ActionBuilder,
-  inlineActionsMiddleware,
-  registerAction,
-  sendActions,
-} from "../../utils/inline-actions/inline-actions";
-import { ActionsCodec } from "../../utils/inline-actions/types/ActionsContent";
-import { IntentCodec } from "../../utils/inline-actions/types/IntentContent";
 import { formatPrice, formatPriceChange, getCurrentPrice } from "./ethPrice";
 import { loadEnvFile } from "../../utils/general";
+import {
+  inlineActionsMiddleware,
+  registerAction,
+  ActionBuilder,
+} from "../../utils/inline-actions";
 
 loadEnvFile();
 
@@ -24,12 +15,12 @@ loadEnvFile();
  */
 async function handleCurrentPrice(ctx: MessageContext<unknown>) {
   try {
-    await ctx.sendText("⏳ Fetching current ETH price...");
+    await ctx.conversation.sendText("⏳ Fetching current ETH price...");
 
     const { price } = await getCurrentPrice();
     const formattedPrice = formatPrice(price);
 
-    await ctx.sendText(`
+    await ctx.conversation.sendText(`
     💰 **Current ETH Price**
 
     ${formattedPrice}
@@ -37,7 +28,9 @@ async function handleCurrentPrice(ctx: MessageContext<unknown>) {
     Data provided by CoinGecko 📈`);
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    await ctx.sendText(`❌ Failed to fetch ETH price: ${errorMessage}`);
+    await ctx.conversation.sendText(
+      `❌ Failed to fetch ETH price: ${errorMessage}`,
+    );
   }
 }
 
@@ -46,13 +39,13 @@ async function handleCurrentPrice(ctx: MessageContext<unknown>) {
  */
 async function handlePriceWithChange(ctx: MessageContext<unknown>) {
   try {
-    await ctx.sendText("⏳ Fetching ETH price with 24h change...");
+    await ctx.conversation.sendText("⏳ Fetching ETH price with 24h change...");
 
     const { price, change24h } = await getCurrentPrice();
     const formattedPrice = formatPrice(price);
     const formattedChange = formatPriceChange(change24h);
 
-    await ctx.sendText(`📊 **ETH Price with 24h Change**
+    await ctx.conversation.sendText(`📊 **ETH Price with 24h Change**
 
 **Current Price:** ${formattedPrice}
 **24h Change:** ${formattedChange}
@@ -60,13 +53,14 @@ async function handlePriceWithChange(ctx: MessageContext<unknown>) {
 Data provided by CoinGecko 📈`);
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    await ctx.sendText(`❌ Failed to fetch ETH price: ${errorMessage}`);
+    await ctx.conversation.sendText(
+      `❌ Failed to fetch ETH price: ${errorMessage}`,
+    );
   }
 }
 
 const agent = await Agent.createFromEnv({
   env: process.env.XMTP_ENV as "local" | "dev" | "production",
-  codecs: [new ActionsCodec(), new IntentCodec()],
 });
 
 // Add middleware to handle button clicks
@@ -76,9 +70,7 @@ agent.use(inlineActionsMiddleware);
 registerAction("get-current-price", handleCurrentPrice);
 registerAction("get-price-chart", handlePriceWithChange);
 
-async function sendWelcomeMessage(
-  ctx: ConversationContext<unknown, Conversation>,
-) {
+async function sendWelcomeMessage(ctx: any) {
   console.log("Added to group:", ctx.conversation.id);
   const welcomeActions = ActionBuilder.create(
     `welcome-${Date.now()}`,
@@ -89,7 +81,7 @@ async function sendWelcomeMessage(
     .build();
 
   console.log(`✓ Sending welcome message with actions`);
-  await sendActions(ctx.conversation, welcomeActions);
+  await (ctx.conversation as any).sendActions(welcomeActions);
 }
 
 agent.on("text", async (ctx) => {

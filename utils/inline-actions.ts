@@ -3,15 +3,16 @@ import type {
   Conversation,
   MessageContext,
 } from "@xmtp/agent-sdk";
-import {
-  ContentTypeActions,
-  type Action,
-  type ActionsContent,
-} from "./types/ActionsContent";
-import { type IntentContent } from "./types/IntentContent";
+import type { Actions, Intent } from "@xmtp/node-sdk";
+import { ActionStyle } from "@xmtp/node-sdk";
+
+// Re-export ActionStyle for convenience
+export { ActionStyle };
 
 // Core types
-export type ActionHandler<T = unknown> = (ctx: MessageContext<T>) => Promise<void>;
+export type ActionHandler<T = unknown> = (
+  ctx: MessageContext<T>,
+) => Promise<void>;
 
 // Action registry - using unknown to accept handlers for any content type
 const actionHandlers = new Map<string, ActionHandler<unknown>>();
@@ -54,7 +55,7 @@ export async function showLastMenu<T = unknown>(
   } else {
     console.warn("⚠️ No last menu to show, falling back to main menu");
     // Fallback to main menu if no last menu is tracked
-    await ctx.sendText("Returning to main menu...");
+    await ctx.conversation.sendText("Returning to main menu...");
   }
 }
 
@@ -65,7 +66,7 @@ export const inlineActionsMiddleware = (async (
   next: () => Promise<void>,
 ) => {
   if (ctx.message.contentType?.typeId === "intent") {
-    const intentContent = ctx.message.content as IntentContent;
+    const intentContent = ctx.message.content as Intent;
     const handler = actionHandlers.get(intentContent.actionId);
 
     console.log("🎯 Processing intent:", intentContent.actionId);
@@ -75,12 +76,14 @@ export const inlineActionsMiddleware = (async (
         await handler(ctx as MessageContext<unknown>);
       } catch (error) {
         console.error(`❌ Error in action handler:`, error);
-        await ctx.sendText(
+        await ctx.conversation.sendText(
           `❌ Error: ${error instanceof Error ? error.message : String(error)}`,
         );
       }
     } else {
-      await ctx.sendText(`❌ Unknown action: ${intentContent.actionId}`);
+      await ctx.conversation.sendText(
+        `❌ Unknown action: ${intentContent.actionId}`,
+      );
     }
     return;
   }
@@ -89,7 +92,11 @@ export const inlineActionsMiddleware = (async (
 
 // Builder for creating actions
 export class ActionBuilder {
-  private actions: Action[] = [];
+  private actions: {
+    id: string;
+    label: string;
+    style?: ActionStyle;
+  }[] = [];
   private actionId = "";
   private actionDescription = "";
 
@@ -100,16 +107,12 @@ export class ActionBuilder {
     return builder;
   }
 
-  add(
-    id: string,
-    label: string,
-    style?: "primary" | "secondary" | "danger",
-  ): this {
+  add(id: string, label: string, style?: ActionStyle): this {
     this.actions.push({ id, label, style });
     return this;
   }
 
-  build(): ActionsContent {
+  build() {
     return {
       id: this.actionId,
       description: this.actionDescription,
@@ -118,10 +121,7 @@ export class ActionBuilder {
   }
 
   async send<T = unknown>(ctx: MessageContext<T>): Promise<void> {
-    const message = await ctx.conversation.send(
-      this.build(),
-      ContentTypeActions,
-    );
+    const message = await (ctx.conversation as any).sendActions(this.build());
     lastSentActionMessage = message;
   }
 }
@@ -129,9 +129,9 @@ export class ActionBuilder {
 // Helper functions
 export async function sendActions(
   conversation: Conversation,
-  actionsContent: ActionsContent,
+  actions: Actions,
 ): Promise<void> {
-  const message = await conversation.send(actionsContent, ContentTypeActions);
+  const message = await (conversation as any).sendActions(actions);
   lastSentActionMessage = message;
 }
 
@@ -150,14 +150,14 @@ export async function sendConfirmation<T = unknown>(
     noId,
     (onNo ||
       (async (ctx) => {
-        await ctx.sendText("❌ Cancelled");
+        await ctx.conversation.sendText("❌ Cancelled");
       })) as ActionHandler<unknown>,
   );
 
   await ActionBuilder.create(`confirm-${timestamp}`, message)
     .add(yesId, "✅ Yes")
-    .add(noId, "❌ No", "danger")
-    .send(ctx);
+    .add(noId, "❌ No", ActionStyle.Danger)
+    .send(ctx as MessageContext<unknown>);
 }
 
 export async function sendSelection<T = unknown>(
@@ -166,7 +166,7 @@ export async function sendSelection<T = unknown>(
   options: Array<{
     id: string;
     label: string;
-    style?: "primary" | "secondary" | "danger";
+    style?: ActionStyle;
     handler: ActionHandler<T>;
   }>,
 ): Promise<void> {
@@ -210,7 +210,7 @@ export const patterns = {
 export type MenuAction<T = unknown> = {
   id: string;
   label: string;
-  style?: "primary" | "secondary" | "danger";
+  style?: ActionStyle;
   handler?: ActionHandler<T>;
   showNavigationOptions?: boolean;
 };
@@ -243,7 +243,7 @@ export async function showMenu<T = unknown>(
   const menu = config.menus[menuId];
   if (!menu) {
     console.error(`❌ Menu not found: ${menuId}`);
-    await ctx.sendText(`❌ Menu not found: ${menuId}`);
+    await ctx.conversation.sendText(`❌ Menu not found: ${menuId}`);
     return;
   }
 
@@ -268,7 +268,7 @@ export async function showNavigationOptions<T = unknown>(
   customActions?: Array<{
     id: string;
     label: string;
-    style?: "primary" | "secondary" | "danger";
+    style?: ActionStyle;
   }>,
 ): Promise<void> {
   // Check if auto-show menu is enabled (default: true for backward compatibility)
@@ -276,7 +276,7 @@ export async function showNavigationOptions<T = unknown>(
 
   if (!autoShowMenu) {
     // If auto-show is disabled, just send the message without showing menu
-    await ctx.sendText(message);
+    await ctx.conversation.sendText(message);
     return;
   }
 
@@ -298,7 +298,7 @@ export async function showNavigationOptions<T = unknown>(
     }
   }
 
-  await navigationMenu.send(ctx);
+  await ctx.conversation.sendActions(navigationMenu.build());
 }
 
 export function initializeAppFromConfig(
