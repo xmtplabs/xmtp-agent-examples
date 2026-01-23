@@ -15,6 +15,8 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Fix build errors in xmtp-attachments, xmtp-gated-group, xmtp-thinking-reaction, xmtp-generalstore
 - Fix type incompatibilities with SDK 2.0.0-rc3
+- Prevent reaction middleware from looping on read receipts / non-text messages
+- Remove unsafe `any` casts in examples and inline actions helpers
 
 ## [0.0.4] - 2026-01-21
 

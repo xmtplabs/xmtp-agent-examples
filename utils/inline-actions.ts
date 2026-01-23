@@ -88,7 +88,7 @@ export const inlineActionsMiddleware = (async (
     return;
   }
   await next();
-}) as AgentMiddleware as any;
+}) as AgentMiddleware;
 
 // Builder for creating actions
 export class ActionBuilder {
@@ -121,7 +121,7 @@ export class ActionBuilder {
   }
 
   async send<T = unknown>(ctx: MessageContext<T>): Promise<void> {
-    const message = await (ctx.conversation as any).sendActions(this.build());
+    const message = await ctx.conversation.sendActions(this.build());
     lastSentActionMessage = message;
   }
 }
@@ -131,15 +131,15 @@ export async function sendActions(
   conversation: Conversation,
   actions: Actions,
 ): Promise<void> {
-  const message = await (conversation as any).sendActions(actions);
+  const message = await conversation.sendActions(actions);
   lastSentActionMessage = message;
 }
 
 export async function sendConfirmation<T = unknown>(
-  ctx: MessageContext<T> | any,
+  ctx: MessageContext<T>,
   message: string,
-  onYes: ActionHandler<T> | ((ctx: any) => Promise<void>),
-  onNo?: ActionHandler<T> | ((ctx: any) => Promise<void>),
+  onYes: ActionHandler<T>,
+  onNo?: ActionHandler<T>,
 ): Promise<void> {
   const timestamp = Date.now();
   const yesId = `yes-${timestamp}`;

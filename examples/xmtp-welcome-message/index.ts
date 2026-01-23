@@ -81,7 +81,7 @@ async function sendWelcomeMessage(ctx: any) {
     .build();
 
   console.log(`✓ Sending welcome message with actions`);
-  await (ctx.conversation as any).sendActions(welcomeActions);
+  await ctx.conversation.sendActions(welcomeActions);
 }
 
 agent.on("text", async (ctx) => {

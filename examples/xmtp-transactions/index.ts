@@ -30,11 +30,18 @@ router.command("/balance", async (ctx) => {
 });
 
 router.command("/tx", async (ctx) => {
+  console.log("Received transaction request", ctx.message);
+
   const agentAddress = agent.address;
   const senderAddress = await ctx.getSenderAddress();
 
-  const amount = parseFloat(ctx.message.content.split(" ")[1]);
-  if (isNaN(amount) || amount <= 0) {
+  // Parse amount from command arguments
+  const messageContent = String(ctx.message.content).trim();
+  const parts = messageContent.split(/\s+/);
+  const valueToParse = parts[1] || "";
+  const amount = parseFloat(valueToParse);
+
+  if (isNaN(amount) || amount <= 0 || !isFinite(amount)) {
     await ctx.conversation.sendText(
       "Please provide a valid amount. Usage: /tx <amount>",
     );
@@ -44,6 +51,9 @@ router.command("/tx", async (ctx) => {
   // Convert amount to USDC decimals (6 decimal places)
   const amountInDecimals = Math.floor(amount * Math.pow(10, 6));
 
+  console.log("Amount", amount);
+  console.log("Amount in decimals", amountInDecimals);
+
   const walletSendCalls = createUSDCTransferCalls(
     networkId,
     validHex(senderAddress),
@@ -51,7 +61,7 @@ router.command("/tx", async (ctx) => {
     amountInDecimals,
   );
   console.log("Replied with wallet sendcall");
-  await (ctx.conversation as any).sendWalletSendCalls(walletSendCalls);
+  await ctx.conversation.sendWalletSendCalls(walletSendCalls);
 
   // Send a follow-up message about transaction references
   await ctx.conversation.sendText(
@@ -60,11 +70,23 @@ router.command("/tx", async (ctx) => {
 });
 
 router.default(async (ctx) => {
-  await ctx.conversation.sendText(
+  // Use the exposed command list from CommandRouter
+  const commands = router.commandList;
+  const commandDescriptions: Record<string, string> = {
+    "/balance": "Check your USDC balance",
+    "/tx": "Send USDC to the agent (e.g. /tx 0.1)",
+  };
+
+  const helpText =
     "Available commands:\n" +
-      "/balance - Check your USDC balance\n" +
-      "/tx <amount> - Send USDC to the agent (e.g. /tx 0.1)",
-  );
+    commands
+      .map((cmd: string) => {
+        const desc = commandDescriptions[cmd] || "";
+        return desc ? `${cmd} - ${desc}` : cmd;
+      })
+      .join("\n");
+
+  await ctx.conversation.sendText(helpText);
 });
 
 agent.on("start", () => {

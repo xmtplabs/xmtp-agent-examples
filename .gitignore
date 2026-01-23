@@ -36,6 +36,7 @@ logs
 *.njsproj
 *.sln
 *.sw?
+examples/**/Untitled
 
 # build artifacts
 dist

@@ -14,6 +14,7 @@ agent.on("text", async (ctx) => {
   try {
     // Get sender's Farcaster profile
     const senderAddress = await ctx.getSenderAddress();
+    console.log("Sender address", senderAddress);
     if (senderAddress) {
       const senderProfile = await fetchFarcasterProfile(senderAddress);
       if (senderProfile.username) {
@@ -22,12 +23,11 @@ agent.on("text", async (ctx) => {
         );
       }
     }
-
     const content = ctx.message.content;
     // Resolve all mentions in the message
     const resolved = await resolveMentionsInMessage(
       content,
-      (await ctx.conversation.members()) as any,
+      await ctx.conversation.members(),
     );
 
     // If no mentions found, don't respond

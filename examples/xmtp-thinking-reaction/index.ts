@@ -2,6 +2,7 @@ import {
   Agent,
   type MessageContext,
   type AgentMiddleware,
+  filter,
 } from "@xmtp/agent-sdk";
 import { getTestUrl } from "@xmtp/agent-sdk/debug";
 import { ReactionSchema } from "@xmtp/node-sdk";
@@ -21,6 +22,16 @@ interface ThinkingReactionContext extends MessageContext {
 
 // Middleware for thinking reaction pattern
 const thinkingReactionMiddleware: AgentMiddleware = async (ctx, next) => {
+  // Only apply to inbound text messages (ignore read receipts, reactions, etc.)
+  // and never react to our own messages to avoid infinite loops.
+  if (
+    !filter.hasContent(ctx.message) ||
+    !filter.isText(ctx.message) ||
+    filter.fromSelf(ctx.message, ctx.client)
+  ) {
+    return;
+  }
+
   try {
     console.log("🤔 Reacting with thinking emoji...");
 
@@ -54,6 +65,7 @@ const agent = await Agent.createFromEnv({
 agent.use(thinkingReactionMiddleware);
 
 agent.on("text", async (ctx) => {
+  console.log("Received message", ctx.message);
   const thinkingCtx = ctx as ThinkingReactionContext;
 
   try {
