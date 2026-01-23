@@ -5,7 +5,21 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Changed
-- Update agent SDK to 2.0.0-rc1 (2026-01-21)
+- Update agent SDK to 2.0.0-rc3 (2026-01-23)
+- Centralize agent-sdk version across all example packages
+- Fix EncryptedAttachment API usage (payload instead of content.payload)
+- Update group creation to use agent.createGroupWithAddresses
+- Fix Reaction API to use ReactionSchema enum
+- Fix ActionStyle imports to use SDK enum
+
+### Fixed
+- Fix build errors in xmtp-attachments, xmtp-gated-group, xmtp-thinking-reaction, xmtp-generalstore
+- Fix type incompatibilities with SDK 2.0.0-rc3
+
+## [0.0.4] - 2026-01-21
+
+### Changed
+- Update agent SDK to 2.0.0-rc1
 - Remove content type packages and test SDK compatibility
 - Update imports to use SDK instead of separate content type packages
 
