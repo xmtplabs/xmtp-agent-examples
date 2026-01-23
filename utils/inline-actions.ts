@@ -25,7 +25,7 @@ let lastShownMenu: { config: AppConfig; menuId: string } | null = null;
 
 export function registerAction<T = unknown>(
   actionId: string,
-  handler: ActionHandler<T> | ((ctx: any) => Promise<void>),
+  handler: ActionHandler<T> | ((ctx: MessageContext<unknown>) => Promise<void>),
 ): void {
   // Prevent overwriting existing handlers unless explicitly intended
   if (actionHandlers.has(actionId)) {
@@ -62,7 +62,7 @@ export async function showLastMenu<T = unknown>(
 // Middleware - works with any content type
 // Using any for the context parameter to allow compatibility with any agent content types
 export const inlineActionsMiddleware = (async (
-  ctx: any,
+  ctx: MessageContext<unknown>,
   next: () => Promise<void>,
 ) => {
   if (ctx.message.contentType?.typeId === "intent") {

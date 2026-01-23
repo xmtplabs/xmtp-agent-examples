@@ -70,7 +70,7 @@ agent.use(inlineActionsMiddleware);
 registerAction("get-current-price", handleCurrentPrice);
 registerAction("get-price-chart", handlePriceWithChange);
 
-async function sendWelcomeMessage(ctx: any) {
+async function sendWelcomeMessage(ctx: MessageContext<unknown>) {
   console.log("Added to group:", ctx.conversation.id);
   const welcomeActions = ActionBuilder.create(
     `welcome-${Date.now()}`,

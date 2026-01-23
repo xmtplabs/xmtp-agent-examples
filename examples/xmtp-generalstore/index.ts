@@ -200,7 +200,7 @@ registerAction("checkout", async (ctx: MessageContext<unknown>) => {
   await sendConfirmation(
     ctx,
     `Confirm your order?\n\n${summary}\n\nThis will place your order.`,
-    async (ctx: any) => {
+    async (ctx: MessageContext<unknown>) => {
       const conversationId = ctx.conversation.id;
       const orderItems = orders.get(conversationId) || [];
 
