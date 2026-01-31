@@ -243,6 +243,7 @@ agent.use(inlineActionsMiddleware);
 
 // Handle text messages - show menu on any text
 agent.on("text", async (ctx) => {
+  console.log("text", ctx);
   const builder = ActionBuilder.create(
     "main-menu",
     "🏪 Welcome to General Store!\n\nSelect a product:",

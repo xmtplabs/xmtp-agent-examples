@@ -1,6 +1,6 @@
 {
   "name": "xmtp-agent-examples",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "private": true,
   "type": "module",
   "workspaces": [
@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@types/node": "^22.13.0",
-    "@xmtp/agent-sdk": "*",
+    "@xmtp/agent-sdk": "2.0.0",
     "@xmtp/cli": "^0.0.4",
     "ink-text-input": "^6.0.0",
     "react": "^19.2.0",
