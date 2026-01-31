@@ -11,12 +11,12 @@ Use `extractMentions` to find all mentions in a message.
 **Basic extraction:**
 
 ```typescript
-import { extractMentions } from "../../utils/resolver";
-
 const message = "Hey @vitalik.eth and @dwr, check this out!";
 const mentions = extractMentions(message);
 // Returns: ["vitalik.eth", "dwr"]
 ```
+
+Implement `extractMentions` using regex to match @mentions, domains, and addresses.
 
 **Supported formats:**
 
@@ -40,14 +40,14 @@ extractMentions("Send to 0x1234567890abcdef..."); // ["0x1234..."]
 **Resolve all mentions:**
 
 ```typescript
-import { resolveMentionsInMessage } from "../../utils/resolver";
-
 const message = "Send 10 USDC to @vitalik.eth";
 const members = await ctx.conversation.members();
 
 const resolved = await resolveMentionsInMessage(message, members);
 // Returns: { "vitalik.eth": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045" }
 ```
+
+Implement `resolveMentionsInMessage` to extract mentions and resolve each to an address.
 
 **Filter subdomains:**
 

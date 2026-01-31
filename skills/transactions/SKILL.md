@@ -50,13 +50,12 @@ Reference these guidelines when:
 ## Quick start
 
 ```typescript
-import { createUSDCTransferCalls, getUSDCBalance } from "../../utils/transactions";
 import { validHex } from "@xmtp/agent-sdk";
 
-// Check balance
+// Check balance using viem
 const balance = await getUSDCBalance("base-sepolia", validHex(address));
 
-// Send transfer request
+// Create USDC transfer calls (EIP-5792)
 const calls = createUSDCTransferCalls(
   "base-sepolia",
   validHex(fromAddress),
@@ -64,6 +63,58 @@ const calls = createUSDCTransferCalls(
   1000000 // 1 USDC (6 decimals)
 );
 await ctx.conversation.sendWalletSendCalls(calls);
+```
+
+## Implementation snippets
+
+**USDC token config:**
+
+```typescript
+const USDC_TOKENS: Record<string, { address: string; decimals: number }> = {
+  "base-sepolia": { address: "0x036CbD53842c5426634e7929541eC2318f3dCF7e", decimals: 6 },
+  "base-mainnet": { address: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913", decimals: 6 },
+};
+```
+
+**Get USDC balance:**
+
+```typescript
+import { createPublicClient, formatUnits, http } from "viem";
+import { baseSepolia, base } from "viem/chains";
+
+const getUSDCBalance = async (networkId: string, address: HexString): Promise<string> => {
+  const token = USDC_TOKENS[networkId];
+  const client = createPublicClient({
+    chain: networkId === "base-mainnet" ? base : baseSepolia,
+    transport: http(),
+  });
+  const balance = await client.readContract({
+    address: token.address as HexString,
+    abi: [{ inputs: [{ name: "account", type: "address" }], name: "balanceOf", outputs: [{ type: "uint256" }], stateMutability: "view", type: "function" }],
+    functionName: "balanceOf",
+    args: [address],
+  });
+  return formatUnits(balance, token.decimals);
+};
+```
+
+**Create USDC transfer calls:**
+
+```typescript
+import { toHex } from "viem";
+
+const createUSDCTransferCalls = (
+  networkId: string, from: HexString, to: string, amount: number
+): WalletSendCalls => {
+  const token = USDC_TOKENS[networkId];
+  const data = `0xa9059cbb${to.slice(2).padStart(64, "0")}${BigInt(amount).toString(16).padStart(64, "0")}`;
+  return {
+    version: "1.0",
+    from,
+    chainId: toHex(networkId === "base-mainnet" ? 8453 : 84532),
+    calls: [{ to: token.address as HexString, data: validHex(data) }],
+  };
+};
 ```
 
 ## How to use
@@ -76,7 +127,3 @@ rules/receive-transaction-reference.md
 rules/balance-check.md
 ```
 
-## Related examples
-
-- [xmtp-transactions](../../examples/xmtp-transactions/) - Full USDC transfer example
-- [xmtp-smart-wallet](../../examples/xmtp-smart-wallet/) - Smart wallet integration

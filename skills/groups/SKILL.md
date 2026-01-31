@@ -78,7 +78,3 @@ rules/permissions-roles.md
 rules/welcome-on-install.md
 ```
 
-## Related examples
-
-- [xmtp-gated-group](../../examples/xmtp-gated-group/) - Group gating with passphrase
-- [xmtp-welcome-message](../../examples/xmtp-welcome-message/) - Welcome message patterns

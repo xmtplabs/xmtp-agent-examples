@@ -77,6 +77,3 @@ rules/receive-reaction.md
 rules/patterns-thinking.md
 ```
 
-## Related examples
-
-- [xmtp-thinking-reaction](../../examples/xmtp-thinking-reaction/) - Thinking indicator pattern

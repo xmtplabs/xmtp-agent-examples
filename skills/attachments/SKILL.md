@@ -64,6 +64,3 @@ rules/receive-attachment.md
 rules/upload-callback.md
 ```
 
-## Related examples
-
-- [xmtp-attachments](../../examples/xmtp-attachments/) - Full attachment handling with Pinata

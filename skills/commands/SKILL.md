@@ -52,7 +52,3 @@ rules/filters-message-types.md
 rules/guards-codec.md
 ```
 
-## Related examples
-
-- [xmtp-transactions](../../examples/xmtp-transactions/) - Uses CommandRouter and validators
-- [xmtp-gpt](../../examples/xmtp-gpt/) - Command handling patterns

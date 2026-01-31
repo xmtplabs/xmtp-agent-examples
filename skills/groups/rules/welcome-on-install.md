@@ -36,8 +36,6 @@ agent.on("group", async (ctx) => {
 **Welcome with inline actions:**
 
 ```typescript
-import { ActionBuilder } from "../../utils/inline-actions";
-
 async function sendWelcomeMessage(ctx: ConversationContext) {
   const welcomeActions = ActionBuilder.create(
     `welcome-${Date.now()}`,
@@ -50,6 +48,8 @@ async function sendWelcomeMessage(ctx: ConversationContext) {
   await ctx.conversation.sendActions(welcomeActions);
 }
 ```
+
+See the inline-actions skill for implementing `ActionBuilder`.
 
 **Group gating example:**
 

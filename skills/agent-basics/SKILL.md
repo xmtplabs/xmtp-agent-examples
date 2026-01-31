@@ -100,7 +100,3 @@ rules/events-text.md
 rules/middleware-basics.md
 ```
 
-## Related examples
-
-- [xmtp-gm](../../examples/xmtp-gm/) - Simple text response agent
-- [xmtp-gpt](../../examples/xmtp-gpt/) - GPT-powered responses

@@ -51,13 +51,7 @@ Reference these guidelines when:
 ## Quick start
 
 ```typescript
-import {
-  ActionBuilder,
-  inlineActionsMiddleware,
-  registerAction,
-} from "../../utils/inline-actions";
-
-// 1. Add middleware to your agent
+// 1. Add middleware to handle intent messages
 agent.use(inlineActionsMiddleware);
 
 // 2. Register action handlers
@@ -72,6 +66,80 @@ await ActionBuilder.create("my-menu", "Choose an option:")
   .send(ctx);
 ```
 
+## Implementation snippets
+
+**Action registry and handler:**
+
+```typescript
+import type { AgentMiddleware, MessageContext } from "@xmtp/agent-sdk";
+import type { Intent } from "@xmtp/node-sdk";
+
+type ActionHandler = (ctx: MessageContext) => Promise<void>;
+const actionHandlers = new Map<string, ActionHandler>();
+
+const registerAction = (id: string, handler: ActionHandler) => {
+  actionHandlers.set(id, handler);
+};
+```
+
+**Inline actions middleware:**
+
+```typescript
+const inlineActionsMiddleware: AgentMiddleware = async (ctx, next) => {
+  if (ctx.message.contentType?.typeId === "intent") {
+    const intent = ctx.message.content as Intent;
+    const handler = actionHandlers.get(intent.actionId);
+    if (handler) await handler(ctx);
+    else await ctx.conversation.sendText(`Unknown action: ${intent.actionId}`);
+    return;
+  }
+  await next();
+};
+```
+
+**ActionBuilder class:**
+
+```typescript
+import { ActionStyle } from "@xmtp/node-sdk";
+
+class ActionBuilder {
+  private actions: { id: string; label: string; style?: ActionStyle }[] = [];
+  constructor(private id: string, private description: string) {}
+  
+  static create(id: string, description: string) {
+    return new ActionBuilder(id, description);
+  }
+  
+  add(id: string, label: string, style?: ActionStyle) {
+    this.actions.push({ id, label, style });
+    return this;
+  }
+  
+  async send(ctx: MessageContext) {
+    await ctx.conversation.sendActions({
+      id: this.id,
+      description: this.description,
+      actions: this.actions,
+    });
+  }
+}
+```
+
+**Confirmation helper:**
+
+```typescript
+const sendConfirmation = async (
+  ctx: MessageContext, message: string,
+  onYes: ActionHandler, onNo?: ActionHandler
+) => {
+  const ts = Date.now();
+  registerAction(`yes-${ts}`, onYes);
+  registerAction(`no-${ts}`, onNo || (async (c) => c.conversation.sendText("Cancelled")));
+  await ActionBuilder.create(`confirm-${ts}`, message)
+    .add(`yes-${ts}`, "Yes").add(`no-${ts}`, "No", ActionStyle.Danger).send(ctx);
+};
+```
+
 ## How to use
 
 Read individual rule files for detailed explanations:
@@ -82,7 +150,3 @@ rules/helpers-confirmation.md
 rules/config-menus.md
 ```
 
-## Related examples
-
-- [xmtp-generalstore](../../examples/xmtp-generalstore/) - Full shopping cart with inline actions
-- [xmtp-welcome-message](../../examples/xmtp-welcome-message/) - Welcome messages with buttons

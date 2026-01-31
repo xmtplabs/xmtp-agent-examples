@@ -26,11 +26,9 @@ const fcAddress = await resolver("dwr.farcaster.eth");
 const baseAddress = await resolver("tony.base.eth");
 ```
 
-**Using resolveIdentifier helper:**
+**Using a resolveIdentifier helper:**
 
 ```typescript
-import { resolveIdentifier } from "../../utils/resolver";
-
 // Handles multiple formats:
 // - Full address: "0x1234...abcd" (returned as-is)
 // - Shortened address: "0xabc5…f002" (matched against members)
@@ -40,6 +38,8 @@ import { resolveIdentifier } from "../../utils/resolver";
 const address = await resolveIdentifier("vitalik.eth");
 const fromShortened = await resolveIdentifier("0xabc5…f002", memberAddresses);
 ```
+
+Implement `resolveIdentifier` to handle these formats using createNameResolver from the SDK.
 
 **Environment setup:**
 

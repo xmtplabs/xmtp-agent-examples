@@ -11,7 +11,6 @@ Use `createUSDCTransferCalls` to create EIP-5792 compliant transfer requests.
 **Basic transfer:**
 
 ```typescript
-import { createUSDCTransferCalls } from "../../utils/transactions";
 import { validHex } from "@xmtp/agent-sdk";
 
 const networkId = "base-sepolia"; // or "base-mainnet"
@@ -27,6 +26,8 @@ const walletSendCalls = createUSDCTransferCalls(
 // Send to conversation
 await ctx.conversation.sendWalletSendCalls(walletSendCalls);
 ```
+
+Implement `createUSDCTransferCalls` to construct EIP-5792 compliant wallet_sendCalls with ERC20 transfer data.
 
 **Parse user input:**
 
