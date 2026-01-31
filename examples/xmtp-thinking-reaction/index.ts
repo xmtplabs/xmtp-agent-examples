@@ -3,8 +3,9 @@ import {
   type MessageContext,
   type AgentMiddleware,
   filter,
+  isText,
+  getTestUrl,
 } from "@xmtp/agent-sdk";
-import { getTestUrl } from "@xmtp/agent-sdk/debug";
 import { ReactionSchema } from "@xmtp/node-sdk";
 import { loadEnvFile } from "../../utils/general";
 
@@ -26,7 +27,7 @@ const thinkingReactionMiddleware: AgentMiddleware = async (ctx, next) => {
   // and never react to our own messages to avoid infinite loops.
   if (
     !filter.hasContent(ctx.message) ||
-    !filter.isText(ctx.message) ||
+    !isText(ctx.message) ||
     filter.fromSelf(ctx.message, ctx.client)
   ) {
     return;

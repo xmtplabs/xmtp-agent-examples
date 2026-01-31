@@ -1,5 +1,5 @@
-import { Agent, MessageContext } from "@xmtp/agent-sdk";
-import { getTestUrl } from "@xmtp/agent-sdk/debug";
+import { Agent, getTestUrl, type MessageContext } from "@xmtp/agent-sdk";
+import type { Actions } from "@xmtp/node-sdk";
 import { formatPrice, formatPriceChange, getCurrentPrice } from "./ethPrice";
 import { loadEnvFile } from "../../utils/general";
 import {
@@ -13,7 +13,7 @@ loadEnvFile();
 /**
  * Handle current ETH price request
  */
-async function handleCurrentPrice(ctx: MessageContext<unknown>) {
+async function handleCurrentPrice(ctx: MessageContext) {
   try {
     await ctx.conversation.sendText("⏳ Fetching current ETH price...");
 
@@ -37,7 +37,7 @@ async function handleCurrentPrice(ctx: MessageContext<unknown>) {
 /**
  * Handle ETH price with 24h change request
  */
-async function handlePriceWithChange(ctx: MessageContext<unknown>) {
+async function handlePriceWithChange(ctx: MessageContext) {
   try {
     await ctx.conversation.sendText("⏳ Fetching ETH price with 24h change...");
 
@@ -70,7 +70,12 @@ agent.use(inlineActionsMiddleware);
 registerAction("get-current-price", handleCurrentPrice);
 registerAction("get-price-chart", handlePriceWithChange);
 
-async function sendWelcomeMessage(ctx: MessageContext<unknown>) {
+async function sendWelcomeMessage(ctx: {
+  conversation: {
+    id: string;
+    sendActions: (actions: Actions) => Promise<string>;
+  };
+}) {
   console.log("Added to group:", ctx.conversation.id);
   const welcomeActions = ActionBuilder.create(
     `welcome-${Date.now()}`,

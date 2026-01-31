@@ -15,7 +15,7 @@ export type ActionHandler<T = unknown> = (
 ) => Promise<void>;
 
 // Action registry - using unknown to accept handlers for any content type
-const actionHandlers = new Map<string, ActionHandler<unknown>>();
+const actionHandlers = new Map<string, ActionHandler>();
 
 // Track the last sent action message for reply functionality
 let lastSentActionMessage: unknown = null;
@@ -25,13 +25,13 @@ let lastShownMenu: { config: AppConfig; menuId: string } | null = null;
 
 export function registerAction<T = unknown>(
   actionId: string,
-  handler: ActionHandler<T> | ((ctx: MessageContext<unknown>) => Promise<void>),
+  handler: ActionHandler<T> | ((ctx: MessageContext) => Promise<void>),
 ): void {
   // Prevent overwriting existing handlers unless explicitly intended
   if (actionHandlers.has(actionId)) {
     console.warn(`⚠️ Action ${actionId} already registered, overwriting...`);
   }
-  actionHandlers.set(actionId, handler as ActionHandler<unknown>);
+  actionHandlers.set(actionId, handler as ActionHandler);
 }
 
 // Get the last sent action message for reply functionality
@@ -62,7 +62,7 @@ export async function showLastMenu<T = unknown>(
 // Middleware - works with any content type
 // Using any for the context parameter to allow compatibility with any agent content types
 export const inlineActionsMiddleware = (async (
-  ctx: MessageContext<unknown>,
+  ctx: MessageContext,
   next: () => Promise<void>,
 ) => {
   if (ctx.message.contentType?.typeId === "intent") {
@@ -73,7 +73,7 @@ export const inlineActionsMiddleware = (async (
 
     if (handler) {
       try {
-        await handler(ctx as MessageContext<unknown>);
+        await handler(ctx as MessageContext);
       } catch (error) {
         console.error(`❌ Error in action handler:`, error);
         await ctx.conversation.sendText(
@@ -145,19 +145,19 @@ export async function sendConfirmation<T = unknown>(
   const yesId = `yes-${timestamp}`;
   const noId = `no-${timestamp}`;
 
-  registerAction(yesId, onYes as ActionHandler<unknown>);
+  registerAction(yesId, onYes as ActionHandler);
   registerAction(
     noId,
     (onNo ||
       (async (ctx) => {
         await ctx.conversation.sendText("❌ Cancelled");
-      })) as ActionHandler<unknown>,
+      })) as ActionHandler,
   );
 
   await ActionBuilder.create(`confirm-${timestamp}`, message)
     .add(yesId, "✅ Yes")
     .add(noId, "❌ No", ActionStyle.Danger)
-    .send(ctx as MessageContext<unknown>);
+    .send(ctx as MessageContext);
 }
 
 export async function sendSelection<T = unknown>(
@@ -319,7 +319,7 @@ export function initializeAppFromConfig(
     menu.actions.forEach((action) => {
       if (action.handler) {
         // Wrap handler to automatically show last menu if showNavigationOptions is true
-        const wrappedHandler = async (ctx: MessageContext<unknown>) => {
+        const wrappedHandler = async (ctx: MessageContext) => {
           await action.handler?.(ctx);
           if (action.showNavigationOptions) {
             await showLastMenu(ctx);
@@ -346,7 +346,7 @@ export function initializeAppFromConfig(
     menu.actions.forEach((action) => {
       if (!action.handler && config.menus[action.id]) {
         // This action navigates to another menu
-        registerAction(action.id, async (ctx: MessageContext<unknown>) => {
+        registerAction(action.id, async (ctx: MessageContext) => {
           await showMenu(ctx, config, action.id);
         });
         console.log(`✅ Auto-registered navigation for menu: ${action.id}`);
@@ -355,15 +355,15 @@ export function initializeAppFromConfig(
   });
 
   // Auto-register common navigation actions
-  registerAction("main-menu", async (ctx: MessageContext<unknown>) => {
+  registerAction("main-menu", async (ctx: MessageContext) => {
     await showMenu(ctx, config, "main-menu");
   });
 
-  registerAction("help", async (ctx: MessageContext<unknown>) => {
+  registerAction("help", async (ctx: MessageContext) => {
     await showMenu(ctx, config, "main-menu");
   });
 
-  registerAction("back-to-main", async (ctx: MessageContext<unknown>) => {
+  registerAction("back-to-main", async (ctx: MessageContext) => {
     await showMenu(ctx, config, "main-menu");
   });
 }
