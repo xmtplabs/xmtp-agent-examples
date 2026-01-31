@@ -1,121 +1,145 @@
-# XMTP agent examples
+# XMTP agent skills
 
-These example agents serve as a starting point for building your own agents. They are built with the [`agent-sdk`](https://github.com/xmtp/xmtp-js/tree/main/sdks/agent-sdk) and run on the [XMTP](https://docs.xmtp.org/) network.
+A collection of skills and examples for building XMTP agents using the [`@xmtp/agent-sdk`](https://github.com/xmtp/xmtp-js/tree/main/sdks/agent-sdk).
 
-- [xmtp-gm](/examples/xmtp-gm/): A simple agent that replies to all text messages with "gm"
-- [xmtp-gpt](/examples/xmtp-gpt/): An example using GPT API's to answer messages
-- [xmtp-mini-app](/examples/xmtp-mini-app/): An example using mini app to access group members
-- [xmtp-gated-group](/examples/xmtp-gated-group/): Add members to a group based on arbitrary criteria
-- [xmtp-coinbase-agentkit](/examples/xmtp-coinbase-agentkit/): Agent that uses a CDP for gasless USDC on base
-- [xmtp-domain-resolver](/examples/xmtp-domain-resolver/): Resolve ens user tags in group messages
-- [xmtp-transactions](/examples/xmtp-transactions/): Allow transactions between users and agents
-- [xmtp-gaia](/examples/xmtp-gaia/): This example uses a [Gaia](https://docs.gaianet.ai) API
-- [xmtp-smart-wallet](/examples/xmtp-smart-wallet/): Agent that uses a smart wallet to send messages
-- [xmtp-attachments](/examples/xmtp-attachments/): Agent that sends and receives images
-- [xmtp-generalstore](/examples/xmtp-generalstore/): An example using inline actions (dynamic buttons)
-- [xmtp-thinking-reaction](/examples/xmtp-thinking-reaction/): Agent that reacts to messages with a thinking emoji
-- [xmtp-queue-dual-client](/examples/xmtp-queue-dual-client/): Agent that uses two clients to send and receive messages
-- [xmtp-welcome-message](/examples/xmtp-welcome-message/): Agent that sends a welcome message when its added and to new members
+Skills follow the [Agent Skills](https://agentskills.io/) format.
+
+## Installation
+
+```bash
+npx skills add xmtplabs/xmtp-agent-examples
+```
+
+## Skills
+
+Skills are structured best practices and patterns for building XMTP agents. Each skill contains a `SKILL.md` with guidelines and individual rule files with code examples.
+
+| Skill | Description | Use when |
+|-------|-------------|----------|
+| [agent-basics](skills/agent-basics/) | Core SDK setup, events, middleware | Creating new agents, handling messages |
+| [commands](skills/commands/) | Validators, filters, type guards | Implementing commands, validating input |
+| [inline-actions](skills/inline-actions/) | Interactive buttons (XIP-67) | Creating menus, confirmations, selections |
+| [attachments](skills/attachments/) | Encrypted file handling | Sending/receiving files and images |
+| [transactions](skills/transactions/) | USDC transfers, wallet calls | Token transfers, transaction requests |
+| [groups](skills/groups/) | Group management, permissions | Creating groups, managing members |
+| [reactions](skills/reactions/) | Emoji reactions, thinking indicator | Reacting to messages, showing state |
+| [domain-resolver](skills/domain-resolver/) | ENS, Farcaster resolution | Resolving mentions, fetching profiles |
+
+## Examples
+
+Runnable example agents that demonstrate specific capabilities:
+
+| Example | Description |
+|---------|-------------|
+| [xmtp-gm](examples/xmtp-gm/) | Simple agent that replies "gm" |
+| [xmtp-gpt](examples/xmtp-gpt/) | GPT-powered responses |
+| [xmtp-gated-group](examples/xmtp-gated-group/) | Group gating with passphrase |
+| [xmtp-coinbase-agentkit](examples/xmtp-coinbase-agentkit/) | CDP AgentKit integration |
+| [xmtp-domain-resolver](examples/xmtp-domain-resolver/) | ENS and Farcaster resolution |
+| [xmtp-transactions](examples/xmtp-transactions/) | USDC transactions |
+| [xmtp-gaia](examples/xmtp-gaia/) | Gaia AI integration |
+| [xmtp-smart-wallet](examples/xmtp-smart-wallet/) | Smart wallet usage |
+| [xmtp-attachments](examples/xmtp-attachments/) | File attachments with Pinata |
+| [xmtp-generalstore](examples/xmtp-generalstore/) | Shopping cart with inline actions |
+| [xmtp-thinking-reaction](examples/xmtp-thinking-reaction/) | Thinking emoji pattern |
+| [xmtp-queue-dual-client](examples/xmtp-queue-dual-client/) | Dual client architecture |
+| [xmtp-welcome-message](examples/xmtp-welcome-message/) | Welcome messages with buttons |
 
 > Visit [miniapps](https://xmtp.org/miniapps) to explore the latest agents and mini-apps.
 
-### Vibe coding
+## Quick start
 
-See these [Cursor rules](/.cursor) for vibe coding with XMTP using best practices.
-
-```bash
-Prompt: lets create an example that gets a number and returns its 2x multiple (use claude max)
-```
-
-### Run an example agent
+### Run an example
 
 ```bash
-# git clone repo
-git clone https://github.com/ephemeraHQ/xmtp-agent-examples.git
-# go to the folder
+# Clone the repo
+git clone https://github.com/xmtplabs/xmtp-agent-examples.git
 cd xmtp-agent-examples
-# install packages
+
+# Install packages
 yarn
-# generate random xmtp keys (optional)
+
+# Generate random XMTP keys
 yarn gen:keys
-# run the example
+
+# Run an example
+cd examples/xmtp-gm
 yarn dev
 ```
 
-### Set environment variables
+### Environment variables
 
-To run an example, you must create a `.env` file with the following variables:
+Create a `.env` file with:
 
 ```bash
-XMTP_WALLET_KEY= # the private key of the wallet
-XMTP_DB_ENCRYPTION_KEY= # encryption key for the local database
-XMTP_ENV=dev # local, dev, production
+XMTP_WALLET_KEY=      # Private key for the wallet
+XMTP_DB_ENCRYPTION_KEY= # Encryption key for local database
+XMTP_ENV=dev          # local, dev, or production
 ```
 
-### Generate random XMTP keys
-
-Use this script to generate random XMTP keys:
+### Generate keys
 
 ```bash
 yarn gen:keys
 ```
 
-> [!WARNING]
-> Running the `yarn gen:keys` command will append keys to your existing `.env` file.
+> Warning: Running `yarn gen:keys` will append keys to your existing `.env` file.
 
-### Revoke installations
+## Development
 
-You can revoke old installations by running:
+### Vibe coding
+
+See the [skills](skills/) directory for AI-assisted development patterns.
 
 ```bash
-# you can get your values from terminal logs
-yarn revoke <inbox-id> <installations-to-exclude>
+Prompt: Create an agent that multiplies numbers by 2
 ```
 
-### Enable debug mode
-
-You can enable debug mode by adding the following to your `.env` file:
+### Debug mode
 
 ```bash
 XMTP_FORCE_DEBUG=true
-XMTP_FORCE_DEBUG_LEVEL=warn # debug, info, warn, error
+XMTP_FORCE_DEBUG_LEVEL=debug # debug, info, warn, error
 ```
-
-> This will print additional information to the console.
 
 ### Talk to your agent
 
-Try out the examples using [xmtp.chat](https://xmtp.chat), the official playground for agents.
+Test using [xmtp.chat](https://xmtp.chat), the official playground for agents.
 
-![](/examples/xmtp-gm/screenshot.png)
-
-### Talk using the CLI
+### CLI debugging
 
 ```bash
-# initialize the CLI
 yarn debug
-# connect to an agent
 yarn debug --agent 0x81bddb3d7cd9ccdfaeb117ce19fd77c1433b907d
 ```
 
-### Run a local XMTP network (optional)
+### Local XMTP network
 
-`dev` and `production` networks are hosted by XMTP, while you can run your own `local` network.
+```bash
+# Start local network
+./dev/up
 
-1. Install Docker
+# Update .env
+XMTP_ENV=local
 
-2. Start the XMTP service and database
+# Stop
+./dev/down
+```
 
-   ```bash
-   ./dev/up
-   ```
+### Revoke installations
 
-3. Change the `.env` file to use the `local` network
+```bash
+yarn revoke <inbox-id> <installations-to-exclude>
+```
 
-   ```bash
-   XMTP_ENV = local
-   ```
+## Deploy
 
-### Deploy your own agent
+See [Deploy your own agent](https://docs.xmtp.org/agents/deploy/deploy-agent) for production deployment guides.
 
-See how to build and deploy [your own production-grade agent](https://docs.xmtp.org/agents/deploy/deploy-agent) with XMTP.
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+## License
+
+MIT
