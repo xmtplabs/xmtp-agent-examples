@@ -11,6 +11,8 @@ Use `sendConfirmation` for yes/no dialogs.
 **Basic confirmation:**
 
 ```typescript
+import { sendConfirmation } from "../../utils/inline-actions";
+
 await sendConfirmation(
   ctx,
   "Delete this item?",
@@ -24,8 +26,6 @@ await sendConfirmation(
   }
 );
 ```
-
-Implement `sendConfirmation` helper that creates yes/no buttons with unique IDs and registers the handlers.
 
 **Without cancel handler:**
 

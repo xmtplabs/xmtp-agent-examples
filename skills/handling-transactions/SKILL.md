@@ -1,5 +1,5 @@
 ---
-name: transactions
+name: handling-transactions
 description: Token transactions and wallet integration for XMTP agents. Use when sending USDC, creating transaction requests, or handling transaction confirmations. Triggers on USDC transfer, wallet calls, or transaction reference.
 license: MIT
 metadata:

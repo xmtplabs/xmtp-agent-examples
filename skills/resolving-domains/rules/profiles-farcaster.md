@@ -11,6 +11,8 @@ Use `fetchFarcasterProfile` to get Farcaster user information.
 **Basic usage:**
 
 ```typescript
+import { fetchFarcasterProfile } from "../../utils/resolver";
+
 const profile = await fetchFarcasterProfile("dwr.eth");
 
 console.log("Address:", profile.address);
@@ -20,8 +22,6 @@ console.log("FID:", profile.fid);
 console.log("Followers:", profile.social?.follower);
 console.log("Following:", profile.social?.following);
 ```
-
-Implement `fetchFarcasterProfile` by calling the web3.bio API at `https://api.web3.bio/profile/{name}`.
 
 **In agent context:**
 

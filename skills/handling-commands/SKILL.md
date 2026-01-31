@@ -1,5 +1,5 @@
 ---
-name: commands
+name: handling-commands
 description: Patterns for handling commands, validating input, and filtering messages in XMTP agents. Use when implementing slash commands, validators, or message filters. Triggers on command handling, input validation, or type guards.
 license: MIT
 metadata:

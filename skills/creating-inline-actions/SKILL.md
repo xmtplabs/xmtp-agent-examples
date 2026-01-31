@@ -1,5 +1,5 @@
 ---
-name: inline-actions
+name: creating-inline-actions
 description: Interactive button-based UI for XMTP agents following XIP-67. Use when creating menus, confirmation dialogs, selection options, or any button-based interaction. Triggers on inline actions, buttons, menus, or ActionBuilder.
 license: MIT
 metadata:

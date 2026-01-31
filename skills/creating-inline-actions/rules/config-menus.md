@@ -11,11 +11,7 @@ Use `AppConfig` for complex bots with multiple menus.
 **Define app configuration:**
 
 ```typescript
-type AppConfig = {
-  name: string;
-  menus: Record<string, Menu>;
-  options?: { autoShowMenuAfterAction?: boolean };
-};
+import { AppConfig, initializeAppFromConfig, showMenu } from "../../utils/inline-actions";
 
 const config: AppConfig = {
   name: "My Bot",

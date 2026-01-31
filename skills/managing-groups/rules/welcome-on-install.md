@@ -49,7 +49,7 @@ async function sendWelcomeMessage(ctx: ConversationContext) {
 }
 ```
 
-See the inline-actions skill for implementing `ActionBuilder`.
+See the [creating-inline-actions](../../creating-inline-actions/) skill for implementing `ActionBuilder`.
 
 **Group gating example:**
 

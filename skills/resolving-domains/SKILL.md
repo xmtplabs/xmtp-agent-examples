@@ -1,5 +1,5 @@
 ---
-name: domain-resolver
+name: resolving-domains
 description: ENS and Web3 identity resolution for XMTP agents. Use when resolving domain names, extracting mentions, or fetching Farcaster profiles. Triggers on ENS resolution, Farcaster lookup, or mention extraction.
 license: MIT
 metadata:

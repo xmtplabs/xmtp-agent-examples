@@ -11,6 +11,7 @@ Use `getUSDCBalance` to check token balances.
 **Basic balance check:**
 
 ```typescript
+import { getUSDCBalance } from "../../utils/transactions";
 import { validHex } from "@xmtp/agent-sdk";
 
 const networkId = "base-sepolia"; // or "base-mainnet"
@@ -20,8 +21,6 @@ const balance = await getUSDCBalance(networkId, validHex(address));
 
 await ctx.conversation.sendText(`Your balance: ${balance} USDC`);
 ```
-
-Implement `getUSDCBalance` using viem to read ERC20 balanceOf and format with decimals.
 
 **In a command handler:**
 
@@ -47,7 +46,9 @@ router.command("/balance", async (ctx) => {
 **Generic token balance:**
 
 ```typescript
-const customToken = {
+import { getTokenBalance, TokenConfig } from "../../utils/transactions";
+
+const customToken: TokenConfig = {
   tokenAddress: "0x...",
   decimals: 18,
   symbol: "TOKEN",
@@ -55,8 +56,6 @@ const customToken = {
 
 const balance = await getTokenBalance(networkId, customToken, validHex(address));
 ```
-
-Implement `getTokenBalance` to read any ERC20 token balance using viem's readContract.
 
 **Requirements:**
 

@@ -16,14 +16,14 @@ Skills are structured best practices and patterns for building XMTP agents. Each
 
 | Skill | Description | Use when |
 |-------|-------------|----------|
-| [agent-basics](skills/agent-basics/) | Core SDK setup, events, middleware | Creating new agents, handling messages |
-| [commands](skills/commands/) | Validators, filters, type guards | Implementing commands, validating input |
-| [inline-actions](skills/inline-actions/) | Interactive buttons (XIP-67) | Creating menus, confirmations, selections |
-| [attachments](skills/attachments/) | Encrypted file handling | Sending/receiving files and images |
-| [transactions](skills/transactions/) | USDC transfers, wallet calls | Token transfers, transaction requests |
-| [groups](skills/groups/) | Group management, permissions | Creating groups, managing members |
-| [reactions](skills/reactions/) | Emoji reactions, thinking indicator | Reacting to messages, showing state |
-| [domain-resolver](skills/domain-resolver/) | ENS, Farcaster resolution | Resolving mentions, fetching profiles |
+| [building-agents](skills/building-agents/) | Core SDK setup, events, middleware | Creating new agents, handling messages |
+| [handling-commands](skills/handling-commands/) | Validators, filters, type guards | Implementing commands, validating input |
+| [creating-inline-actions](skills/creating-inline-actions/) | Interactive buttons (XIP-67) | Creating menus, confirmations, selections |
+| [handling-attachments](skills/handling-attachments/) | Encrypted file handling | Sending/receiving files and images |
+| [handling-transactions](skills/handling-transactions/) | USDC transfers, wallet calls | Token transfers, transaction requests |
+| [managing-groups](skills/managing-groups/) | Group management, permissions | Creating groups, managing members |
+| [sending-reactions](skills/sending-reactions/) | Emoji reactions, thinking indicator | Reacting to messages, showing state |
+| [resolving-domains](skills/resolving-domains/) | ENS, Farcaster resolution | Resolving mentions, fetching profiles |
 
 ## Examples
 

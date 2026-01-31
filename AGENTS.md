@@ -7,14 +7,14 @@ Guidelines for AI agents working with this repository.
 ```
 xmtp-agent-skills/
 ├── skills/           # Best practices and patterns
-│   ├── agent-basics/
-│   ├── commands/
-│   ├── inline-actions/
-│   ├── attachments/
-│   ├── transactions/
-│   ├── groups/
-│   ├── reactions/
-│   └── domain-resolver/
+│   ├── building-agents/
+│   ├── handling-commands/
+│   ├── creating-inline-actions/
+│   ├── handling-attachments/
+│   ├── handling-transactions/
+│   ├── managing-groups/
+│   ├── sending-reactions/
+│   └── resolving-domains/
 ├── examples/         # Runnable example agents
 │   ├── xmtp-gm/
 │   ├── xmtp-gpt/

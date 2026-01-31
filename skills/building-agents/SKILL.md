@@ -1,5 +1,5 @@
 ---
-name: agent-basics
+name: building-agents
 description: Core XMTP Agent SDK setup and patterns. Use when creating new agents, handling messages, setting up middleware, or configuring environment variables. Triggers on agent setup, XMTP configuration, message handling, or middleware implementation.
 license: MIT
 metadata:

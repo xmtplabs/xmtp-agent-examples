@@ -11,6 +11,8 @@ Use `sendSelection` for multi-option menus with handlers.
 **Basic selection:**
 
 ```typescript
+import { sendSelection } from "../../utils/inline-actions";
+
 await sendSelection(ctx, "Pick a color:", [
   {
     id: "red",
@@ -36,12 +38,10 @@ await sendSelection(ctx, "Pick a color:", [
 ]);
 ```
 
-Implement `sendSelection` helper that builds action menus from options array and registers each handler.
-
 **With custom styles:**
 
 ```typescript
-import { ActionStyle } from "@xmtp/node-sdk";
+import { sendSelection, ActionStyle } from "../../utils/inline-actions";
 
 await sendSelection(ctx, "Choose action:", [
   {
