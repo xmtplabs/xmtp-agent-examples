@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 ### Changed
 
 - Move skills folder to .cursor/skills for Cursor auto-discovery
+- Format README tables and add community examples section
 
 ## [0.0.9] - 2026-01-31
 
