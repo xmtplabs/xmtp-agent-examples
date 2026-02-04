@@ -12,7 +12,7 @@
     "start": "tsx index.ts"
   },
   "dependencies": {
-    "@xmtp/agent-sdk": "2.0.0",
+    "@xmtp/agent-sdk": "*",
     "axios": "^1.8.4",
     "form-data": "^4.0.2"
   },

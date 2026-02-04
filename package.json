@@ -18,9 +18,12 @@
     "start": "cd examples/xmtp-gm && tsx index.ts",
     "typecheck": "tsc"
   },
+  "resolutions": {
+    "@xmtp/agent-sdk": "2.0.2"
+  },
   "dependencies": {
     "@types/node": "^22.13.0",
-    "@xmtp/agent-sdk": "2.0.0",
+    "@xmtp/agent-sdk": "*",
     "@xmtp/cli": "^0.0.4",
     "ink-text-input": "^6.0.0",
     "react": "^19.2.0",

@@ -12,7 +12,7 @@
     "start": "tsx index.ts"
   },
   "dependencies": {
-    "@xmtp/agent-sdk": "2.0.0",
+    "@xmtp/agent-sdk": "*",
     "viem": "^2.20.2"
   },
   "devDependencies": {
