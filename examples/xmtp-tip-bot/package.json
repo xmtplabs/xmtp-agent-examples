@@ -1,0 +1,13 @@
+﻿{
+  "name": "xmtp-tip-bot",
+  "version": "1.0.0",
+  "description": "Send ETH tips via XMTP on Base",
+  "main": "index.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx index.ts"
+  },
+  "dependencies": {
+    "viem": "^2.22.14"
+  }
+}

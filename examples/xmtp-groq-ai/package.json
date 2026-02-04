@@ -1,0 +1,13 @@
+﻿{
+  "name": "xmtp-groq-ai",
+  "version": "1.0.0",
+  "description": "AI agent using Groq's FREE Llama 3.3 70B",
+  "main": "index.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx index.ts"
+  },
+  "dependencies": {
+    "groq-sdk": "^0.9.0"
+  }
+}
