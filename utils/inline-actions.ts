@@ -4,7 +4,6 @@ import {
   type MessageContext,
   isIntent,
   type Actions,
-  type Intent,
 } from "@xmtp/agent-sdk";
 import { ActionStyle } from "@xmtp/agent-sdk";
 
@@ -68,7 +67,7 @@ export const inlineActionsMiddleware = (async (
   next: () => Promise<void>,
 ) => {
   if (isIntent(ctx.message)) {
-    const intentContent = ctx.message.content;
+    const intentContent = ctx.message.content as { actionId: string };
     const handler = actionHandlers.get(intentContent.actionId);
 
     console.log("🎯 Processing intent:", intentContent.actionId);
