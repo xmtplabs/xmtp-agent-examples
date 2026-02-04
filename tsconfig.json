@@ -7,7 +7,7 @@
     "declarationMap": true,
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": false,
-    "lib": ["ESNext"],
+    "lib": ["ESNext", "DOM"],
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "noEmit": true,
@@ -22,5 +22,6 @@
       "@helpers/client": ["./helpers/client.ts"]
     }
   },
-  "include": ["**/*.ts"]
+  "include": ["utils/**/*.ts"],
+  "exclude": ["node_modules"]
 }

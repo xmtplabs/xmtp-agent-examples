@@ -1,10 +1,11 @@
-import type {
-  AgentMiddleware,
-  Conversation,
-  MessageContext,
+import {
+  type AgentMiddleware,
+  type Conversation,
+  type MessageContext,
+  isIntent,
+  type Actions,
 } from "@xmtp/agent-sdk";
-import type { Actions, Intent } from "@xmtp/node-sdk";
-import { ActionStyle } from "@xmtp/node-sdk";
+import { ActionStyle } from "@xmtp/agent-sdk";
 
 // Re-export ActionStyle for convenience
 export { ActionStyle };
@@ -65,8 +66,8 @@ export const inlineActionsMiddleware = (async (
   ctx: MessageContext,
   next: () => Promise<void>,
 ) => {
-  if (ctx.message.contentType?.typeId === "intent") {
-    const intentContent = ctx.message.content as Intent;
+  if (isIntent(ctx.message)) {
+    const intentContent = ctx.message.content as { actionId: string };
     const handler = actionHandlers.get(intentContent.actionId);
 
     console.log("🎯 Processing intent:", intentContent.actionId);

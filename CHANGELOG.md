@@ -4,10 +4,23 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- Pin agent-sdk version once via root `resolutions`; workspaces use `*`
+
 ### Changed
 
+- Upgrade @xmtp/agent-sdk to 2.0.2
+- Use SDK `isIntent()` and agent-sdk imports in utils/inline-actions.ts
+- Rename `build:examples` script to `build:all`; workflow runs `yarn build:all`
+- Root tsconfig: include `utils/**/*.ts` only, add DOM lib for fetch types
+- Creating-inline-actions skill: use `isIntent()` and import from @xmtp/agent-sdk
 - Move skills folder to .cursor/skills for Cursor auto-discovery
 - Format README tables and add community examples section
+
+### Removed
+
+- Remove xmtp-coinbase-agentkit example (needs update; was causing transitive type errors)
 
 ## [0.0.9] - 2026-01-31
 

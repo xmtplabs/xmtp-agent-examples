@@ -34,7 +34,6 @@ Runnable example agents that demonstrate specific capabilities:
 | [xmtp-gm](examples/xmtp-gm/)                               | Simple agent that replies "gm"    |
 | [xmtp-gpt](examples/xmtp-gpt/)                             | GPT-powered responses             |
 | [xmtp-gated-group](examples/xmtp-gated-group/)             | Group gating with passphrase      |
-| [xmtp-coinbase-agentkit](examples/xmtp-coinbase-agentkit/) | CDP AgentKit integration          |
 | [xmtp-domain-resolver](examples/xmtp-domain-resolver/)     | ENS and Farcaster resolution      |
 | [xmtp-transactions](examples/xmtp-transactions/)           | USDC transactions                 |
 | [xmtp-smart-wallet](examples/xmtp-smart-wallet/)           | Smart wallet usage                |
