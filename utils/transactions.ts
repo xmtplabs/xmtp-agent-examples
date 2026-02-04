@@ -1,5 +1,5 @@
-import { HexString, validHex } from "@xmtp/agent-sdk";
-import type { WalletSendCallsParams } from "@xmtp/content-type-wallet-send-calls";
+import type { WalletSendCalls, HexString } from "@xmtp/agent-sdk";
+import { validHex } from "@xmtp/agent-sdk";
 import { createPublicClient, formatUnits, http, toHex } from "viem";
 import { base, baseSepolia } from "viem/chains";
 
@@ -81,7 +81,7 @@ export const createTokenTransferCalls = (
   fromAddress: HexString,
   recipientAddress: string,
   amount: number,
-): WalletSendCallsParams => {
+): WalletSendCalls => {
   const networkConfig = getNetworkConfig(networkId);
   const data = `0xa9059cbb${recipientAddress.slice(2).padStart(64, "0")}${BigInt(amount).toString(16).padStart(64, "0")}`;
   return {
@@ -120,7 +120,7 @@ export const createUSDCTransferCalls = (
   fromAddress: HexString,
   recipientAddress: string,
   amount: number,
-): WalletSendCallsParams => {
+): WalletSendCalls => {
   const tokenConfig = USDC_TOKENS[networkId];
   if (!tokenConfig)
     throw new Error(`USDC token not found for network: ${networkId}`);

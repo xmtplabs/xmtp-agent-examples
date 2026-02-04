@@ -1,7 +1,6 @@
 import { Agent, validHex } from "@xmtp/agent-sdk";
 import { getTestUrl } from "@xmtp/agent-sdk/debug";
 import { CommandRouter } from "@xmtp/agent-sdk/middleware";
-import { ContentTypeWalletSendCalls } from "@xmtp/content-type-wallet-send-calls";
 import { loadEnvFile } from "../../utils/general";
 import {
   createUSDCTransferCalls,
@@ -24,24 +23,52 @@ router.command("/balance", async (ctx) => {
     validHex(senderAddress),
   );
 
-  await ctx.sendText(
+  await ctx.conversation.sendText(
     `My USDC balance is: ${agentBalance} USDC\n` +
       `Your USDC balance is: ${senderBalance} USDC`,
   );
 });
 
 router.command("/tx", async (ctx) => {
+  console.log("Received transaction request", ctx.message);
+
   const agentAddress = agent.address;
   const senderAddress = await ctx.getSenderAddress();
 
-  const amount = parseFloat(ctx.message.content.split(" ")[1]);
-  if (isNaN(amount) || amount <= 0) {
-    await ctx.sendText("Please provide a valid amount. Usage: /tx <amount>");
+  const parseUsdcToBaseUnits = (raw: string): number | null => {
+    const s = raw.trim();
+    if (!s) return null;
+
+    // Accept: "2", "2.5", ".5" (USDC has 6 decimals)
+    if (!/^(?:\d+(?:\.\d+)?|\.\d+)$/.test(s)) return null;
+
+    const [wholePart, fracPartRaw = ""] = s.split(".");
+    const whole = BigInt(wholePart === "" ? "0" : wholePart);
+    const fracPart = fracPartRaw.padEnd(6, "0").slice(0, 6);
+    const frac = BigInt(fracPart === "" ? "0" : fracPart);
+    const units = whole * 1_000_000n + frac;
+
+    if (units <= 0n) return null;
+    if (units > BigInt(Number.MAX_SAFE_INTEGER)) return null;
+    return Number(units);
+  };
+
+  // CommandRouter may pass either "/tx 2" or just "2" as message content.
+  const messageContent = String(ctx.message.content ?? "").trim();
+  const argsText = messageContent.toLowerCase().startsWith("/tx")
+    ? messageContent.replace(/^\/tx\b/i, "").trim()
+    : messageContent;
+  const amountToken = argsText.split(/\s+/)[0] ?? "";
+  const amountInDecimals = parseUsdcToBaseUnits(amountToken);
+
+  if (!amountInDecimals) {
+    await ctx.conversation.sendText(
+      "Please provide a valid amount. Usage: /tx <amount>",
+    );
     return;
   }
 
-  // Convert amount to USDC decimals (6 decimal places)
-  const amountInDecimals = Math.floor(amount * Math.pow(10, 6));
+  console.log("Amount in decimals", amountInDecimals);
 
   const walletSendCalls = createUSDCTransferCalls(
     networkId,
@@ -50,20 +77,32 @@ router.command("/tx", async (ctx) => {
     amountInDecimals,
   );
   console.log("Replied with wallet sendcall");
-  await ctx.conversation.send(walletSendCalls, ContentTypeWalletSendCalls);
+  await ctx.conversation.sendWalletSendCalls(walletSendCalls);
 
   // Send a follow-up message about transaction references
-  await ctx.sendText(
+  await ctx.conversation.sendText(
     `💡 After completing the transaction, you can send a transaction reference message to confirm completion.`,
   );
 });
 
 router.default(async (ctx) => {
-  await ctx.sendText(
+  // Use the exposed command list from CommandRouter
+  const commands = router.commandList;
+  const commandDescriptions: Record<string, string> = {
+    "/balance": "Check your USDC balance",
+    "/tx": "Send USDC to the agent (e.g. /tx 0.1)",
+  };
+
+  const helpText =
     "Available commands:\n" +
-      "/balance - Check your USDC balance\n" +
-      "/tx <amount> - Send USDC to the agent (e.g. /tx 0.1)",
-  );
+    commands
+      .map((cmd: string) => {
+        const desc = commandDescriptions[cmd] || "";
+        return desc ? `${cmd} - ${desc}` : cmd;
+      })
+      .join("\n");
+
+  await ctx.conversation.sendText(helpText);
 });
 
 agent.on("start", () => {
@@ -85,7 +124,7 @@ agent.on("transaction-reference", async (ctx) => {
 
   console.log("Received transaction reference: ", transactionRef);
 
-  await ctx.sendText(
+  await ctx.conversation.sendText(
     `✅ Transaction confirmed!\n` +
       `🔗 Network: ${transactionRef.networkId}\n` +
       `📄 Hash: ${transactionRef.reference}\n` +

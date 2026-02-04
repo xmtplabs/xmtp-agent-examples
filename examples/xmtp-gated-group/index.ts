@@ -86,19 +86,19 @@ agent.on("text", (ctx) => {
 
   // Check if validation data is available
   if (!validation) {
-    void ctx.sendText(GROUP_CONFIG.messages.error);
+    void ctx.conversation.sendText(GROUP_CONFIG.messages.error);
     return;
   }
 
   // Check if secret word is not configured
   if (!validation.hasSecretWord) {
-    void ctx.sendText(GROUP_CONFIG.messages.error);
+    void ctx.conversation.sendText(GROUP_CONFIG.messages.error);
     return;
   }
 
   // Check if user is already in the group
   if (validation.isAlreadyInGroup) {
-    void ctx.sendText(GROUP_CONFIG.messages.alreadyInGroup);
+    void ctx.conversation.sendText(GROUP_CONFIG.messages.alreadyInGroup);
     return;
   }
 
@@ -107,7 +107,7 @@ agent.on("text", (ctx) => {
     void handleSuccessfulPassphrase(ctx);
   } else {
     // Wrong passphrase
-    void ctx.sendText(GROUP_CONFIG.messages.invalid);
+    void ctx.conversation.sendText(GROUP_CONFIG.messages.invalid);
   }
 });
 
@@ -124,17 +124,18 @@ async function handleSuccessfulPassphrase(ctx: MessageContext) {
     // Check if we already have a group created
     // For simplicity, we'll create a new group each time
     // In a production app, you'd want to store the group ID
-    const group = await agent.client.conversations.newGroup([]);
-    group.updateName(GROUP_CONFIG.groupName);
-    group.updateDescription(GROUP_CONFIG.groupDescription);
+    const group = await agent.createGroupWithAddresses([], {
+      groupName: GROUP_CONFIG.groupName,
+      groupDescription: GROUP_CONFIG.groupDescription,
+    });
     await group.addMembers([ctx.message.senderInboxId]);
 
     // Send success messages
-    await ctx.sendText(GROUP_CONFIG.messages.success[0]);
+    await ctx.conversation.sendText(GROUP_CONFIG.messages.success[0]);
 
     // Send welcome message in the group
-    await group.send(GROUP_CONFIG.messages.success[1]);
-    await group.send(GROUP_CONFIG.messages.success[2]);
+    await group.sendText(GROUP_CONFIG.messages.success[1]);
+    await group.sendText(GROUP_CONFIG.messages.success[2]);
 
     // Mark user as in group or get the sender address
     const senderAddress = await ctx.getSenderAddress();
@@ -147,7 +148,7 @@ async function handleSuccessfulPassphrase(ctx: MessageContext) {
     );
 
     // Send group details
-    await ctx.sendText(
+    await ctx.conversation.sendText(
       `Group Details:\n` +
         `- Group ID: ${group.id}\n` +
         `- Group URL: https://xmtp.chat/conversations/${group.id}\n` +
@@ -156,6 +157,6 @@ async function handleSuccessfulPassphrase(ctx: MessageContext) {
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     console.error("Error adding user to group:", errorMessage);
-    await ctx.sendText(GROUP_CONFIG.messages.error);
+    await ctx.conversation.sendText(GROUP_CONFIG.messages.error);
   }
 }

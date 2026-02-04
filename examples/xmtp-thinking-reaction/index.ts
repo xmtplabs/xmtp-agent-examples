@@ -2,13 +2,11 @@ import {
   Agent,
   type MessageContext,
   type AgentMiddleware,
+  filter,
+  isText,
+  getTestUrl,
 } from "@xmtp/agent-sdk";
-import { getTestUrl } from "@xmtp/agent-sdk/debug";
-import {
-  ContentTypeReaction,
-  ReactionCodec,
-  type Reaction,
-} from "@xmtp/content-type-reaction";
+import { ReactionSchema } from "@xmtp/node-sdk";
 import { loadEnvFile } from "../../utils/general";
 
 loadEnvFile();
@@ -25,31 +23,25 @@ interface ThinkingReactionContext extends MessageContext {
 
 // Middleware for thinking reaction pattern
 const thinkingReactionMiddleware: AgentMiddleware = async (ctx, next) => {
+  // Only apply to inbound text messages (ignore read receipts, reactions, etc.)
+  // and never react to our own messages to avoid infinite loops.
+  if (
+    !filter.hasContent(ctx.message) ||
+    !isText(ctx.message) ||
+    filter.fromSelf(ctx.message, ctx.client)
+  ) {
+    return;
+  }
+
   try {
     console.log("🤔 Reacting with thinking emoji...");
 
     // Step 1: Add thinking emoji reaction
-    await ctx.conversation.send(
-      {
-        action: "added",
-        content: "⏳",
-        reference: ctx.message.id,
-        schema: "shortcode",
-      } as Reaction,
-      ContentTypeReaction,
-    );
+    await ctx.sendReaction("⏳", ReactionSchema.Shortcode);
 
     // Step 2: Add helper function to remove the thinking emoji
     const removeThinkingEmoji = async () => {
-      await ctx.conversation.send(
-        {
-          action: "removed",
-          content: "⏳",
-          reference: ctx.message.id,
-          schema: "shortcode",
-        } as Reaction,
-        ContentTypeReaction,
-      );
+      await ctx.sendReaction("⏳", ReactionSchema.Shortcode);
     };
 
     // Attach helper to context
@@ -68,13 +60,13 @@ const thinkingReactionMiddleware: AgentMiddleware = async (ctx, next) => {
 
 const agent = await Agent.createFromEnv({
   env: process.env.XMTP_ENV as "local" | "dev" | "production",
-  codecs: [new ReactionCodec()],
 });
 
 // Apply the thinking reaction middleware
 agent.use(thinkingReactionMiddleware);
 
 agent.on("text", async (ctx) => {
+  console.log("Received message", ctx.message);
   const thinkingCtx = ctx as ThinkingReactionContext;
 
   try {
@@ -87,7 +79,7 @@ agent.on("text", async (ctx) => {
 
     // Step 2: Send response
     console.log("💭 Sending response...");
-    await ctx.sendText(
+    await ctx.conversation.sendText(
       "I've been thinking about your message and here's my response!",
     );
 

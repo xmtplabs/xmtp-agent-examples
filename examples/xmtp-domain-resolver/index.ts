@@ -14,6 +14,7 @@ agent.on("text", async (ctx) => {
   try {
     // Get sender's Farcaster profile
     const senderAddress = await ctx.getSenderAddress();
+    console.log("Sender address", senderAddress);
     if (senderAddress) {
       const senderProfile = await fetchFarcasterProfile(senderAddress);
       if (senderProfile.username) {
@@ -22,7 +23,6 @@ agent.on("text", async (ctx) => {
         );
       }
     }
-
     const content = ctx.message.content;
     // Resolve all mentions in the message
     const resolved = await resolveMentionsInMessage(
@@ -64,10 +64,10 @@ agent.on("text", async (ctx) => {
       );
     }
 
-    await ctx.sendText(response);
+    await ctx.conversation.sendText(response);
   } catch (error) {
     console.error("Error processing message:", error);
-    await ctx.sendText(
+    await ctx.conversation.sendText(
       "❌ Sorry, I encountered an error processing your request. Please try again.",
     );
   }

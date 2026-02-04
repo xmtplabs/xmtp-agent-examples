@@ -13,7 +13,7 @@ agent.on("text", async (ctx) => {
     const messageContent = ctx.message.content;
     const senderAddress = await ctx.getSenderAddress();
     console.log(`Received message: ${messageContent} by ${senderAddress}`);
-    await ctx.sendText("gm");
+    await ctx.conversation.sendText("gm");
   }
 });
 
@@ -23,7 +23,7 @@ agent.on("text", async (ctx) => {
     console.log(
       `Received message in group: ${ctx.message.content} by ${senderAddress}`,
     );
-    await ctx.sendText("gm");
+    await ctx.conversation.sendText("gm");
   }
 });
 

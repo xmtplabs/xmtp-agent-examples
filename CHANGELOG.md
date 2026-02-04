@@ -5,19 +5,55 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Changed
-- Update agent SDK (2026-01-20)
+
+- Move skills folder to .cursor/skills for Cursor auto-discovery
+
+## [0.0.9] - 2026-01-31
+
+### Changed
+
+- Update agent SDK to 2.0.0 (2026-01-23)
+- Centralize agent-sdk version across all example packages
+- Fix EncryptedAttachment API usage (payload instead of content.payload)
+- Update group creation to use agent.createGroupWithAddresses
+- Fix Reaction API to use ReactionSchema enum
+- Fix ActionStyle imports to use SDK enum
+
+### Fixed
+
+- Fix build errors in xmtp-attachments, xmtp-gated-group, xmtp-thinking-reaction, xmtp-generalstore
+- Fix type incompatibilities with SDK 2.0.0
+- Prevent reaction middleware from looping on read receipts / non-text messages
+- Remove unsafe `any` casts in examples and inline actions helpers
+- Fix `/tx` amount parsing when CommandRouter passes args-only content
+
+## [0.0.4] - 2026-01-21
+
+### Changed
+
+- Update agent SDK to 2.0.0-rc1
+- Remove content type packages and test SDK compatibility
+- Update imports to use SDK instead of separate content type packages
+
+### Added
+
+- Add SDK 2.0.0-rc1 test report
+- Add content types removal error documentation
 
 ## [2025-12-19]
 
 ### Changed
+
 - Update readme + cursor rules (#351)
 
 ## [2025-12-13]
 
 ### Added
+
 - Add @xmtp/cli to dependencies
 
 ### Changed
+
 - Set hoisting limit to workspaces
 - Update agent-sdk version
 - Update remote attachment pkg
@@ -25,6 +61,7 @@ All notable changes to this project will be documented in this file.
 ## [2025-11-24]
 
 ### Changed
+
 - Refactor scripts to use cli utils (#345)
 - Update key generation command
 - Add .env file in workflow
@@ -34,11 +71,13 @@ All notable changes to this project will be documented in this file.
 - Rename cli to debug mode
 
 ### Added
+
 - General Store Bot (#343)
 
 ## [2025-11-22]
 
 ### Changed
+
 - Remove unused imports
 - Add fs and path imports
 - Remove unused fs import
@@ -49,6 +88,7 @@ All notable changes to this project will be documented in this file.
 - Enhance env var parsing & validation
 
 ### Added
+
 - Add token transfer functionality
 - Refactor token and network config
 - Refactor USDC transaction utils
@@ -60,6 +100,7 @@ All notable changes to this project will be documented in this file.
 ## [2025-11-21]
 
 ### Changed
+
 - Update hackathon prize info
 - Update README example link
 - Refactor prize info markdown
@@ -75,10 +116,12 @@ All notable changes to this project will be documented in this file.
 - Refactor product browsing code
 
 ### Added
+
 - Add hackathon info message
 - Add General Store Bot feature
 
 ## [2025-11-10]
 
 ### Added
+
 - Add Coinbase Wallet compatibility (#342)
