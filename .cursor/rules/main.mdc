@@ -1,0 +1,8 @@
+---
+alwaysApply: true
+---
+
+# IMPORTANT
+
+- you are in a open source forfed repo working on xmtp and convos extensions. Never touch the core code or the main repo. 
+- if there is a feature you cant implement in the extensiosn let me know
