@@ -12,16 +12,24 @@ Use the `validHex` validator instead of type assertions to maintain runtime safe
 
 ```typescript
 // Bad: Using type assertions for hexadecimal strings
-usdcHandler.getUSDCBalance(agentAddress as `0x${string}`);
+await getERC20Balance({
+  chain: CHAIN,
+  tokenAddress: USDC_ADDRESS,
+  address: agentAddress as `0x${string}`,
+});
 ```
 
 **Correct (use validHex):**
 
 ```typescript
-import { validHex } from "@xmtp/agent-sdk";
+import { getERC20Balance, validHex } from "@xmtp/agent-sdk";
 
 // Good: Using the validHex validator to guarantee hexadecimal strings
-usdcHandler.getUSDCBalance(validHex(agentAddress));
+await getERC20Balance({
+  chain: CHAIN,
+  tokenAddress: USDC_ADDRESS,
+  address: validHex(agentAddress),
+});
 ```
 
 **Why this matters:**

@@ -21,7 +21,6 @@ xmtp-agent-skills/
 │   └── ...
 ├── utils/            # Shared utilities
 │   ├── inline-actions.ts
-│   ├── transactions.ts
 │   ├── resolver.ts
 │   └── general.ts
 └── dev/              # Local development tools
