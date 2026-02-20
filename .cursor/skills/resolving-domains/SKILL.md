@@ -49,7 +49,7 @@ Reference these guidelines when:
 ## Quick start
 
 ```typescript
-import { createNameResolver } from "@xmtp/agent-sdk/user";
+import { createNameResolver } from "@xmtp/agent-sdk";
 
 // Resolve a single name using the SDK resolver
 const resolver = createNameResolver(process.env.WEB3_BIO_API_KEY || "");
@@ -94,7 +94,7 @@ const extractMentions = (message: string): string[] => {
 **Resolve mentions in message:**
 
 ```typescript
-import { createNameResolver } from "@xmtp/agent-sdk/user";
+import { createNameResolver } from "@xmtp/agent-sdk";
 
 const resolveMentionsInMessage = async (
   message: string, members?: GroupMember[]

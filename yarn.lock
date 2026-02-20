@@ -913,14 +913,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@xmtp/agent-sdk@npm:2.0.2":
-  version: 2.0.2
-  resolution: "@xmtp/agent-sdk@npm:2.0.2"
+"@xmtp/agent-sdk@npm:2.2.0":
+  version: 2.2.0
+  resolution: "@xmtp/agent-sdk@npm:2.2.0"
   dependencies:
     "@xmtp/content-type-primitives": "npm:3.0.1"
-    "@xmtp/node-sdk": "npm:5.2.0"
+    "@xmtp/node-sdk": "npm:5.3.0"
     viem: "npm:^2.37.6"
-  checksum: 10c0/978e0650d90bfed01d35eabc2e0ceebabd273d1df0dcf757cf2e2f1ae2ecf3d04f47913b61bbce8c309f288d4904efad5f58b1a6dfed269058a5f8953a339e08
+  checksum: 10c0/e40b3fef50c69a7bd7eca8da52153f03b08162529397b325f34bdcb17f40bf2a027981d5c84a18b5c501c7633b1d2d3333e846a5df5678eefc404be88435c074
   languageName: node
   linkType: hard
 
@@ -1060,13 +1060,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@xmtp/node-sdk@npm:5.2.0":
-  version: 5.2.0
-  resolution: "@xmtp/node-sdk@npm:5.2.0"
+"@xmtp/node-sdk@npm:5.3.0":
+  version: 5.3.0
+  resolution: "@xmtp/node-sdk@npm:5.3.0"
   dependencies:
     "@xmtp/content-type-primitives": "npm:3.0.0"
     "@xmtp/node-bindings": "npm:1.9.1"
-  checksum: 10c0/791bcaf31cc1535895585ef4b6e4bc6d1a63e9801e5b5eb35e6becfbfc4dd5f2142f18ed5d962a0102fc6cfc84482a56e1b73dbe6181f2bc00bee04278a4a605
+  checksum: 10c0/4b57e8509193d38b6167accc648f700399894d0e41f16a9479a06acd85da86cbcbea88490f4c9ed43431ed21311f4ccf167d30a5ad3e528de972e78eaf918858
   languageName: node
   linkType: hard
 

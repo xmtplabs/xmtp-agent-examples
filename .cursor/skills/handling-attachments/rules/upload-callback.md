@@ -11,7 +11,7 @@ Create an upload callback to store encrypted files on your storage provider.
 **Pinata example:**
 
 ```typescript
-import { type AttachmentUploadCallback } from "@xmtp/agent-sdk/util";
+import { type AttachmentUploadCallback } from "@xmtp/agent-sdk";
 import { PinataSDK } from "pinata";
 
 const uploadCallback: AttachmentUploadCallback = async (attachment) => {

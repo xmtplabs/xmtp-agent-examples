@@ -59,11 +59,12 @@ npm install @xmtp/agent-sdk
 yarn add @xmtp/agent-sdk
 ```
 
+SDK 2.0+ uses unified exports: import everything from `@xmtp/agent-sdk` (no `/debug`, `/middleware`, `/user`, `/util` subpaths).
+
 ## Quick start
 
 ```typescript
-import { Agent } from "@xmtp/agent-sdk";
-import { getTestUrl } from "@xmtp/agent-sdk/debug";
+import { Agent, getTestUrl } from "@xmtp/agent-sdk";
 
 // Create agent using environment variables
 const agent = await Agent.createFromEnv();

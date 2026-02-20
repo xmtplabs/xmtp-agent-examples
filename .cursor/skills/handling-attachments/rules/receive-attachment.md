@@ -11,17 +11,14 @@ Use the `attachment` event and `downloadRemoteAttachment` to receive files.
 **Basic receiver:**
 
 ```typescript
-import { downloadRemoteAttachment } from "@xmtp/agent-sdk/util";
+import { downloadRemoteAttachment } from "@xmtp/agent-sdk";
 
 agent.on("attachment", async (ctx) => {
-  const attachment = await downloadRemoteAttachment(
-    ctx.message.content,
-    agent
-  );
-  
+  const attachment = await downloadRemoteAttachment(ctx.message.content);
+
   console.log(`Filename: ${attachment.filename}`);
   console.log(`MIME type: ${attachment.mimeType}`);
-  console.log(`Size: ${attachment.data.byteLength} bytes`);
+  console.log(`Size: ${attachment.content.byteLength} bytes`);
 });
 ```
 
@@ -29,14 +26,12 @@ agent.on("attachment", async (ctx) => {
 
 ```typescript
 import fs from "fs";
+import { downloadRemoteAttachment } from "@xmtp/agent-sdk";
 
 agent.on("attachment", async (ctx) => {
-  const attachment = await downloadRemoteAttachment(
-    ctx.message.content,
-    agent
-  );
-  
-  fs.writeFileSync(`./downloads/${attachment.filename}`, attachment.data);
+  const attachment = await downloadRemoteAttachment(ctx.message.content);
+
+  fs.writeFileSync(`./downloads/${attachment.filename}`, attachment.content);
   await ctx.conversation.sendText(`Saved: ${attachment.filename}`);
 });
 ```

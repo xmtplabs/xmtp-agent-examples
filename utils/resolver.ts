@@ -1,6 +1,8 @@
-import { IdentifierKind } from "@xmtp/agent-sdk";
-import { createNameResolver } from "@xmtp/agent-sdk/user";
-import type { GroupMember } from "@xmtp/agent-sdk";
+import {
+  createNameResolver,
+  IdentifierKind,
+  type GroupMember,
+} from "@xmtp/agent-sdk";
 import { loadEnvFile } from "./general";
 
 loadEnvFile();

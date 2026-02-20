@@ -6,56 +6,61 @@ tags: transactions, balance, usdc
 
 ## Check USDC balance
 
-Use `getUSDCBalance` to check token balances.
+Use the SDK 2.2.0 `getERC20Balance` and `getERC20Decimals` to check token balances.
 
 **Basic balance check:**
 
 ```typescript
-import { getUSDCBalance } from "../../utils/transactions";
-import { validHex } from "@xmtp/agent-sdk";
+import { getERC20Balance, getERC20Decimals, validHex } from "@xmtp/agent-sdk";
+import { formatUnits } from "viem";
+import { baseSepolia } from "viem/chains";
 
-const networkId = "base-sepolia"; // or "base-mainnet"
+const CHAIN = baseSepolia;
+const USDC_ADDRESS = "0x036CbD53842c5426634e7929541eC2318f3dCF7e";
 
-// Get balance (returns formatted string like "10.5")
-const balance = await getUSDCBalance(networkId, validHex(address));
+const balance = await getERC20Balance({
+  chain: CHAIN,
+  tokenAddress: USDC_ADDRESS,
+  address: validHex(address),
+});
+const decimals = await getERC20Decimals({ chain: CHAIN, tokenAddress: USDC_ADDRESS });
 
-await ctx.conversation.sendText(`Your balance: ${balance} USDC`);
+await ctx.conversation.sendText(`Your balance: ${formatUnits(balance, decimals)} USDC`);
 ```
 
 **In a command handler:**
 
 ```typescript
-import { CommandRouter } from "@xmtp/agent-sdk/middleware";
+import {
+  CommandRouter,
+  getERC20Balance,
+  getERC20Decimals,
+  validHex,
+} from "@xmtp/agent-sdk";
+import { formatUnits } from "viem";
 
 const router = new CommandRouter();
 
 router.command("/balance", async (ctx) => {
   const agentAddress = agent.address;
   const senderAddress = await ctx.getSenderAddress();
+  const decimals = await getERC20Decimals({ chain: CHAIN, tokenAddress: USDC_ADDRESS });
 
-  const agentBalance = await getUSDCBalance(networkId, validHex(agentAddress));
-  const senderBalance = await getUSDCBalance(networkId, validHex(senderAddress));
+  const [agentBalance, senderBalance] = await Promise.all([
+    getERC20Balance({ chain: CHAIN, tokenAddress: USDC_ADDRESS, address: validHex(agentAddress) }),
+    getERC20Balance({ chain: CHAIN, tokenAddress: USDC_ADDRESS, address: validHex(senderAddress) }),
+  ]);
 
   await ctx.conversation.sendText(
-    `Agent balance: ${agentBalance} USDC\n` +
-    `Your balance: ${senderBalance} USDC`
+    `Agent balance: ${formatUnits(agentBalance, decimals)} USDC\n` +
+      `Your balance: ${formatUnits(senderBalance, decimals)} USDC`,
   );
 });
 ```
 
-**Generic token balance:**
+**Other ERC-20 tokens:**
 
-```typescript
-import { getTokenBalance, TokenConfig } from "../../utils/transactions";
-
-const customToken: TokenConfig = {
-  tokenAddress: "0x...",
-  decimals: 18,
-  symbol: "TOKEN",
-};
-
-const balance = await getTokenBalance(networkId, customToken, validHex(address));
-```
+Use the same `getERC20Balance` and `getERC20Decimals` with a different `tokenAddress` and chain.
 
 **Requirements:**
 

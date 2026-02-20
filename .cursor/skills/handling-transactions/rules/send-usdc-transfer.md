@@ -6,73 +6,49 @@ tags: transactions, usdc, transfer, wallet
 
 ## Create USDC transfer requests
 
-Use `createUSDCTransferCalls` to create EIP-5792 compliant transfer requests.
+Use the SDK 2.2.0 `createERC20TransferCalls` to create EIP-5792 compliant transfer requests.
 
 **Basic transfer:**
 
 ```typescript
-import { createUSDCTransferCalls } from "../../utils/transactions";
-import { validHex } from "@xmtp/agent-sdk";
+import { createERC20TransferCalls, validHex } from "@xmtp/agent-sdk";
+import { parseUnits } from "viem";
+import { baseSepolia } from "viem/chains";
 
-const networkId = "base-sepolia"; // or "base-mainnet"
+const CHAIN = baseSepolia;
+const USDC_ADDRESS = "0x036CbD53842c5426634e7929541eC2318f3dCF7e";
 
-// Create transfer request (amount in smallest units, 6 decimals)
-const walletSendCalls = createUSDCTransferCalls(
-  networkId,
-  validHex(senderAddress),  // from
-  validHex(recipientAddress), // to
-  1000000 // 1 USDC = 1,000,000 (6 decimals)
-);
+const walletSendCalls = createERC20TransferCalls({
+  chain: CHAIN,
+  tokenAddress: USDC_ADDRESS,
+  from: validHex(senderAddress),
+  to: validHex(recipientAddress),
+  amount: parseUnits("1", 6), // 1 USDC (6 decimals)
+  description: "Transfer 1 USDC on Base Sepolia",
+});
 
-// Send to conversation
 await ctx.conversation.sendWalletSendCalls(walletSendCalls);
 ```
 
 **Parse user input:**
 
 ```typescript
-// Convert USDC string to base units
-const parseUsdcToBaseUnits = (raw: string): number | null => {
-  const s = raw.trim();
-  if (!s) return null;
+import { parseUnits } from "viem";
 
-  // Accept: "2", "2.5", ".5"
-  if (!/^(?:\d+(?:\.\d+)?|\.\d+)$/.test(s)) return null;
-
-  const [wholePart, fracPartRaw = ""] = s.split(".");
-  const whole = BigInt(wholePart === "" ? "0" : wholePart);
-  const fracPart = fracPartRaw.padEnd(6, "0").slice(0, 6);
-  const frac = BigInt(fracPart === "" ? "0" : fracPart);
-  const units = whole * 1_000_000n + frac;
-
-  if (units <= 0n) return null;
-  return Number(units);
-};
-
-// Usage: "/tx 2.5" -> 2500000
-const amount = parseUsdcToBaseUnits("2.5"); // 2500000
+// Parse human-readable amount to bigint (e.g. "2.5" USDC with 6 decimals)
+let amount: bigint;
+try {
+  amount = parseUnits(userInput, 6);
+} catch {
+  await ctx.conversation.sendText("Please provide a valid amount.");
+  return;
+}
+if (amount <= 0n) {
+  await ctx.conversation.sendText("Amount must be positive.");
+  return;
+}
 ```
 
 **WalletSendCalls structure:**
 
-```typescript
-const walletSendCalls: WalletSendCallsParams = {
-  version: "1.0",
-  from: "0x123...abc",
-  chainId: "0x14a34", // Base Sepolia in hex
-  calls: [
-    {
-      to: "0x456...xyz",
-      data: "0x...", // ERC20 transfer call data
-      metadata: {
-        description: "Transfer 10 USDC on Base Sepolia",
-        transactionType: "transfer",
-        currency: "USDC",
-        amount: 10,
-        decimals: 6,
-        networkId: "base-sepolia",
-      },
-    },
-  ],
-};
-```
+The SDK's `createERC20TransferCalls` returns a `WalletSendCalls` object with `version`, `chainId`, `from`, and `calls` (each with `to`, `data`, `value`, and `metadata`: `description`, `transactionType: "transfer"`).

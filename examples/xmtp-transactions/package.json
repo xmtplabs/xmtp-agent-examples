@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsx --watch index.ts",
-    "gen:keys": "yarn dlx @xmtp/cli keys",
+    "gen:keys": "yarn dlx @xmtp/cli init --output ./.env",
     "cli": "tsx ../../scripts/cli.tsx",
     "lint": "cd ../.. && yarn eslint examples/xmtp-transactions",
     "start": "tsx index.ts"

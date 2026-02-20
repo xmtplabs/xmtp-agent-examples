@@ -54,6 +54,8 @@ See the [creating-inline-actions](../../creating-inline-actions/) skill for impl
 **Group gating example:**
 
 ```typescript
+import { IdentifierKind } from "@xmtp/agent-sdk";
+
 const GROUP_CONFIG = {
   secretWord: "xmtp",
   groupName: "Secret Group",

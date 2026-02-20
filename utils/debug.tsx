@@ -4,18 +4,19 @@ import { render, Box, Text, useApp } from "ink";
 import TextInput from "ink-text-input";
 import {
   Agent,
-  IdentifierKind,
+  createSigner,
+  createUser,
   type Conversation,
   type DecodedMessage,
-  type XmtpEnv,
-  type Group,
   type Dm,
+  type Group,
+  getTestUrl,
+  IdentifierKind,
+  type XmtpEnv,
   validHex,
 } from "@xmtp/agent-sdk";
 import { getRandomValues } from "node:crypto";
 import { Client } from "@xmtp/node-sdk";
-import { getTestUrl } from "@xmtp/agent-sdk/debug";
-import { createSigner, createUser } from "@xmtp/agent-sdk/user";
 import { generatePrivateKey, privateKeyToAddress } from "viem/accounts";
 import { fromString, toString } from "uint8arrays";
 

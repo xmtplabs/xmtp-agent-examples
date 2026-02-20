@@ -1,10 +1,11 @@
 import { readFile } from "node:fs/promises";
-import { Agent, MessageContext } from "@xmtp/agent-sdk";
-import { getTestUrl } from "@xmtp/agent-sdk/debug";
 import {
+  Agent,
   type AttachmentUploadCallback,
   downloadRemoteAttachment,
-} from "@xmtp/agent-sdk/util";
+  getTestUrl,
+  type MessageContext,
+} from "@xmtp/agent-sdk";
 
 import { uploadToPinata } from "./upload";
 import { loadEnvFile } from "../../utils/general";
@@ -42,7 +43,7 @@ agent.on("text", async (ctx: MessageContext) => {
     return fileUrl;
   };
 
-  await ctx.sendRemoteAttachment(file, uploadCallback);
+  await ctx.conversation.sendRemoteAttachment(file, uploadCallback);
   console.log("Remote attachment sent successfully");
 });
 
@@ -81,7 +82,7 @@ agent.on("attachment", async (ctx: MessageContext) => {
     );
   };
 
-  await ctx.sendRemoteAttachment(file, uploadCallback);
+  await ctx.conversation.sendRemoteAttachment(file, uploadCallback);
   console.log(`Successfully sent back attachment: ${filename}`);
   await ctx.conversation.sendText(`Here's your attachment back: ${filename}`);
 });

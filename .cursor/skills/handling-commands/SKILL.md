@@ -34,7 +34,7 @@ Reference these guidelines when:
 - `validators-address` - Validate Ethereum addresses
 
 ### Filters (HIGH)
-- `filters-message-types` - Filter by message type
+- `filters-message-types` - Filter by message type (SDK 2.0+: use direct imports `isText`, `isReaction`, `isReply`, etc. from `@xmtp/agent-sdk`; keep `filter.fromSelf`, `filter.hasDefinedContent`)
 - `filters-sender` - Filter out self-messages
 - `filters-content` - Check for defined content
 

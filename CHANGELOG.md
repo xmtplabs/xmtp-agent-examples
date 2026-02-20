@@ -10,6 +10,12 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- Upgrade @xmtp/agent-sdk to 2.2.0; align all snippets with CHANGELOG 2.0.0 and adopt 2.2.0 transaction helpers
+- Unified exports: import from `@xmtp/agent-sdk` only (no `/debug`, `/middleware`, `/user`, `/util`)
+- Content-type filters: use direct imports (`isText`, `isReaction`, etc.) instead of `filter.isText`
+- Use `ctx.conversation.sendRemoteAttachment` and `ctx.conversation.sendReaction` (reaction object) in examples
+- Attachments: `downloadRemoteAttachment(remoteAttachment)` (no agent arg); use `attachment.content` not `.data`
+- Transaction example and handling-transactions skill: use SDK 2.2.0 helpers (`createERC20TransferCalls`, `getERC20Balance`, `getERC20Decimals`) with viem chains and bigint
 - Upgrade @xmtp/agent-sdk to 2.0.2
 - Use SDK `isIntent()` and agent-sdk imports in utils/inline-actions.ts
 - Rename `build:examples` script to `build:all`; workflow runs `yarn build:all`

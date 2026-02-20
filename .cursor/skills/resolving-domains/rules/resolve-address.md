@@ -11,7 +11,7 @@ Use the name resolver to convert Web3 identities to Ethereum addresses.
 **Basic resolution:**
 
 ```typescript
-import { createNameResolver } from "@xmtp/agent-sdk/user";
+import { createNameResolver } from "@xmtp/agent-sdk";
 
 const resolver = createNameResolver(process.env.WEB3_BIO_API_KEY || "");
 

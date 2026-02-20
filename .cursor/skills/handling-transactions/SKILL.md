@@ -49,72 +49,87 @@ Reference these guidelines when:
 
 ## Quick start
 
-```typescript
-import { validHex } from "@xmtp/agent-sdk";
+Use the SDK 2.2.0 transaction helpers with viem chains and bigint amounts:
 
-// Check balance using viem
-const balance = await getUSDCBalance("base-sepolia", validHex(address));
+```typescript
+import {
+  createERC20TransferCalls,
+  getERC20Balance,
+  getERC20Decimals,
+  validHex,
+} from "@xmtp/agent-sdk";
+import { formatUnits, parseUnits } from "viem";
+import { base, baseSepolia } from "viem/chains";
+
+const CHAIN = baseSepolia; // or base for mainnet
+const USDC_ADDRESS = "0x036CbD53842c5426634e7929541eC2318f3dCF7e"; // Base Sepolia
+
+// Get decimals (e.g. 6 for USDC)
+const decimals = await getERC20Decimals({ chain: CHAIN, tokenAddress: USDC_ADDRESS });
+
+// Check balance (returns bigint; format for display)
+const balance = await getERC20Balance({
+  chain: CHAIN,
+  tokenAddress: USDC_ADDRESS,
+  address: validHex(address),
+});
+await ctx.conversation.sendText(`Your balance: ${formatUnits(balance, decimals)} USDC`);
 
 // Create USDC transfer calls (EIP-5792)
-const calls = createUSDCTransferCalls(
-  "base-sepolia",
-  validHex(fromAddress),
-  validHex(toAddress),
-  1000000 // 1 USDC (6 decimals)
-);
+const calls = createERC20TransferCalls({
+  chain: CHAIN,
+  tokenAddress: USDC_ADDRESS,
+  from: validHex(fromAddress),
+  to: validHex(toAddress),
+  amount: parseUnits("1", decimals), // 1 USDC
+  description: `Transfer 1 USDC on ${CHAIN.name}`,
+});
 await ctx.conversation.sendWalletSendCalls(calls);
 ```
 
 ## Implementation snippets
 
-**USDC token config:**
+**USDC addresses (viem chains):**
 
 ```typescript
-const USDC_TOKENS: Record<string, { address: string; decimals: number }> = {
-  "base-sepolia": { address: "0x036CbD53842c5426634e7929541eC2318f3dCF7e", decimals: 6 },
-  "base-mainnet": { address: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913", decimals: 6 },
-};
+import { base, baseSepolia } from "viem/chains";
+
+const CHAIN = baseSepolia; // or base
+const USDC_ADDRESS = CHAIN.id === 8453
+  ? "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"   // Base Mainnet
+  : "0x036CbD53842c5426634e7929541eC2318f3dCF7e";  // Base Sepolia
 ```
 
-**Get USDC balance:**
+**Get ERC-20 balance (SDK 2.2.0):**
 
 ```typescript
-import { createPublicClient, formatUnits, http } from "viem";
-import { baseSepolia, base } from "viem/chains";
+import { getERC20Balance, getERC20Decimals } from "@xmtp/agent-sdk";
+import { formatUnits } from "viem";
 
-const getUSDCBalance = async (networkId: string, address: HexString): Promise<string> => {
-  const token = USDC_TOKENS[networkId];
-  const client = createPublicClient({
-    chain: networkId === "base-mainnet" ? base : baseSepolia,
-    transport: http(),
-  });
-  const balance = await client.readContract({
-    address: token.address as HexString,
-    abi: [{ inputs: [{ name: "account", type: "address" }], name: "balanceOf", outputs: [{ type: "uint256" }], stateMutability: "view", type: "function" }],
-    functionName: "balanceOf",
-    args: [address],
-  });
-  return formatUnits(balance, token.decimals);
-};
+const balance = await getERC20Balance({
+  chain: CHAIN,
+  tokenAddress: USDC_ADDRESS,
+  address: validHex(address),
+});
+const decimals = await getERC20Decimals({ chain: CHAIN, tokenAddress: USDC_ADDRESS });
+const formatted = formatUnits(balance, decimals);
 ```
 
-**Create USDC transfer calls:**
+**Create ERC-20 transfer calls (SDK 2.2.0):**
 
 ```typescript
-import { toHex } from "viem";
+import { createERC20TransferCalls } from "@xmtp/agent-sdk";
+import { parseUnits } from "viem";
 
-const createUSDCTransferCalls = (
-  networkId: string, from: HexString, to: string, amount: number
-): WalletSendCalls => {
-  const token = USDC_TOKENS[networkId];
-  const data = `0xa9059cbb${to.slice(2).padStart(64, "0")}${BigInt(amount).toString(16).padStart(64, "0")}`;
-  return {
-    version: "1.0",
-    from,
-    chainId: toHex(networkId === "base-mainnet" ? 8453 : 84532),
-    calls: [{ to: token.address as HexString, data: validHex(data) }],
-  };
-};
+const walletSendCalls = createERC20TransferCalls({
+  chain: CHAIN,
+  tokenAddress: USDC_ADDRESS,
+  from: validHex(senderAddress),
+  to: validHex(recipientAddress),
+  amount: parseUnits("2.5", 6), // 2.5 USDC
+  description: "Transfer 2.5 USDC",
+});
+await ctx.conversation.sendWalletSendCalls(walletSendCalls);
 ```
 
 ## How to use

@@ -23,7 +23,7 @@ agent.on("text", async (ctx) => {
 **Correct (use CommandRouter):**
 
 ```typescript
-import { CommandRouter } from "@xmtp/agent-sdk/middleware";
+import { CommandRouter } from "@xmtp/agent-sdk";
 
 const router = new CommandRouter();
 

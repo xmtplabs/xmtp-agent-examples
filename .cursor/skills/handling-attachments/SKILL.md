@@ -41,7 +41,10 @@ Reference these guidelines when:
 ## Quick start
 
 ```typescript
-import { type AttachmentUploadCallback } from "@xmtp/agent-sdk/util";
+import {
+  type AttachmentUploadCallback,
+  downloadRemoteAttachment,
+} from "@xmtp/agent-sdk";
 
 // Send an attachment
 const file = new File(["Hello, World!"], "hello.txt", { type: "text/plain" });
@@ -49,7 +52,7 @@ await ctx.conversation.sendRemoteAttachment(file, uploadCallback);
 
 // Receive an attachment
 agent.on("attachment", async (ctx) => {
-  const attachment = await downloadRemoteAttachment(ctx.message.content, agent);
+  const attachment = await downloadRemoteAttachment(ctx.message.content);
   console.log(`Received: ${attachment.filename}`);
 });
 ```
