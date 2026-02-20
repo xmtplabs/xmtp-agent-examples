@@ -1,4 +1,4 @@
-# XMTP agent skills
+# XMTP agent examples
 
 A collection of examples for building XMTP agents using the [`@xmtp/agent-sdk`](https://github.com/xmtp/xmtp-js/tree/main/sdks/agent-sdk).
 
@@ -115,7 +115,6 @@ See [Deploy your own agent](https://docs.xmtp.org/agents/deploy/deploy-agent) fo
 
 | Example                                                               | Description         |
 | --------------------------------------------------------------------- | ------------------- |
-| [xmtp-gaia](https://github.com/xmtplabs/xmtp-agent-examples/pull/43)  | Gaia AI integration |
 | [xmtp-groq](https://github.com/xmtplabs/xmtp-agent-examples/pull/354) | Groq AI integration |
 
 ## Contributing
