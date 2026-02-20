@@ -1,12 +1,11 @@
 import {
   Agent,
-  type MessageContext,
   type AgentMiddleware,
   filter,
-  isText,
   getTestUrl,
+  isText,
+  type MessageContext,
 } from "@xmtp/agent-sdk";
-import { ReactionSchema } from "@xmtp/node-sdk";
 import { loadEnvFile } from "../../utils/general";
 
 loadEnvFile();
@@ -26,7 +25,7 @@ const thinkingReactionMiddleware: AgentMiddleware = async (ctx, next) => {
   // Only apply to inbound text messages (ignore read receipts, reactions, etc.)
   // and never react to our own messages to avoid infinite loops.
   if (
-    !filter.hasContent(ctx.message) ||
+    !filter.hasDefinedContent(ctx.message) ||
     !isText(ctx.message) ||
     filter.fromSelf(ctx.message, ctx.client)
   ) {
@@ -37,11 +36,21 @@ const thinkingReactionMiddleware: AgentMiddleware = async (ctx, next) => {
     console.log("🤔 Reacting with thinking emoji...");
 
     // Step 1: Add thinking emoji reaction
-    await ctx.sendReaction("⏳", ReactionSchema.Shortcode);
+    await ctx.conversation.sendReaction({
+      reference: ctx.message.id,
+      action: "added",
+      content: "⏳",
+      schema: "unicode",
+    });
 
     // Step 2: Add helper function to remove the thinking emoji
     const removeThinkingEmoji = async () => {
-      await ctx.sendReaction("⏳", ReactionSchema.Shortcode);
+      await ctx.conversation.sendReaction({
+        reference: ctx.message.id,
+        action: "removed",
+        content: "⏳",
+        schema: "unicode",
+      });
     };
 
     // Attach helper to context

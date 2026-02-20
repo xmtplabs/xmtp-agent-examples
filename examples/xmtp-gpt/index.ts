@@ -1,5 +1,9 @@
-import { Agent, BuiltInContentTypes, MessageContext } from "@xmtp/agent-sdk";
-import { getTestUrl } from "@xmtp/agent-sdk/debug";
+import {
+  Agent,
+  BuiltInContentTypes,
+  getTestUrl,
+  type MessageContext,
+} from "@xmtp/agent-sdk";
 import OpenAI from "openai/index.mjs";
 import { loadEnvFile } from "../../utils/general";
 

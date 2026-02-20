@@ -34,7 +34,7 @@ jobs:
         run: |
           cd test-dir/examples/xmtp-gm
           touch .env
-          yarn gen:keys
+          yarn gen:keys --force
 
       - name: Run agent
         run: |

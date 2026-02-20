@@ -1,15 +1,32 @@
-import { Agent, validHex } from "@xmtp/agent-sdk";
-import { getTestUrl } from "@xmtp/agent-sdk/debug";
-import { CommandRouter } from "@xmtp/agent-sdk/middleware";
-import { loadEnvFile } from "../../utils/general";
 import {
-  createUSDCTransferCalls,
-  getUSDCBalance,
-} from "../../utils/transactions";
+  Agent,
+  createERC20TransferCalls,
+  CommandRouter,
+  getERC20Balance,
+  getERC20Decimals,
+  getTestUrl,
+  validHex,
+} from "@xmtp/agent-sdk";
+import { formatUnits, parseUnits } from "viem";
+import { base, baseSepolia } from "viem/chains";
+import { loadEnvFile } from "../../utils/general";
 
 loadEnvFile();
 const agent = await Agent.createFromEnv();
 const networkId = process.env.NETWORK_ID || "base-sepolia";
+const CHAIN = networkId === "base-mainnet" ? base : baseSepolia;
+const USDC_ADDRESS = (
+  networkId === "base-mainnet"
+    ? "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"
+    : "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+) as `0x${string}`;
+
+let USDC_DECIMALS = 6;
+getERC20Decimals({ chain: CHAIN, tokenAddress: USDC_ADDRESS })
+  .then((d) => {
+    USDC_DECIMALS = d;
+  })
+  .catch(() => {});
 
 const router = new CommandRouter();
 
@@ -17,15 +34,22 @@ router.command("/balance", async (ctx) => {
   const agentAddress = agent.address;
   const senderAddress = await ctx.getSenderAddress();
 
-  const agentBalance = await getUSDCBalance(networkId, validHex(agentAddress));
-  const senderBalance = await getUSDCBalance(
-    networkId,
-    validHex(senderAddress),
-  );
+  const [agentBalance, senderBalance] = await Promise.all([
+    getERC20Balance({
+      chain: CHAIN,
+      tokenAddress: USDC_ADDRESS,
+      address: validHex(agentAddress),
+    }),
+    getERC20Balance({
+      chain: CHAIN,
+      tokenAddress: USDC_ADDRESS,
+      address: validHex(senderAddress),
+    }),
+  ]);
 
   await ctx.conversation.sendText(
-    `My USDC balance is: ${agentBalance} USDC\n` +
-      `Your USDC balance is: ${senderBalance} USDC`,
+    `My USDC balance is: ${formatUnits(agentBalance, USDC_DECIMALS)} USDC\n` +
+      `Your USDC balance is: ${formatUnits(senderBalance, USDC_DECIMALS)} USDC`,
   );
 });
 
@@ -35,47 +59,37 @@ router.command("/tx", async (ctx) => {
   const agentAddress = agent.address;
   const senderAddress = await ctx.getSenderAddress();
 
-  const parseUsdcToBaseUnits = (raw: string): number | null => {
-    const s = raw.trim();
-    if (!s) return null;
-
-    // Accept: "2", "2.5", ".5" (USDC has 6 decimals)
-    if (!/^(?:\d+(?:\.\d+)?|\.\d+)$/.test(s)) return null;
-
-    const [wholePart, fracPartRaw = ""] = s.split(".");
-    const whole = BigInt(wholePart === "" ? "0" : wholePart);
-    const fracPart = fracPartRaw.padEnd(6, "0").slice(0, 6);
-    const frac = BigInt(fracPart === "" ? "0" : fracPart);
-    const units = whole * 1_000_000n + frac;
-
-    if (units <= 0n) return null;
-    if (units > BigInt(Number.MAX_SAFE_INTEGER)) return null;
-    return Number(units);
-  };
-
   // CommandRouter may pass either "/tx 2" or just "2" as message content.
   const messageContent = String(ctx.message.content ?? "").trim();
   const argsText = messageContent.toLowerCase().startsWith("/tx")
     ? messageContent.replace(/^\/tx\b/i, "").trim()
     : messageContent;
   const amountToken = argsText.split(/\s+/)[0] ?? "";
-  const amountInDecimals = parseUsdcToBaseUnits(amountToken);
 
-  if (!amountInDecimals) {
+  let amount: bigint;
+  try {
+    amount = parseUnits(amountToken || "0", USDC_DECIMALS);
+  } catch {
     await ctx.conversation.sendText(
       "Please provide a valid amount. Usage: /tx <amount>",
     );
     return;
   }
+  if (amount <= 0n) {
+    await ctx.conversation.sendText(
+      "Please provide a positive amount. Usage: /tx <amount>",
+    );
+    return;
+  }
 
-  console.log("Amount in decimals", amountInDecimals);
-
-  const walletSendCalls = createUSDCTransferCalls(
-    networkId,
-    validHex(senderAddress),
-    validHex(agentAddress),
-    amountInDecimals,
-  );
+  const walletSendCalls = createERC20TransferCalls({
+    chain: CHAIN,
+    tokenAddress: USDC_ADDRESS,
+    from: validHex(senderAddress),
+    to: validHex(agentAddress),
+    amount,
+    description: `Transfer ${amountToken} USDC to agent on ${CHAIN.name}`,
+  });
   console.log("Replied with wallet sendcall");
   await ctx.conversation.sendWalletSendCalls(walletSendCalls);
 

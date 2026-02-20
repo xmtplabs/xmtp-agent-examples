@@ -11,10 +11,10 @@ Middleware lets you intercept and process messages before they reach event handl
 **Basic middleware:**
 
 ```typescript
-import { Agent, AgentMiddleware, filter } from "@xmtp/agent-sdk";
+import { Agent, AgentMiddleware, isText } from "@xmtp/agent-sdk";
 
 const onlyText: AgentMiddleware = async (ctx, next) => {
-  if (filter.isText(ctx.message)) {
+  if (isText(ctx.message)) {
     // Continue to next middleware
     await next();
   }

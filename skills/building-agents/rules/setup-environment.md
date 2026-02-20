@@ -25,9 +25,8 @@ XMTP_DB_ENCRYPTION_KEY=0xabcd...1234
 # Database directory (defaults to current working directory)
 XMTP_DB_DIRECTORY=./data
 
-# Debug mode
-XMTP_FORCE_DEBUG=true
-XMTP_FORCE_DEBUG_LEVEL=debug # debug, info, warn, error
+# Debug logging (SDK 2.0+)
+XMTP_FORCE_DEBUG_LEVEL=Debug
 ```
 
 **Generate keys:**

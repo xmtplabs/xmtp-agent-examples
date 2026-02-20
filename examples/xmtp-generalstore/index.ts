@@ -1,6 +1,5 @@
-import { Agent, MessageContext } from "@xmtp/agent-sdk";
+import { Agent, getTestUrl, type MessageContext } from "@xmtp/agent-sdk";
 import { ActionStyle } from "@xmtp/node-sdk";
-import { getTestUrl } from "@xmtp/agent-sdk/debug";
 import {
   inlineActionsMiddleware,
   registerAction,

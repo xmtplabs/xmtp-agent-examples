@@ -1,9 +1,9 @@
 import {
   Agent,
-  type MessageContext,
   type AgentMiddleware,
+  getTestUrl,
+  type MessageContext,
 } from "@xmtp/agent-sdk";
-import { getTestUrl } from "@xmtp/agent-sdk/debug";
 
 import { loadEnvFile } from "../../utils/general";
 

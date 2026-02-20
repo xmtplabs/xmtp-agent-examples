@@ -21,7 +21,6 @@ xmtp-agent-skills/
 │   └── ...
 ├── utils/            # Shared utilities
 │   ├── inline-actions.ts
-│   ├── transactions.ts
 │   ├── resolver.ts
 │   └── general.ts
 └── dev/              # Local development tools
@@ -59,16 +58,18 @@ metadata:
 Brief description.
 
 ## When to apply
+
 - Use case 1
 - Use case 2
 
 ## Quick reference
+
 - `rule-name` - Description
 ```
 
 ### Rule file format
 
-```markdown
+````markdown
 ---
 title: Rule Title
 impact: CRITICAL | HIGH | MEDIUM | LOW
@@ -80,15 +81,19 @@ tags: tag1, tag2
 Why it matters.
 
 **Incorrect:**
+
 ```typescript
 // Bad example
 ```
+````
 
 **Correct:**
+
 ```typescript
 // Good example
 ```
-```
+
+````
 
 ## Creating new skills
 
@@ -116,7 +121,7 @@ Why it matters.
   "scripts": {
     "build": "tsc",
     "dev": "tsx --watch index.ts",
-    "gen:keys": "yarn dlx @xmtp/cli keys",
+    "gen:keys": "yarn dlx @xmtp/cli init --output ./.env",
     "start": "tsx index.ts"
   },
   "dependencies": {
@@ -130,15 +135,14 @@ Why it matters.
     "node": ">=20"
   }
 }
-```
+````
 
 ## Code patterns
 
 ### Agent initialization
 
 ```typescript
-import { Agent } from "@xmtp/agent-sdk";
-import { getTestUrl } from "@xmtp/agent-sdk/debug";
+import { Agent, getTestUrl } from "@xmtp/agent-sdk";
 
 const agent = await Agent.createFromEnv();
 
@@ -168,7 +172,7 @@ const address = validHex(value);
 ### Use CommandRouter for commands
 
 ```typescript
-import { CommandRouter } from "@xmtp/agent-sdk/middleware";
+import { Agent, CommandRouter } from "@xmtp/agent-sdk";
 
 const router = new CommandRouter();
 router.command("/help", async (ctx) => { ... });
@@ -178,9 +182,9 @@ agent.use(router.middleware());
 ### Use filters for type safety
 
 ```typescript
-import { filter } from "@xmtp/agent-sdk";
+import { filter, isText } from "@xmtp/agent-sdk";
 
-if (filter.isText(ctx.message) && !filter.fromSelf(ctx.message, ctx.client)) {
+if (isText(ctx.message) && !filter.fromSelf(ctx.message, ctx.client)) {
   // Handle text message
 }
 ```
@@ -188,6 +192,7 @@ if (filter.isText(ctx.message) && !filter.fromSelf(ctx.message, ctx.client)) {
 ## Testing
 
 Test agents using:
+
 - [xmtp.chat](https://xmtp.chat) - Official playground
 - `yarn debug` - CLI tool
 - Local network via `./dev/up`

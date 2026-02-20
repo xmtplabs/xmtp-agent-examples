@@ -11,7 +11,7 @@ Use `sendRemoteAttachment` to send encrypted files.
 **Basic usage:**
 
 ```typescript
-import { type AttachmentUploadCallback } from "@xmtp/agent-sdk/util";
+import { type AttachmentUploadCallback } from "@xmtp/agent-sdk";
 
 agent.on("text", async (ctx) => {
   if (ctx.message.content === "/send-file") {

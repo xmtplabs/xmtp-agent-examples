@@ -11,44 +11,47 @@ Use built-in filters to check message types instead of manual type checking.
 **Available filters:**
 
 ```typescript
-import { filter } from "@xmtp/agent-sdk";
+import {
+  filter,
+  isReaction,
+  isRemoteAttachment,
+  isReply,
+  isText,
+} from "@xmtp/agent-sdk";
 
-// Check message types
-filter.isText(ctx.message)
-filter.isReaction(ctx.message)
-filter.isReply(ctx.message)
-filter.isAttachment(ctx.message)
+// Check message types (direct imports)
+isText(ctx.message);
+isReaction(ctx.message);
+isReply(ctx.message);
+isRemoteAttachment(ctx.message);
 
-// Check content
-filter.hasDefinedContent(ctx.message)
-
-// Check sender
-filter.fromSelf(ctx.message, ctx.client)
+// Check content and sender (filter)
+filter.hasDefinedContent(ctx.message);
+filter.fromSelf(ctx.message, ctx.client);
 ```
 
 **Example usage:**
 
 ```typescript
-import { filter } from "@xmtp/agent-sdk";
+import { filter, isText } from "@xmtp/agent-sdk";
 
 agent.on("message", async (ctx) => {
-  // Filter for specific message types to prevent infinite loops
   if (
     filter.hasDefinedContent(ctx.message) &&
     !filter.fromSelf(ctx.message, ctx.client) &&
-    filter.isText(ctx.message)
+    isText(ctx.message)
   ) {
     await ctx.conversation.sendText("Valid text message received");
   }
 });
 ```
 
-**Short import alias:**
+**Direct type check:**
 
 ```typescript
-import { f } from "@xmtp/agent-sdk";
+import { isText } from "@xmtp/agent-sdk";
 
-if (f.isText(ctx.message)) {
+if (isText(ctx.message)) {
   // Handle text message
 }
 ```

@@ -11,7 +11,7 @@ Use lifecycle events to run code when the agent starts or stops.
 **Start event:**
 
 ```typescript
-import { getTestUrl } from "@xmtp/agent-sdk/debug";
+import { getTestUrl } from "@xmtp/agent-sdk";
 
 agent.on("start", () => {
   console.log(`Agent address: ${agent.address}`);

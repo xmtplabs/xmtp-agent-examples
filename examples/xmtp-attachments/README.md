@@ -11,7 +11,7 @@ An XMTP agent that demonstrates [file attachment](https://docs.xmtp.org/agents/c
 Send and receive attachments using the `sendRemoteAttachment` and `downloadRemoteAttachment` utility functions.
 
 ```ts
-import { type AttachmentUploadCallback } from "@xmtp/agent-sdk/util";
+import { type AttachmentUploadCallback } from "@xmtp/agent-sdk";
 
 agent.on("text", async (ctx) => {
   if (ctx.message.content === "/send-file") {
@@ -53,13 +53,10 @@ agent.on("text", async (ctx) => {
 Other agents can then download and decrypt the attachment using the `"attachment"` topic:
 
 ```ts
-import { downloadRemoteAttachment } from "@xmtp/agent-sdk/util";
+import { downloadRemoteAttachment } from "@xmtp/agent-sdk";
 
 agent.on("attachment", async (ctx) => {
-  const receivedAttachment = await downloadRemoteAttachment(
-    ctx.message.content,
-    agent,
-  );
+  const receivedAttachment = await downloadRemoteAttachment(ctx.message.content);
   console.log(`Received attachment: ${receivedAttachment.filename}`);
 });
 ```
