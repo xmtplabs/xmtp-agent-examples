@@ -115,7 +115,6 @@ See [Deploy your own agent](https://docs.xmtp.org/agents/deploy/deploy-agent) fo
 
 | Example                                                               | Description         |
 | --------------------------------------------------------------------- | ------------------- |
-| [xmtp-gaia](https://github.com/xmtplabs/xmtp-agent-examples/pull/43)  | Gaia AI integration |
 | [xmtp-groq](https://github.com/xmtplabs/xmtp-agent-examples/pull/354) | Groq AI integration |
 
 ## Contributing
