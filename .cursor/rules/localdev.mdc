@@ -1,0 +1,64 @@
+# Local development setup and troubleshooting
+
+
+Run OpenClaw from a git checkout and test extensions (Convos, XMTP, etc.).
+
+## Prerequisites
+
+Node ≥22, pnpm.
+
+## Steps
+
+```bash
+pnpm install
+pnpm build
+pnpm openclaw config set gateway.mode local   # or: pnpm openclaw setup
+pnpm ui:build
+pnpm openclaw gateway run --force
+
+## set model
+pnpm openclaw models set openai/gpt-5.1-codex-mini
+```
+
+Control UI: `http://127.0.0.1:18789`
+
+To use another model or provider via config, run `pnpm openclaw configure` or set `agents.defaults.model.primary` in config.
+ 
+## Plugins (Convos, XMTP)
+
+**Do not** run `openclaw plugins install ./extensions/xmtp` (or convos). The installer copies the extension and runs `npm install` there; extensions use `workspace:*` in devDependencies, which npm rejects (`Unsupported URL Type "workspace:"`). The copy then has no deps and loads with error.
+
+Use workspace extensions only: plugins are auto-discovered from `extensions/*`; `pnpm install` at the repo root already resolved their deps.
+
+If you already installed and see plugin **error** or duplicate id:
+
+```bash
+rm -rf ~/.openclaw/extensions/xmtp ~/.openclaw/extensions/convos
+```
+
+Then `pnpm openclaw plugins list` — Convos/XMTP should show source under the repo `extensions/` path and status **disabled** until configured. There is no `plugins uninstall`; remove the folder or edit config.
+
+## Control UI and gateway token
+
+The gateway expects a token for WebSocket connections. Set `OPENCLAW_GATEWAY_TOKEN` in the same env where you run the gateway, or run `pnpm openclaw doctor --generate-gateway-token` and use the tokenized URL:
+
+```bash
+pnpm openclaw dashboard --no-open
+```
+
+Open the printed URL (e.g. `http://127.0.0.1:18789?token=...`) in the browser. Do not set `OPENCLAW_STATE_DIR=/data` on macOS — the gateway will try to `mkdir '/data'` and fail; use `unset OPENCLAW_STATE_DIR` or `export OPENCLAW_STATE_DIR=~/.openclaw`.
+
+## Troubleshooting
+
+| Issue | Fix |
+|-------|-----|
+| `Missing config` | `pnpm openclaw config set gateway.mode local` or `pnpm openclaw setup` |
+| Plugin error / `Cannot find module '@xmtp/agent-sdk'` | Remove `~/.openclaw/extensions/<plugin>`; use workspace copy only |
+| Duplicate plugin id | Same: remove `~/.openclaw/extensions/<plugin>` |
+| Control UI missing | `pnpm ui:build` (not `build:ui`) before gateway run |
+| `ENOENT: mkdir '/data'` / Control UI disconnects (1000) | Unset `OPENCLAW_STATE_DIR` or set to `~/.openclaw`; restart gateway |
+
+## Configure channels
+
+- **Convos:** `pnpm openclaw configure` → Convos → paste invite link (or Control UI “Generate Invite Link”).
+- **XMTP:** No wizard; set `channels.xmtp` in `~/.openclaw/openclaw.json` (walletKey, dbEncryptionKey, env). Use `env: "dev"` for testing.
