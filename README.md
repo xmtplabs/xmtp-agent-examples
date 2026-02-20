@@ -20,8 +20,6 @@ Runnable example agents that demonstrate specific capabilities:
 | [xmtp-queue-dual-client](examples/xmtp-queue-dual-client/) | Dual client architecture          |
 | [xmtp-welcome-message](examples/xmtp-welcome-message/)     | Welcome messages with buttons     |
 
-> Visit [miniapps](https://xmtp.org/miniapps) to explore the latest agents and mini-apps.
-
 ## Quick start
 
 ### Run an example
@@ -115,7 +113,7 @@ See [Deploy your own agent](https://docs.xmtp.org/agents/deploy/deploy-agent) fo
 
 | Example                                                               | Description         |
 | --------------------------------------------------------------------- | ------------------- |
-| [xmtp-gaia](https://github.com/xmtplabs/xmtp-agent-examples/pull/43)  | Gaia AI integration |
+| [xmtp-gaia](https://github.com/xmtplabs/xmtp-agent-examples/pull/364)  | Gaia AI integration |
 | [xmtp-groq](https://github.com/xmtplabs/xmtp-agent-examples/pull/354) | Groq AI integration |
 
 ## Contributing
