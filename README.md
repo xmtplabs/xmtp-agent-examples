@@ -1,4 +1,4 @@
-# XMTP agent skills
+# XMTP agent examples
 
 A collection of examples for building XMTP agents using the [`@xmtp/agent-sdk`](https://github.com/xmtp/xmtp-js/tree/main/sdks/agent-sdk).
 
